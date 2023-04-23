@@ -4,6 +4,7 @@ Workout app built on React Native
 
 ## Setup and Run
 
+install node (nvm then node)
 Currently using v 20.0.0
 
 install Expo
@@ -47,3 +48,5 @@ Download Expo Go on google play store
 Select connect with QR Code
 Scan code presented when starting the front end
 Should pull up and be reactive on save
+
+Can also reload with hitting R in the console
