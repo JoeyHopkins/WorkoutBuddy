@@ -1,36 +1,53 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Stack = createNativeStackNavigator();
+
+const Tab = createBottomTabNavigator();
 
 const Reports = ({navigation}) => {
   return (
     <Button
-      title="This is the Reports Page"
+      title="Go to Workout Page"
       onPress={() =>
-        navigation.navigate('Profile', {name: 'Jane'})
+        navigation.navigate('Workout', {name: 'Jane'})
+      }
+    />
+   );
+};
+    
+const Workout = ({navigation}) => {
+  return (
+    <Button
+      title="Go to Planning Page"
+      onPress={() =>
+        navigation.navigate('Planning', {name: 'Jane'})
       }
     />
   );
 };
 
-const Training = ({navigation, route}) => {
-  return <Text>This is the Training page</Text>;
+const Planning = ({navigation}) => {
+  return (
+    <Button
+      title="Go to Reports Page"
+      onPress={() =>
+        navigation.navigate('Reports', {name: 'Jane'})
+      }
+    />
+  );
 };
 
+//https://reactnavigation.org/docs/native-stack-navigator/#options
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Reports}
-          options={{title: 'Welcome'}}
-        />
-        <Stack.Screen name="Profile" component={Training} />
-      </Stack.Navigator>
+      <Tab.Navigator>
+        <Tab.Screen name="Reports" component={Reports} />
+        <Tab.Screen name="Workout" component={Workout} />
+        <Tab.Screen name="Planning" component={Planning} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
