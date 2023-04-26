@@ -1,14 +1,39 @@
 import React, {useRef, useState} from 'react';
-import { Button, DrawerLayoutAndroid, Text, StyleSheet, View, } from 'react-native';
+import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, } from 'react-native';
 
 export const Reports = ({navigation}) => {
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('right');
+  
+  const reportList = [
+    {
+      id: '1',
+      title: 'Weight',
+    },
+    {
+      id: '2',
+      title: 'Second Item',
+    },
+    {
+      id: '3',
+      title: 'Third Item',
+    },
+  ];
 
   const navigationView = () => (
-    <View style={[styles.container, styles.navigationContainer]}>
+    <View style={[styles.containerReportList]}>
+      <FlatList
+        data={reportList}
+        renderItem={({item}) => <ReportListView title={item.title} />}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  );
+
+  const ReportListView = ({title}) => (
+    <View style={styles.reportListItem}>
       <Button
-        title="Close drawer"
+        title={title}
         onPress={() => drawer.current.closeDrawer()}
       />
     </View>
@@ -33,41 +58,18 @@ export const Reports = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
   },
-  navigationContainer: {
+  containerReportList: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 0,
     backgroundColor: '#ecf0f1',
   },
-  paragraph: {
-    padding: 16,
-    fontSize: 15,
-    textAlign: 'center',
+  reportListItem: {
+    backgroundColor: '#f9c2ff',
+    marginVertical: 8,
+    marginHorizontal: 0,
   },
 });
-
-
-
-
-
-//https://reactnavigation.org/docs/native-stack-navigator/#options
-// export const Reports = ({navigation}) => {
-//   return (
-//     <Button
-//       title="Go to Workout Page"
-//       onPress={() =>
-//         navigation.navigate('Workout', {name: 'Jane'})
-//       }
-//     />
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
