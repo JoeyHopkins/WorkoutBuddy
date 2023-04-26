@@ -1,56 +1,61 @@
 import React, {useRef, useState} from 'react';
-import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, } from 'react-native';
+import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, Text} from 'react-native';
+
+const reportList = [
+  {
+    id: '0',
+    title: 'Weight',
+  },
+  {
+    id: '1',
+    title: 'Second Item',
+  },
+  {
+    id: '2',
+    title: 'Third Item',
+  },
+];
 
 export const Reports = ({navigation}) => {
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('right');
-  
-  const reportList = [
-    {
-      id: '1',
-      title: 'Weight',
-    },
-    {
-      id: '2',
-      title: 'Second Item',
-    },
-    {
-      id: '3',
-      title: 'Third Item',
-    },
-  ];
+  const [titleText, setTitleText] = useState("");
 
   const navigationView = () => (
     <View style={[styles.containerReportList]}>
       <FlatList
         data={reportList}
-        renderItem={({item}) => <ReportListView title={item.title} />}
+        renderItem={({item}) => <ReportListView title={item.title} id={item.id} />}
         keyExtractor={item => item.id}
       />
     </View>
   );
 
-  const ReportListView = ({title}) => (
+  const ReportListView = ({title, id}) => (
     <View style={styles.reportListItem}>
       <Button
         title={title}
-        onPress={() => drawer.current.closeDrawer()}
+        onPress={() => {
+          drawerReportSelected(title, id)
+        }}
       />
     </View>
   );
+
+  const drawerReportSelected = (id) => {
+    setTitleText("Selected Report: " + id);
+  };
 
   return (
     <DrawerLayoutAndroid
       ref={drawer}
       drawerWidth={300}
       drawerPosition={drawerPosition}
-      renderNavigationView={navigationView}>
-      <View style={styles.container}>
-        <Button
-          title="Open drawer"
-          onPress={() => drawer.current.openDrawer()}
-        />
-      </View>
+      renderNavigationView={navigationView}
+    >
+      <Text style={styles.titleText}>
+        {titleText}
+      </Text>
     </DrawerLayoutAndroid>
   );
 };
