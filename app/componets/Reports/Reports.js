@@ -35,7 +35,7 @@ export const Reports = ({navigation}) => {
   };
 
   useEffect( () => {
-    reportsSql.getReports(setReportList);
+    reportsSql.getReportList(setReportList);
   }, [])
 
   return (
