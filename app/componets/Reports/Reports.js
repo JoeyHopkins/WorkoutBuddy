@@ -1,12 +1,14 @@
 import React, {useRef, useState} from 'react';
 import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, Text} from 'react-native';
-import reportsSql from '../../controllers/reports.controller'
 import { useEffect } from 'react'
+import reportsSql from '../../controllers/reports.controller'
+import weightReport from './Weight'
 
 export const Reports = ({navigation}) => {
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('right');
   const [titleText, setTitleText] = useState("");
+  const [selectedReportID, setSelectedReportID] = useState("");
   const [reportList, setReportList] = useState([]);
 
   const navigationView = () => (
@@ -29,10 +31,23 @@ export const Reports = ({navigation}) => {
       />
     </View>
   );
-
-  const drawerReportSelected = (id) => {
+  
+  const drawerReportSelected = (title, id) => {
     setTitleText("Selected Report: " + id);
+    setSelectedReportID(title)
+    drawer.current.closeDrawer()
   };
+
+  function RenderReportComponet(input) {
+    switch(input.name)
+    {
+      case "Weight":
+        return weightReport.getReport();
+    }
+
+    return <Text>Nothing Selected</Text>;
+  }
+
 
   useEffect( () => {
     reportsSql.getReportList(setReportList);
@@ -45,13 +60,14 @@ export const Reports = ({navigation}) => {
       drawerPosition={drawerPosition}
       renderNavigationView={navigationView}
     >
-    <View style={[styles.container, styles.navigationContainer]}>
-      <Button
-        title="open drawer"
-        onPress={() => drawer.current.openDrawer()}
-      />
-    </View>
+      <View style={[styles.container, styles.navigationContainer]}>
+        <Button
+          title="open drawer"
+          onPress={() => drawer.current.openDrawer()}
+        />
+      </View>
 
+      <RenderReportComponet name={selectedReportID}></RenderReportComponet>
       <Text style={styles.titleText}>
         {titleText}
       </Text>
@@ -62,7 +78,7 @@ export const Reports = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    // justifyContent: 'center',
     padding: 16,
   },
   containerReportList: {
