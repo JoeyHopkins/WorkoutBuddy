@@ -1,31 +1,19 @@
 import React, {useRef, useState} from 'react';
 import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, Text} from 'react-native';
-
-const reportList = [
-  {
-    id: '0',
-    title: 'Weight',
-  },
-  {
-    id: '1',
-    title: 'Second Item',
-  },
-  {
-    id: '2',
-    title: 'Third Item',
-  },
-];
+import reportsSql from '../../controllers/reports.controller'
+import { useEffect } from 'react'
 
 export const Reports = ({navigation}) => {
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('right');
   const [titleText, setTitleText] = useState("");
+  const [reportList, setReportList] = useState([]);
 
   const navigationView = () => (
     <View style={[styles.containerReportList]}>
       <FlatList
         data={reportList}
-        renderItem={({item}) => <ReportListView title={item.title} id={item.id} />}
+        renderItem={({item}) => <ReportListView title={item.name} id={item.id} />}
         keyExtractor={item => item.id}
       />
     </View>
@@ -46,6 +34,10 @@ export const Reports = ({navigation}) => {
     setTitleText("Selected Report: " + id);
   };
 
+  useEffect( () => {
+    reportsSql.getReports(setReportList);
+  }, [])
+
   return (
     <DrawerLayoutAndroid
       ref={drawer}
@@ -53,6 +45,13 @@ export const Reports = ({navigation}) => {
       drawerPosition={drawerPosition}
       renderNavigationView={navigationView}
     >
+    <View style={[styles.container, styles.navigationContainer]}>
+      <Button
+        title="open drawer"
+        onPress={() => drawer.current.openDrawer()}
+      />
+    </View>
+
       <Text style={styles.titleText}>
         {titleText}
       </Text>

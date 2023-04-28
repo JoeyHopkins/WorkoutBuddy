@@ -17,7 +17,6 @@ export default function App() {
     appSql.getTablesFromDB();
   })
 
-  console.log('app started')
   return (
     <NavigationContainer>
       <Tab.Navigator>
