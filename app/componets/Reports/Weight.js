@@ -1,12 +1,14 @@
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import reportsSql from '../../controllers/reports.controller'
 
 exports.getReport = () => {
   let date = new Date()
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [datePicked, setDatePicked] = useState(date.toLocaleDateString());
   const [weightPicked, setWeightPicked] = useState('');
+  const [weightList, setWeightList] = useState([]);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -22,11 +24,14 @@ exports.getReport = () => {
   };
 
   function submitNewWeight() {
-    console.log('datePicked')
-    console.log(datePicked)
-    console.log('weightPicked')
-    console.log(weightPicked)
+    reportsSql.submitNewWeight(weightPicked, datePicked)
+    reportsSql.getAllWeight(setWeightList)
+    Keyboard.dismiss()
   }
+
+  useEffect( () => {
+    reportsSql.getAllWeight(setWeightList)
+  }, [])
 
   return (
     <View>
@@ -36,6 +41,7 @@ exports.getReport = () => {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
+
       <Text 
         style={styles.dateText}
         onPress={showDatePicker}
@@ -58,6 +64,7 @@ exports.getReport = () => {
           submitNewWeight()
         }}
       />
+
     </View>
   );
 };

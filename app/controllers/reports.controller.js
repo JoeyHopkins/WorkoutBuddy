@@ -9,6 +9,7 @@ exports.getReportList = (setReportList) => {
         (txObj, { rows: { _array } }) => { 
 
           //if reports exist then load them into the list
+          //else first time on app, create new record for weight
           if(_array.length > 0)
             setReportList(_array) 
           else
@@ -20,6 +21,36 @@ exports.getReportList = (setReportList) => {
             );
           }
         },
+        (txObj, error) => { console.log('Error ', error) },
+      );
+    });
+  });
+};
+
+exports.submitNewWeight = (weight, date) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("INSERT INTO weight (weight, date) VALUES (?,?)",
+        [weight, date],
+        null,
+        (txObj, ResultSet) => { 
+          console.log('sucess')
+          console.log(txObj)
+          
+          console.log(ResultSet) 
+        },
+        (txObj, error) => { console.log('Error ', error) },
+      );
+    });
+  });
+};
+
+exports.getAllWeight = (setWeightList) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM weight",
+        null,
+        (txObj, { rows: { _array } }) => { setWeightList(_array) },
         (txObj, error) => { console.log('Error ', error) },
       );
     });

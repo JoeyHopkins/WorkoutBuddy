@@ -24,7 +24,7 @@ exports.createTables = () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS weight (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS weight (id INTEGER PRIMARY KEY AUTOINCREMENT, weight VARCHAR(20), date VARCHAR(10));`,
       [],
       (sqlTxn, res) => {
         console.log("weight table created successfully")
