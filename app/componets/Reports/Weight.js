@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, Keyboard } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Keyboard, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import reportsSql from '../../controllers/reports.controller'
@@ -9,6 +9,8 @@ exports.getReport = () => {
   const [datePicked, setDatePicked] = useState(date.toLocaleDateString());
   const [weightPicked, setWeightPicked] = useState('');
   const [weightList, setWeightList] = useState([]);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteButtonText, setDeleteButtonText] = useState('Delete A Record');
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -29,6 +31,56 @@ exports.getReport = () => {
     Keyboard.dismiss()
   }
 
+  const DeleteWeightView = ({id, weight, date}) => (
+    <View style={styles.DeleteWeightView}>
+      <Text>
+        {date.toLocaleDateString()}: {weight}
+        <Text 
+          onPress={() => reportsSql.deleteWeight(id)} 
+          style={styles.setDateText}
+        > Delete</Text>
+      </Text>
+    </View>
+  );
+
+  function WeightOrDelete(showDelete) {
+    if(showDelete.show)
+      return (
+        <View>
+          <Text>Show Delete</Text>
+          <FlatList
+            data={weightList}
+            renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={date}/>}
+            keyExtractor={item => item.id}
+          />
+        </View>
+      )
+    else
+      return (
+        <View>
+          <Text style={styles.dateText}>
+            {datePicked}
+            <Text onPress={showDatePicker} style={styles.setDateText}> Set</Text>
+          </Text>
+  
+          <TextInput
+            inputMode="numeric"
+            style={styles.input}
+            placeholder="Weight"
+            onChangeText={setWeightPicked}
+            value={weightPicked}
+            ></TextInput>
+  
+          <Button
+            title="Submit"
+            onPress={() => {
+              submitNewWeight()
+            }}
+          />
+        </View>
+      )
+  }
+
   useEffect( () => {
     reportsSql.getAllWeight(setWeightList)
   }, [])
@@ -42,28 +94,19 @@ exports.getReport = () => {
         onCancel={hideDatePicker}
       />
 
-      <Text 
-        style={styles.dateText}
-        onPress={showDatePicker}
-      >
-        {datePicked}
-        <Text style={styles.setDateText}> Set</Text>
-      </Text>
-
-      <TextInput
-        inputMode="numeric"
-        style={styles.input}
-        placeholder="Weight"
-        onChangeText={setWeightPicked}
-        value={weightPicked}
-      ></TextInput>
-
       <Button
-        title="Submit"
+        title={deleteButtonText}
+        style={styles.editButton}
         onPress={() => {
-          submitNewWeight()
+          setShowDelete(!showDelete)
+          if(deleteButtonText == 'Delete A Record')
+            setDeleteButtonText('Cancel')
+            else
+            setDeleteButtonText('Delete A Record')
         }}
       />
+
+      <WeightOrDelete show={showDelete}></WeightOrDelete>
 
     </View>
   );
@@ -78,6 +121,9 @@ const styles = StyleSheet.create({
   },
   dateText: {
     marginLeft: 12,
+  },
+  editButton: {
+    flex: 1
   },
   setDateText: {
     color: 'blue',

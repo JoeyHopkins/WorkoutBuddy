@@ -56,3 +56,8 @@ exports.getAllWeight = (setWeightList) => {
     });
   });
 };
+
+exports.deleteWeight = (id) => {
+  console.log('id is ' + id)
+};
+

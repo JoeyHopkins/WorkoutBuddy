@@ -62,7 +62,7 @@ export const Reports = ({navigation}) => {
       <Text style={styles.titleText}>
         {titleText}
       </Text>
-      <View style={[styles.container, styles.navigationContainer]}>
+      <View>
         <Button
           title="open drawer"
           onPress={() => drawer.current.openDrawer()}
