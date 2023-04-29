@@ -6,6 +6,7 @@ exports.getReport = () => {
   let date = new Date()
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [datePicked, setDatePicked] = useState(date.toLocaleDateString());
+  const [weightPicked, setWeightPicked] = useState('');
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -20,8 +21,21 @@ exports.getReport = () => {
     hideDatePicker();
   };
 
+  function submitNewWeight() {
+    console.log('datePicked')
+    console.log(datePicked)
+    console.log('weightPicked')
+    console.log(weightPicked)
+  }
+
   return (
     <View>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
       <Text 
         style={styles.dateText}
         onPress={showDatePicker}
@@ -34,18 +48,15 @@ exports.getReport = () => {
         inputMode="numeric"
         style={styles.input}
         placeholder="Weight"
+        onChangeText={setWeightPicked}
+        value={weightPicked}
       ></TextInput>
+
       <Button
         title="Submit"
         onPress={() => {
-          console.log('submit record')
+          submitNewWeight()
         }}
-      />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
       />
     </View>
   );
