@@ -33,7 +33,7 @@ export const Reports = ({navigation}) => {
   );
   
   const drawerReportSelected = (title, id) => {
-    setTitleText("Selected Report: " + id);
+    setTitleText("Selected Report: " + title);
     setSelectedReportID(title)
     drawer.current.closeDrawer()
   };
@@ -43,11 +43,10 @@ export const Reports = ({navigation}) => {
     {
       case "Weight":
         return weightReport.getReport();
+      default:
+        return weightReport.getReport();
     }
-
-    return <Text>Nothing Selected</Text>;
   }
-
 
   useEffect( () => {
     reportsSql.getReportList(setReportList);
@@ -60,6 +59,9 @@ export const Reports = ({navigation}) => {
       drawerPosition={drawerPosition}
       renderNavigationView={navigationView}
     >
+      <Text style={styles.titleText}>
+        {titleText}
+      </Text>
       <View style={[styles.container, styles.navigationContainer]}>
         <Button
           title="open drawer"
@@ -68,9 +70,6 @@ export const Reports = ({navigation}) => {
       </View>
 
       <RenderReportComponet name={selectedReportID}></RenderReportComponet>
-      <Text style={styles.titleText}>
-        {titleText}
-      </Text>
     </DrawerLayoutAndroid>
   );
 };
