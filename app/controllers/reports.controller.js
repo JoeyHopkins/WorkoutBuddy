@@ -57,7 +57,16 @@ exports.getAllWeight = (setWeightList) => {
   });
 };
 
-exports.deleteWeight = (id) => {
-  console.log('id is ' + id)
+exports.deleteWeightByID = (id) => {
+  console.log('delete id')
+  console.log(id)
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("DELETE FROM weight WHERE id = ?", [id],
+        (txObj, ResultSet) => { console.log('sucess') },
+        (txObj, error) => { console.log('Error ', error) },
+      );
+    });
+  });
 };
 

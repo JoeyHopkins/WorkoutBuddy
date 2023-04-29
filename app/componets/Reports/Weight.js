@@ -31,12 +31,17 @@ exports.getReport = () => {
     Keyboard.dismiss()
   }
 
+  function deleteWeight(id) {
+    reportsSql.deleteWeightByID(id)
+    reportsSql.getAllWeight(setWeightList)
+  }
+
   const DeleteWeightView = ({id, weight, date}) => (
     <View style={styles.DeleteWeightView}>
       <Text>
         {date.toLocaleDateString()}: {weight}
         <Text 
-          onPress={() => reportsSql.deleteWeight(id)} 
+          onPress={ () => deleteWeight(id) } 
           style={styles.setDateText}
         > Delete</Text>
       </Text>
