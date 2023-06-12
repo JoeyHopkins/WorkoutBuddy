@@ -2,6 +2,7 @@ import { View, Text, TextInput, Button, StyleSheet, Keyboard, FlatList } from 'r
 import React, { useState, useEffect } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import reportsSql from '../../controllers/reports.controller'
+import { LineChart } from '../../graphHelper/LineChart'
 
 exports.getReport = () => {
   let date = new Date()
@@ -90,15 +91,24 @@ exports.getReport = () => {
     reportsSql.getAllWeight(setWeightList)
   }, [])
 
+  function RenderTable() { 
+      return (
+        <LineChart style={styles.table}></LineChart>
+      )
+  }
+
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <RenderTable show={!showDelete}></RenderTable>
+      </View>
+
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-
       <Button
         title={deleteButtonText}
         style={styles.editButton}
@@ -110,14 +120,27 @@ exports.getReport = () => {
             setDeleteButtonText('Delete A Record')
         }}
       />
-
       <WeightOrDelete show={showDelete}></WeightOrDelete>
-
     </View>
+
+      
+
+
+
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  section: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    borderColor: '#ccc',
+    borderBottomWidth: 1,
+  },
   input: {
     height: 40,
     margin: 12,

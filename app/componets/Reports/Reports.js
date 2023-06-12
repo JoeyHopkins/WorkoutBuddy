@@ -62,12 +62,12 @@ export const Reports = ({navigation}) => {
       <Text style={styles.titleText}>
         {titleText}
       </Text>
-      <View>
+      {/* <View>
         <Button
           title="open drawer"
           onPress={() => drawer.current.openDrawer()}
         />
-      </View>
+      </View> */}
 
       <RenderReportComponet name={selectedReportID}></RenderReportComponet>
     </DrawerLayoutAndroid>

@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('workouBuddy.db');
-    
+
 exports.getReportList = (setReportList) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {

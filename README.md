@@ -41,7 +41,7 @@ Ctrl+M -> main screen expo go
 
 ## Using own Android Dev
 
-Make sure you are connected to the wifi, Was having issues being hard wires not connected.
+Make sure you are connected to the wifi, Was having issues being hard wired, not connected.
 Make sure the wifi is set to private
 ->might be able to have public if disired but I belive this depends on firewall
 Download Expo Go on google play store
