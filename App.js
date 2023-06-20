@@ -13,6 +13,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
 
   useEffect( () => {
+    // appSql.dropAllTables();
     appSql.createTables();
     appSql.getTablesFromDB();
   })
