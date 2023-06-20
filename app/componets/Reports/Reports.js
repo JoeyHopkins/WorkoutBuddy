@@ -5,6 +5,7 @@ import reportsSql from '../../controllers/reports.controller'
 import weightReport from './Weight'
 
 export const Reports = ({navigation}) => {
+
   const drawer = useRef(null);
   const [drawerPosition, setDrawerPosition] = useState('right');
   const [titleText, setTitleText] = useState("");
@@ -21,22 +22,22 @@ export const Reports = ({navigation}) => {
     </View>
   );
 
-  const ReportListView = ({title, id}) => (
-    <View style={styles.reportListItem}>
-      <Button
-        title={title}
-        onPress={() => {
-          drawerReportSelected(title, id)
-        }}
-      />
-    </View>
-  );
+  // const ReportListView = ({title, id}) => (
+  //   <View style={styles.reportListItem}>
+  //     <Button
+  //       title={title}
+  //       onPress={() => {
+  //         drawerReportSelected(title, id)
+  //       }}
+  //     />
+  //   </View>
+  // );
   
-  const drawerReportSelected = (title, id) => {
-    setTitleText("Selected Report: " + title);
-    setSelectedReportID(title)
-    drawer.current.closeDrawer()
-  };
+  // const drawerReportSelected = (title, id) => {
+  //   setTitleText("Selected Report: " + title);
+  //   setSelectedReportID(title)
+  //   drawer.current.closeDrawer()
+  // };
 
   function RenderReportComponet(input) {
     switch(input.name)
@@ -48,9 +49,9 @@ export const Reports = ({navigation}) => {
     }
   }
 
-  useEffect( () => {
-    reportsSql.getReportList(setReportList);
-  }, [])
+  // useEffect( () => {
+  //   reportsSql.getReportList(setReportList);
+  // }, [])
 
   return (
     <DrawerLayoutAndroid

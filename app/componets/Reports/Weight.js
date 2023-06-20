@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import reportsSql from '../../controllers/reports.controller'
 import { LineChart } from '../../graphHelper/LineChart'
+import Utils from '../../utils'
 
 exports.getReport = () => {
   let date = new Date()
@@ -27,9 +28,9 @@ exports.getReport = () => {
   };
 
   function submitNewWeight() {
-    reportsSql.submitNewWeight(weightPicked, datePicked)
+    let formattedDate = Utils.convertDateFormat(datePicked)
+    reportsSql.submitNewWeight(weightPicked, formattedDate)
     reportsSql.getAllWeight(setWeightList)
-    Keyboard.dismiss()
   }
 
   function deleteWeight(id) {
@@ -88,27 +89,56 @@ exports.getReport = () => {
   }
 
   useEffect( () => {
+    console.log('getting weightlist')
     reportsSql.getAllWeight(setWeightList)
   }, [])
 
   function RenderTable() { 
+
+    const dimensions = {
+      height: 400,
+      width: 350,
+      margin: 30,
+    };
+    
+    // let testWeightList = [
+    //   {"date": "2023-06-01", "id": 1, "weight": 10}, 
+    //   {"date": "2023-06-04", "id": 2, "weight": 25},
+    //   {"date": "2023-06-07", "id": 3, "weight": 15},
+    //   {"date": "2023-06-09", "id": 4, "weight": 30},
+    // ]
+ 
+    if(weightList.length == 0)
+      return(<Text>Loading...</Text>)
+    else
       return (
-        <LineChart style={styles.table}></LineChart>
+        <LineChart
+          tableData={weightList}
+          dimensions={dimensions}
+        ></LineChart>
       )
+
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <RenderTable show={!showDelete}></RenderTable>
-      </View>
 
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      />
+      {!showDelete
+        ? 
+          <View style={styles.section}>
+            <RenderTable></RenderTable>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              />
+          </View>
+        :
+        <View>
+        </View>
+      }
+
       <Button
         title={deleteButtonText}
         style={styles.editButton}
@@ -116,17 +146,13 @@ exports.getReport = () => {
           setShowDelete(!showDelete)
           if(deleteButtonText == 'Delete A Record')
             setDeleteButtonText('Cancel')
-            else
+          else
             setDeleteButtonText('Delete A Record')
-        }}
+          }
+        }
       />
       <WeightOrDelete show={showDelete}></WeightOrDelete>
     </View>
-
-      
-
-
-
   );
 };
 
