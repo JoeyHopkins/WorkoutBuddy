@@ -5,6 +5,7 @@ import { Reports } from './app/componets/Reports/Reports';
 import { Workout } from './app/componets/Workout/Workout';
 import { Planning } from './app/componets/Planning/Planning';
 import appSql from './app/controllers/app.controller';
+import FlashMessage from "react-native-flash-message";
 import { useEffect } from 'react'
 
 const Tab = createBottomTabNavigator();
@@ -25,6 +26,7 @@ export default function App() {
         <Tab.Screen name="Reports" component={Reports} />
         <Tab.Screen name="Planning" component={Planning} />
       </Tab.Navigator>
+      <FlashMessage position="bottom" />
     </NavigationContainer>
   );
 }

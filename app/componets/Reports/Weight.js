@@ -4,6 +4,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import reportsSql from '../../controllers/reports.controller'
 import { LineChart } from '../../graphHelper/LineChart'
 import Utils from '../../utils'
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 exports.getReport = () => {
   let date = new Date()
@@ -35,6 +36,11 @@ exports.getReport = () => {
 
   function deleteWeight(id) {
     reportsSql.deleteWeightByID(id)
+    showMessage({
+      message: "Success!",
+      description: "Record was deleted!",
+      type: "success",
+    });
     reportsSql.getAllWeight(setWeightList)
   }
 
@@ -89,7 +95,6 @@ exports.getReport = () => {
   }
 
   useEffect( () => {
-    console.log('getting weightlist')
     reportsSql.getAllWeight(setWeightList)
   }, [])
 
