@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Canvas,
@@ -49,6 +49,9 @@ export const LineChart = (props) => {
     .curve(d3.curveNatural)(tableData);
   
   const skPath = Skia.Path.MakeFromSVGString(curvedLine);
+
+  if(!font)
+    return <View/>
 
   return (
     <View style={styles.container}>
