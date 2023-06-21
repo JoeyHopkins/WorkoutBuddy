@@ -5,6 +5,7 @@ import reportsSql from '../../controllers/reports.controller'
 import { LineChart } from '../../graphHelper/LineChart'
 import Utils from '../../utils'
 import { showMessage, hideMessage } from "react-native-flash-message";
+import BottomSheet from 'react-native-simple-bottom-sheet';
 
 exports.getReport = () => {
   let date = new Date()
@@ -156,7 +157,13 @@ exports.getReport = () => {
           }
         }
       />
-      <WeightOrDelete show={showDelete}></WeightOrDelete>
+
+      <BottomSheet isOpen={false}>
+        <View>
+          <WeightOrDelete show={showDelete}></WeightOrDelete>  
+        </View>
+      </BottomSheet>
+
     </View>
   );
 };
