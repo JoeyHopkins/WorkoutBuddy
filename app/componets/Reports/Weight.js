@@ -17,8 +17,9 @@ exports.getReport = () => {
   const [weightList, setWeightList] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteButtonText, setDeleteButtonText] = useState('Delete A Record');
-  const [tableMode, setTableMode] = useState('weight');
+  const [tableMode, setTableMode] = useState('Weight');
   const [actionMode, setActionMode] = useState('read');
+  const [addIcon, setAddIcon] = useState('add-to-list');
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -49,10 +50,6 @@ exports.getReport = () => {
     reportsSql.getAllWeight(setWeightList)
   };
 
-  function editRecordSetup() {
-    setActionMode('edit')
-  };
-
   const DeleteWeightView = ({id, weight, date}) => (
     <Pressable 
       style={styles.DeleteWeightView}
@@ -76,16 +73,36 @@ exports.getReport = () => {
   );
   
   function toggleWeightGoal() {
-    if(tableMode == 'weight')
-      setTableMode('goal')
-    if(tableMode == 'goal')
-      setTableMode('weight')
+    if(tableMode == 'Weight')
+    {
+      setTableMode('Goal')
+      styles.circleButton.backgroundColor = '#ffe84f'
+    }
+    if(tableMode == 'Goal')
+    {
+      setTableMode('Weight')
+      styles.circleButton.backgroundColor = '#58dcff'
+    }
     
+    setAddIcon('add-to-list')
     setActionMode('read')
   };
 
   function addRecordSetup() {
-    setActionMode('add')
+    if(addIcon == 'add-to-list')
+    {
+      setAddIcon('cross')
+      setActionMode('add')
+    }
+    else {
+      setAddIcon('add-to-list')
+      setActionMode('read')
+    }
+  };
+
+  function editRecordSetup() {
+    setAddIcon('cross')
+    setActionMode('edit')
   };
 
 
@@ -99,14 +116,14 @@ exports.getReport = () => {
               style={styles.circleButton} 
               onPress={() => { toggleWeightGoal() }}
             >
-              <Text>Goal</Text>
+              <Text>{tableMode}</Text>
             </Pressable>
     
             <Pressable 
               style={styles.circleButton}
               onPress={() => { addRecordSetup() }}
             >
-              <EntyoIcon name="add-to-list" size={20} color="#000000" />
+              <EntyoIcon name={addIcon} size={20} color="#000000" />
             </Pressable>
 
           </View>
