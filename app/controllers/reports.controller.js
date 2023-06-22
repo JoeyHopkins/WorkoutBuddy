@@ -35,14 +35,35 @@ exports.submitNewWeight = (weight, date) => {
         null,
         (txObj, ResultSet) => { 
           console.log('sucess')
-          console.log(txObj)
-          
-          console.log(ResultSet) 
+          resolve();
         },
-        (txObj, error) => { console.log('Error ', error) },
+        (txObj, error) => { 
+          console.log('Error ', error) 
+          reject(error);
+        },
       );
     });
   });
+};
+
+exports.editWeightByID = (id, weight, date) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE weight SET weight = ?, date = ? WHERE id = ?",
+        [weight, date, id],
+        (txObj, ResultSet) => {
+          console.log('Update success');
+          resolve();
+        },
+        (txObj, error) => {
+          console.log('Error:', error);
+          reject(error);
+        },
+      );
+    });
+  });
+
 };
 
 exports.getAllWeight = (setWeightList) => {

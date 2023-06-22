@@ -16,3 +16,11 @@ exports.convertDateFormat = (dateString) => {
   
   return `${year}-${month}-${day}`;
 }
+
+exports.formatISOtoDisplayDate = (dateObject) => {
+  const month = (dateObject.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = dateObject.getUTCDate().toString().padStart(2, '0');
+  const year = dateObject.getUTCFullYear().toString();
+  
+  return `${month}/${day}/${year}`;
+}

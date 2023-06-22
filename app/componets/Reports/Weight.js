@@ -21,6 +21,9 @@ exports.getReport = () => {
   const [actionMode, setActionMode] = useState('read');
   const [addIcon, setAddIcon] = useState('add-to-list');
   
+  const [editID, setEditID] = useState(-1);
+
+  setEditID
   const showDatePicker = () => {
     let d = new Date()
 
@@ -34,7 +37,7 @@ exports.getReport = () => {
   };
 
   const onChange = (event, selectedDate) => {
-    setDatePicked(selectedDate.toLocaleDateString());
+    setDatePicked(selectedDate.toISOString());
   };
   
   function toggleWeightGoal() {
@@ -71,6 +74,7 @@ exports.getReport = () => {
   function editRecordSetup(id, weight, dateInput) {
     setDatePicked(dateInput)
     setWeightPicked(weight)
+    setEditID(id)
     setAddIcon('cross')
     setActionMode('edit')
   };
@@ -87,8 +91,14 @@ exports.getReport = () => {
   
   function submitWeight(actionType) {
     if(actionType == 'add') {
-      let formattedDate = Utils.convertDateFormat(datePicked)
+      let formattedDate = datePicked.substring(0, 10)
       reportsSql.submitNewWeight(weightPicked, formattedDate)
+      reportsSql.getAllWeight(setWeightList)
+      addRecordSetup()
+    }
+    else {
+      let formattedDate = datePicked.substring(0,10)
+      reportsSql.editWeightByID(editID, weightPicked, formattedDate)
       reportsSql.getAllWeight(setWeightList)
       addRecordSetup()
     }
@@ -176,11 +186,11 @@ exports.getReport = () => {
     <Pressable 
       style={styles.Weightrecord}
       onLongPress={() => { 
-        editRecordSetup(id, weight, date.toISOString()) 
+        editRecordSetup(id, weight, date.toISOString())
       }}
     >
       <Text>
-        {date.toISOString()} 
+        {Utils.formatISOtoDisplayDate(date)} 
       </Text>
 
       <Text style={{ marginLeft: -30 }}>
@@ -196,7 +206,9 @@ exports.getReport = () => {
     </Pressable>
   );
 
-  const AddOrEditMenu = (action) => {
+  const AddOrEditMenu = (item) => {
+
+    let action = item.action
 
     // if(action == 'add')
       // setWeightPicked() set to last record
@@ -207,11 +219,10 @@ exports.getReport = () => {
       // set weight to be record that came in
       //set date to be record that came in
 
-
     return (
       <View style={styles.addEditDrawerSection}>
         <Text style={styles.dateText} onPress={showDatePicker}>
-          {datePicked}
+          {Utils.formatISOtoDisplayDate(new Date(datePicked))}
         </Text>
 
         <View style={styles.inputSpinnerContainer}>
@@ -236,7 +247,7 @@ exports.getReport = () => {
 
           <Pressable 
             style={styles.circleButton}
-            onPress={() => { submitWeight('add') }}
+            onPress={() => { submitWeight(action) }}
           >
             <MaterialIcon name='check-outline' size={20} color="#000000" />
           </Pressable>
