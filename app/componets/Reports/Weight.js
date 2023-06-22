@@ -25,7 +25,9 @@ exports.getReport = () => {
 
   setEditID
   const showDatePicker = () => {
-    let d = new Date()
+    let d = new Date(datePicked);
+    //set timezone to help prevent issues with timezone
+    d.setUTCHours(6);
 
     DateTimePickerAndroid.open({
       value: d,
