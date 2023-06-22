@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, Keyboard, FlatList } from 'react-native';
+import { View, Text, TextInput, Pressable, Button, StyleSheet, Keyboard, FlatList, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import reportsSql from '../../controllers/reports.controller'
@@ -6,6 +6,7 @@ import { LineChart } from '../../graphHelper/LineChart'
 import Utils from '../../utils'
 import { showMessage, hideMessage } from "react-native-flash-message";
 import BottomSheet from 'react-native-simple-bottom-sheet';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 exports.getReport = () => {
   let date = new Date()
@@ -46,19 +47,24 @@ exports.getReport = () => {
   }
 
   const DeleteWeightView = ({id, weight, date}) => (
-    <View style={styles.DeleteWeightView}>
+    <Pressable 
+      style={styles.DeleteWeightView}
+      onLongPress={() => { console.log('fire edit')}}
+    >
       <Text>
         {date.toLocaleDateString()} 
       </Text>
-      <Text style={{ marginLeft: -20 }}>
+      <Text style={{ marginLeft: -30 }}>
         {weight} lbs
       </Text>
-      <Text 
-        onPress={ () => deleteWeight(id) } 
-        style={styles.setDateText}
-      >Delete
-      </Text>
-    </View>
+
+      <Pressable
+        onPress={() => { console.log('fire delete')}}
+        style={{ marginRight: 30 }}
+      >
+        <Icon name="trash" size={20} color="#ff5124" />
+      </Pressable>
+    </Pressable>
   );
 
   function BottomDrawer(showDelete) {
@@ -179,13 +185,6 @@ const styles = StyleSheet.create({
   listBackground: {
     backgroundColor: '#f0f0f0',
   },
-  DeleteWeightView: {
-    backgroundColor: '#ffffff',
-    padding: 20,
-    marginTop: 1,  // Vertical margin from the top
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   section: {
     flex: 1,
     backgroundColor: '#f0f0f0',
@@ -204,8 +203,11 @@ const styles = StyleSheet.create({
   editButton: {
     flex: 1
   },
-  setDateText: {
-    color: 'blue',
-    textDecorationLine: 'underline',
+  DeleteWeightView: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    marginTop: 1,  // Vertical margin from the top
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
