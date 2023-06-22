@@ -8,12 +8,16 @@ import { showMessage, hideMessage } from "react-native-flash-message";
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import EntyoIcon from 'react-native-vector-icons/Entypo';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import InputSpinner from "react-native-input-spinner";
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
 exports.getReport = () => {
   let date = new Date()
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [datePicked, setDatePicked] = useState(date.toLocaleDateString());
-  const [weightPicked, setWeightPicked] = useState('');
+  const [weightPicked, setWeightPicked] = useState(5);
+
   const [weightList, setWeightList] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteButtonText, setDeleteButtonText] = useState('Delete A Record');
@@ -21,8 +25,24 @@ exports.getReport = () => {
   const [actionMode, setActionMode] = useState('read');
   const [addIcon, setAddIcon] = useState('add-to-list');
 
+  const [viewDatePicker, setViewDatePicker] = useState(false);
+  const [mode, setMode] = useState('date');
+
+  const onChange = (event, selectedDate) => {
+    setViewDatePicker(false);
+    setDatePicked(selectedDate.toLocaleDateString());
+  };
+
   const showDatePicker = () => {
-    setDatePickerVisibility(true);
+    let d = new Date()
+
+    DateTimePickerAndroid.open({
+      value: d,
+      onChange,
+      display: 'spinner',
+      mode: 'date',
+      is24Hour: true,
+    });
   };
 
   const hideDatePicker = () => {
@@ -32,12 +52,6 @@ exports.getReport = () => {
   const handleConfirm = (date) => {
     setDatePicked(date.toLocaleDateString())
     hideDatePicker();
-  };
-
-  function submitNewWeight() {
-    let formattedDate = Utils.convertDateFormat(datePicked)
-    reportsSql.submitNewWeight(weightPicked, formattedDate)
-    reportsSql.getAllWeight(setWeightList)
   };
 
   function deleteWeight(id) {
@@ -52,11 +66,13 @@ exports.getReport = () => {
 
   const DeleteWeightView = ({id, weight, date}) => (
     <Pressable 
-      style={styles.DeleteWeightView}
-      onLongPress={() => { editRecordSetup() }}
+    style={styles.DeleteWeightView}
+    onLongPress={() => { 
+        editRecordSetup(id, weight, date.toISOString()) 
+      }}
     >
       <Text>
-        {date.toLocaleDateString()} 
+        {date.toISOString()} 
       </Text>
 
       <Text style={{ marginLeft: -30 }}>
@@ -89,8 +105,7 @@ exports.getReport = () => {
   };
 
   function addRecordSetup() {
-    if(addIcon == 'add-to-list')
-    {
+    if(addIcon == 'add-to-list') {
       setAddIcon('cross')
       setActionMode('add')
     }
@@ -100,13 +115,23 @@ exports.getReport = () => {
     }
   };
 
-  function editRecordSetup() {
+  function editRecordSetup(id, weight, dateInput) {
+    setDatePicked(dateInput)
     setAddIcon('cross')
     setActionMode('edit')
   };
 
 
+  function submitWeight(actionType) {
+    if(actionType == 'add') {
+      let formattedDate = Utils.convertDateFormat(datePicked)
+      reportsSql.submitNewWeight(weightPicked, formattedDate)
+      reportsSql.getAllWeight(setWeightList)
+    }
+  }
+
   function BottomDrawer(showDelete) {
+
     // if(showDelete.show)
     return (
       <View style={styles.listBackground}>
@@ -140,39 +165,51 @@ exports.getReport = () => {
           )}
 
 
-          {actionMode === 'add' && (
-            <Text>Add Mode</Text>
-          )}
-
           {actionMode === 'edit' && (
             <Text>Edit Mode</Text>
+          )}
+
+ 
+          {actionMode === 'add' && (
+            <View style={styles.addEditDrawerSection}>
+              <Text style={styles.dateText} onPress={showDatePicker}>
+                {datePicked}
+              </Text>
+
+              <View style={styles.inputSpinnerContainer}>
+                <InputSpinner
+                  value={weightPicked} 
+                  style={styles.inputSpinner} 
+                  delayPressIn={100}
+                  type={"real"}
+                  step={0.1}
+                  textColor={"#FFF"}
+                  color={"#2d6bff"}
+                  background={"#58dcff"}
+                  rounded={false}
+                  showBorder
+                  onChange={(num) => {
+                    setWeightPicked(num);
+                  }}
+                />
+              </View>
+
+              <View style={styles.bottomDrawerSubmitButtonView}>
+
+                <Pressable 
+                  style={styles.circleButton}
+                  onPress={() => { submitWeight('add') }}
+                >
+                  <MaterialIcon name='check-outline' size={20} color="#000000" />
+                </Pressable>
+              </View>
+            </View>
           )}
 
         </View>
       )
     // else
     //   return (
-    //     <View>
-    //       <Text style={styles.dateText}>
-    //         {datePicked}
-    //         <Text onPress={showDatePicker} style={styles.setDateText}> Set</Text>
-    //       </Text>
-  
-    //       <TextInput
-    //         inputMode="numeric"
-    //         style={styles.input}
-    //         placeholder="Weight"
-    //         onChangeText={setWeightPicked}
-    //         value={weightPicked}
-    //         ></TextInput>
-  
-    //       <Button
-    //         title="Submit"
-    //         onPress={() => {
-    //           submitNewWeight()
-    //         }}
-    //       />
-    //     </View>
     //   )
   }
 
@@ -270,7 +307,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   dateText: {
-    marginLeft: 12,
+    flex: 1,
+    backgroundColor: '#ffffff',
+    textAlign: 'center',
+    color: 'blue',
+    paddingBottom: 20
   },
   editButton: {
     flex: 1
@@ -289,6 +330,12 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     backgroundColor: '#ffffff',
   },
+  bottomDrawerSubmitButtonView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 30
+  },
   circleButton: {
     width: 60,
     height: 60,
@@ -297,4 +344,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  inputSpinner: {
+    flex: 1,
+    minWidth: 250,
+    maxWidth: 250,
+  },
+  inputSpinnerContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addEditDrawerSection: {
+    backgroundColor: '#ffffff',
+    paddingBottom: 20
+  }
 });
