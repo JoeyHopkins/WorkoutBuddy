@@ -17,6 +17,8 @@ exports.getReport = () => {
   const [weightList, setWeightList] = useState([]);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteButtonText, setDeleteButtonText] = useState('Delete A Record');
+  const [tableMode, setTableMode] = useState('weight');
+  const [actionMode, setActionMode] = useState('read');
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -35,7 +37,7 @@ exports.getReport = () => {
     let formattedDate = Utils.convertDateFormat(datePicked)
     reportsSql.submitNewWeight(weightPicked, formattedDate)
     reportsSql.getAllWeight(setWeightList)
-  }
+  };
 
   function deleteWeight(id) {
     reportsSql.deleteWeightByID(id)
@@ -45,16 +47,21 @@ exports.getReport = () => {
       type: "success",
     });
     reportsSql.getAllWeight(setWeightList)
-  }
+  };
+
+  function editRecordSetup() {
+    setActionMode('edit')
+  };
 
   const DeleteWeightView = ({id, weight, date}) => (
     <Pressable 
       style={styles.DeleteWeightView}
-      onLongPress={() => { console.log('fire edit')}}
+      onLongPress={() => { editRecordSetup() }}
     >
       <Text>
         {date.toLocaleDateString()} 
       </Text>
+
       <Text style={{ marginLeft: -30 }}>
         {weight} lbs
       </Text>
@@ -68,27 +75,62 @@ exports.getReport = () => {
     </Pressable>
   );
   
+  function toggleWeightGoal() {
+    if(tableMode == 'weight')
+      setTableMode('goal')
+    if(tableMode == 'goal')
+      setTableMode('weight')
+    
+    setActionMode('read')
+  };
+
+  function addRecordSetup() {
+    setActionMode('add')
+  };
+
+
   function BottomDrawer(showDelete) {
     // if(showDelete.show)
     return (
       <View style={styles.listBackground}>
 
           <View style={styles.bottomDrawerButtonsView}>
-            <Pressable style={styles.circleButton}>
-              <Text>Goals</Text>
+            <Pressable 
+              style={styles.circleButton} 
+              onPress={() => { toggleWeightGoal() }}
+            >
+              <Text>Goal</Text>
             </Pressable>
-
-            <Pressable style={styles.circleButton}>
+    
+            <Pressable 
+              style={styles.circleButton}
+              onPress={() => { addRecordSetup() }}
+            >
               <EntyoIcon name="add-to-list" size={20} color="#000000" />
             </Pressable>
+
           </View>
 
+          {actionMode === 'read' && (
+            <>
+              {console.log('reading')}
+              <FlatList
+                data={weightList}
+                renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={new Date(item.date)}/>}
+                keyExtractor={item => item.id}
+              />
+            </>
+          )}
 
-          <FlatList
-            data={weightList}
-            renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={new Date(item.date)}/>}
-            keyExtractor={item => item.id}
-          />
+
+          {actionMode === 'add' && (
+            <Text>Add Mode</Text>
+          )}
+
+          {actionMode === 'edit' && (
+            <Text>Edit Mode</Text>
+          )}
+
         </View>
       )
     // else
