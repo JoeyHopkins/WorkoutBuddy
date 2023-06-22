@@ -7,6 +7,7 @@ import Utils from '../../utils'
 import { showMessage, hideMessage } from "react-native-flash-message";
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import EntyoIcon from 'react-native-vector-icons/Entypo';
 
 exports.getReport = () => {
   let date = new Date()
@@ -59,18 +60,30 @@ exports.getReport = () => {
       </Text>
 
       <Pressable
-        onPress={() => { console.log('fire delete')}}
+        onPress={() => { deleteWeight(id) }}
         style={{ marginRight: 30 }}
       >
         <Icon name="trash" size={20} color="#ff5124" />
       </Pressable>
     </Pressable>
   );
-
+  
   function BottomDrawer(showDelete) {
     // if(showDelete.show)
-      return (
-        <View style={styles.listBackground}>
+    return (
+      <View style={styles.listBackground}>
+
+          <View style={styles.bottomDrawerButtonsView}>
+            <Pressable style={styles.circleButton}>
+              <Text>Goals</Text>
+            </Pressable>
+
+            <Pressable style={styles.circleButton}>
+              <EntyoIcon name="add-to-list" size={20} color="#000000" />
+            </Pressable>
+          </View>
+
+
           <FlatList
             data={weightList}
             renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={new Date(item.date)}/>}
@@ -209,5 +222,20 @@ const styles = StyleSheet.create({
     marginTop: 1,  // Vertical margin from the top
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  bottomDrawerButtonsView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 90,
+    paddingBottom: 30,
+    backgroundColor: '#ffffff',
+  },
+  circleButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#58dcff',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
