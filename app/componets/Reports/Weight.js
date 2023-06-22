@@ -20,7 +20,7 @@ exports.getReport = () => {
   const [tableMode, setTableMode] = useState('Weight');
   const [actionMode, setActionMode] = useState('read');
   const [addIcon, setAddIcon] = useState('add-to-list');
-
+  
   const showDatePicker = () => {
     let d = new Date()
 
@@ -53,7 +53,13 @@ exports.getReport = () => {
 
   function addRecordSetup() {
     if(addIcon == 'add-to-list') {
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+      const currentDateISOString = currentDate.toISOString();
+
       setAddIcon('cross')
+      setDatePicked(currentDateISOString)
+      setWeightPicked(0)
       setActionMode('add')
     }
     else {
@@ -64,6 +70,7 @@ exports.getReport = () => {
   
   function editRecordSetup(id, weight, dateInput) {
     setDatePicked(dateInput)
+    setWeightPicked(weight)
     setAddIcon('cross')
     setActionMode('edit')
   };
@@ -153,45 +160,14 @@ exports.getReport = () => {
           </>
         )}
 
-        {actionMode === 'edit' && (
-          <Text>Edit Mode</Text>
+        {(actionMode === 'edit') && (
+          <AddOrEditMenu action={actionMode}></AddOrEditMenu>
         )}
 
         {actionMode === 'add' && (
-          <View style={styles.addEditDrawerSection}>
-            <Text style={styles.dateText} onPress={showDatePicker}>
-              {datePicked}
-            </Text>
-
-            <View style={styles.inputSpinnerContainer}>
-              <InputSpinner
-                value={weightPicked} 
-                style={styles.inputSpinner} 
-                delayPressIn={100}
-                type={"real"}
-                step={0.1}
-                textColor={"#FFF"}
-                color={"#2d6bff"}
-                background={"#58dcff"}
-                rounded={false}
-                showBorder
-                onChange={(num) => {
-                  setWeightPicked(num);
-                }}
-              />
-            </View>
-
-            <View style={styles.bottomDrawerSubmitButtonView}>
-
-              <Pressable 
-                style={styles.circleButton}
-                onPress={() => { submitWeight('add') }}
-              >
-                <MaterialIcon name='check-outline' size={20} color="#000000" />
-              </Pressable>
-            </View>
-          </View>
+          <AddOrEditMenu action={actionMode}></AddOrEditMenu>
         )}
+
       </View>
     )
   }
@@ -219,6 +195,55 @@ exports.getReport = () => {
       </Pressable>
     </Pressable>
   );
+
+  const AddOrEditMenu = (action) => {
+
+    // if(action == 'add')
+      // setWeightPicked() set to last record
+      // if no record exists then set to 0
+      // date = today but should remain after change
+    
+    // if(action == 'edit')
+      // set weight to be record that came in
+      //set date to be record that came in
+
+
+    return (
+      <View style={styles.addEditDrawerSection}>
+        <Text style={styles.dateText} onPress={showDatePicker}>
+          {datePicked}
+        </Text>
+
+        <View style={styles.inputSpinnerContainer}>
+          <InputSpinner
+            value={weightPicked} 
+            style={styles.inputSpinner} 
+            delayPressIn={100}
+            type={"real"}
+            step={0.1}
+            textColor={"#FFF"}
+            color={"#2d6bff"}
+            background={"#58dcff"}
+            rounded={false}
+            showBorder
+            onChange={(num) => {
+              setWeightPicked(num);
+            }}
+          />
+        </View>
+
+        <View style={styles.bottomDrawerSubmitButtonView}>
+
+          <Pressable 
+            style={styles.circleButton}
+            onPress={() => { submitWeight('add') }}
+          >
+            <MaterialIcon name='check-outline' size={20} color="#000000" />
+          </Pressable>
+        </View>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
