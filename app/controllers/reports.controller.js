@@ -69,7 +69,7 @@ exports.editWeightByID = (id, weight, date) => {
 exports.getAllWeight = (setWeightList) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("SELECT * FROM weight",
+      tx.executeSql("SELECT * FROM weight ORDER BY date desc, id desc",
         null,
         (txObj, { rows: { _array } }) => { setWeightList(_array) },
         (txObj, error) => { console.log('Error ', error) },
