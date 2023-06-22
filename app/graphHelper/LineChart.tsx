@@ -16,6 +16,8 @@ import Utils from '../utils'
 export const LineChart = (props) => {
   const { tableData, dimensions } = props; 
   
+  let yScale = 10;
+
   const CanvasHeight = dimensions.height;
   const CanvasWidth = dimensions.width;
   const GRAPH_MARGIN = dimensions.margin;
@@ -26,8 +28,10 @@ export const LineChart = (props) => {
   const font = useFont(require("./Roboto-Bold.ttf"), 10);
 
   const dates = tableData.map((val) => new Date(val.date));
-  const min = Math.min(...tableData.map((val) => val.weight));
-  const max = Math.max(...tableData.map((val) => val.weight));
+  const min = Math.min(...tableData.map((val) => val.weight)) - yScale < 0 ? 
+    Math.min(...tableData.map((val) => val.weight)) - yScale : 0
+
+  const max = Math.max(...tableData.map((val) => val.weight)) + yScale;
   const minDate = new Date(Math.min(...dates));
   const maxDate = new Date(Math.max(...dates));
   const minDateConvert = minDate.toISOString().substring(0, 10).split('-')
