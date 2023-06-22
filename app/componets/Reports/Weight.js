@@ -48,51 +48,54 @@ exports.getReport = () => {
   const DeleteWeightView = ({id, weight, date}) => (
     <View style={styles.DeleteWeightView}>
       <Text>
-        {date.toLocaleDateString()}: {weight}
-        <Text 
-          onPress={ () => deleteWeight(id) } 
-          style={styles.setDateText}
-        > Delete</Text>
+        {date.toLocaleDateString()} 
+      </Text>
+      <Text style={{ marginLeft: -20 }}>
+        {weight} lbs
+      </Text>
+      <Text 
+        onPress={ () => deleteWeight(id) } 
+        style={styles.setDateText}
+      >Delete
       </Text>
     </View>
   );
 
-  function WeightOrDelete(showDelete) {
-    if(showDelete.show)
+  function BottomDrawer(showDelete) {
+    // if(showDelete.show)
       return (
-        <View>
-          <Text>Show Delete</Text>
+        <View style={styles.listBackground}>
           <FlatList
             data={weightList}
-            renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={date}/>}
+            renderItem={({item}) => <DeleteWeightView id={item.id} weight={item.weight} date={new Date(item.date)}/>}
             keyExtractor={item => item.id}
           />
         </View>
       )
-    else
-      return (
-        <View>
-          <Text style={styles.dateText}>
-            {datePicked}
-            <Text onPress={showDatePicker} style={styles.setDateText}> Set</Text>
-          </Text>
+    // else
+    //   return (
+    //     <View>
+    //       <Text style={styles.dateText}>
+    //         {datePicked}
+    //         <Text onPress={showDatePicker} style={styles.setDateText}> Set</Text>
+    //       </Text>
   
-          <TextInput
-            inputMode="numeric"
-            style={styles.input}
-            placeholder="Weight"
-            onChangeText={setWeightPicked}
-            value={weightPicked}
-            ></TextInput>
+    //       <TextInput
+    //         inputMode="numeric"
+    //         style={styles.input}
+    //         placeholder="Weight"
+    //         onChangeText={setWeightPicked}
+    //         value={weightPicked}
+    //         ></TextInput>
   
-          <Button
-            title="Submit"
-            onPress={() => {
-              submitNewWeight()
-            }}
-          />
-        </View>
-      )
+    //       <Button
+    //         title="Submit"
+    //         onPress={() => {
+    //           submitNewWeight()
+    //         }}
+    //       />
+    //     </View>
+    //   )
   }
 
   useEffect( () => {
@@ -158,9 +161,9 @@ exports.getReport = () => {
         }
       />
 
-      <BottomSheet isOpen={false}>
+      <BottomSheet isOpen={true}>
         <View>
-          <WeightOrDelete show={showDelete}></WeightOrDelete>  
+          <BottomDrawer show={showDelete}></BottomDrawer>  
         </View>
       </BottomSheet>
 
@@ -172,6 +175,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+  },
+  listBackground: {
+    backgroundColor: '#f0f0f0',
+  },
+  DeleteWeightView: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    marginTop: 1,  // Vertical margin from the top
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   section: {
     flex: 1,
