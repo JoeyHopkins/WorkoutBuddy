@@ -63,8 +63,17 @@ exports.getReport = () => {
       const currentDateISOString = currentDate.toISOString();
 
       setAddIcon('cross')
-      setDatePicked(currentDateISOString)
-      setWeightPicked(0)
+
+      if(weightList.length == 0) {
+        setDatePicked(currentDateISOString)
+        setWeightPicked(0)
+      }
+      else {
+        setDatePicked(weightList[0].date)
+        setWeightPicked(weightList[0].weight)
+      }
+      
+      
       setActionMode('add')
     }
     else {
@@ -124,8 +133,8 @@ exports.getReport = () => {
     else
     return (
       <LineChart
-      tableData={weightList}
-      dimensions={dimensions}
+        tableData={weightList}
+        dimensions={dimensions}
       ></LineChart>
       )
     }
