@@ -17,13 +17,13 @@ exports.getReport = () => {
   const [weightPicked, setWeightPicked] = useState(5);
 
   const [weightList, setWeightList] = useState([]);
+  const [goalWeightList, setGoalWeightList] = useState([]);
   const [tableMode, setTableMode] = useState('Weight');
   const [actionMode, setActionMode] = useState('read');
   const [addIcon, setAddIcon] = useState('add-to-list');
   
   const [editID, setEditID] = useState(-1);
 
-  setEditID
   const showDatePicker = () => {
     let d = new Date(datePicked);
     //set timezone to help prevent issues with timezone
@@ -64,15 +64,17 @@ exports.getReport = () => {
 
       setAddIcon('cross')
 
-      if(weightList.length == 0) {
-        setDatePicked(currentDateISOString)
-        setWeightPicked(0)
-      }
-      else {
+      setDatePicked(currentDateISOString)
+      setWeightPicked(0)
+
+      if(tableMode == 'Weight' && weightList.length != 0) {
         setDatePicked(weightList[0].date)
         setWeightPicked(weightList[0].weight)
       }
-      
+      if(tableMode == 'Goal' && goalWeightList.length != 0) {
+        setDatePicked(goalWeightList[0].date)
+        setWeightPicked(goalWeightList[0].weight)
+      }
       
       setActionMode('add')
     }
@@ -91,32 +93,32 @@ exports.getReport = () => {
   };
     
   function deleteWeight(id) {
-    reportsSql.deleteWeightByID(id)
+    reportsSql.deleteWeightByID(id, tableMode)
     showMessage({
       message: "Success!",
       description: "Record was deleted!",
       type: "success",
     });
-    reportsSql.getAllWeight(setWeightList)
+    reportsSql.getAllWeight(setWeightList, setGoalWeightList)
   };
   
   function submitWeight(actionType) {
     if(actionType == 'add') {
       let formattedDate = datePicked.substring(0, 10)
-      reportsSql.submitNewWeight(weightPicked, formattedDate)
-      reportsSql.getAllWeight(setWeightList)
+      reportsSql.submitNewWeight(weightPicked, formattedDate, tableMode)
+      reportsSql.getAllWeight(setWeightList, setGoalWeightList)
       addRecordSetup()
     }
     else {
       let formattedDate = datePicked.substring(0,10)
-      reportsSql.editWeightByID(editID, weightPicked, formattedDate)
-      reportsSql.getAllWeight(setWeightList)
+      reportsSql.editWeightByID(editID, weightPicked, formattedDate, tableMode)
+      reportsSql.getAllWeight(setWeightList, setGoalWeightList)
       addRecordSetup()
     }
   }
   
   useEffect( () => {
-    reportsSql.getAllWeight(setWeightList)
+    reportsSql.getAllWeight(setWeightList, setGoalWeightList)
   }, [])
   
   function RenderTable() { 
@@ -162,20 +164,46 @@ exports.getReport = () => {
           
         {actionMode === 'read' &&  (
           <>
-            {/* if weight data exists */}
-            {weightList.length > 0 &&  (
+
+            {tableMode === 'Weight' &&  (
               <>
-                <FlatList
-                  data={weightList}
-                  renderItem={({item}) => <Weightrecord id={item.id} weight={item.weight} date={new Date(item.date)}/>}
-                  keyExtractor={item => item.id}
-                />
+                {/* if weight data exists */}
+                {weightList.length > 0 &&  (
+                  <>
+                    <FlatList
+                      data={weightList}
+                      renderItem={({item}) => <Weightrecord id={item.id} weight={item.weight} date={new Date(item.date)}/>}
+                      keyExtractor={item => item.id}
+                    />
+                  </>
+                )}
+                {/* else read data does not exist */}
+                {weightList.length == 0 &&  (
+                  <>
+                    <Text style={{textAlign: 'center', marginTop: 20, marginBottom: -40}}>No Data Available</Text>
+                  </>
+                )}
               </>
             )}
-            {/* else read data does not exist */}
-            {weightList.length == 0 &&  (
+
+            {tableMode === 'Goal' &&  (
               <>
-                <Text style={{textAlign: 'center', marginTop: 20, marginBottom: -40}}>No Data Available</Text>
+                {/* if weight data exists */}
+                {goalWeightList.length > 0 &&  (
+                  <>
+                    <FlatList
+                      data={goalWeightList}
+                      renderItem={({item}) => <Weightrecord id={item.id} weight={item.weight} date={new Date(item.date)}/>}
+                      keyExtractor={item => item.id}
+                    />
+                  </>
+                )}
+                {/* else read data does not exist */}
+                {goalWeightList.length == 0 &&  (
+                  <>
+                    <Text style={{textAlign: 'center', marginTop: 20, marginBottom: -40}}>No Data Available</Text>
+                  </>
+                )}
               </>
             )}
           </>
@@ -220,15 +248,6 @@ exports.getReport = () => {
   const AddOrEditMenu = (item) => {
 
     let action = item.action
-
-    // if(action == 'add')
-      // setWeightPicked() set to last record
-      // if no record exists then set to 0
-      // date = today but should remain after change
-    
-    // if(action == 'edit')
-      // set weight to be record that came in
-      //set date to be record that came in
 
     return (
       <View style={styles.addEditDrawerSection}>

@@ -27,10 +27,17 @@ exports.getReportList = (setReportList) => {
   });
 };
 
-exports.submitNewWeight = (weight, date) => {
+exports.submitNewWeight = (weight, date, tableMode) => {
+  let table = ''
+
+  if(tableMode == 'Weight')
+    table = 'weight'
+  if(tableMode == 'Goal')
+    table = 'weight_goals'
+
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO weight (weight, date) VALUES (?,?)",
+      tx.executeSql("INSERT INTO " + table + " (weight, date) VALUES (?,?)",
         [weight, date],
         null,
         (txObj, ResultSet) => { 
@@ -46,11 +53,18 @@ exports.submitNewWeight = (weight, date) => {
   });
 };
 
-exports.editWeightByID = (id, weight, date) => {
+exports.editWeightByID = (id, weight, date, tableMode) => {
+  let table = ''
+
+  if(tableMode == 'Weight')
+    table = 'weight'
+  if(tableMode == 'Goal')
+    table = 'weight_goals'
+
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        "UPDATE weight SET weight = ?, date = ? WHERE id = ?",
+        "UPDATE " + table + " SET weight = ?, date = ? WHERE id = ?",
         [weight, date, id],
         (txObj, ResultSet) => {
           console.log('Update success');
@@ -63,10 +77,9 @@ exports.editWeightByID = (id, weight, date) => {
       );
     });
   });
-
 };
 
-exports.getAllWeight = (setWeightList) => {
+exports.getAllWeight = (setWeightList, setGoalWeightList) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("SELECT * FROM weight ORDER BY date desc, id desc",
@@ -75,15 +88,28 @@ exports.getAllWeight = (setWeightList) => {
         (txObj, error) => { console.log('Error ', error) },
       );
     });
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM weight_goals ORDER BY date desc, id desc",
+        null,
+        (txObj, { rows: { _array } }) => { setGoalWeightList(_array) },
+        (txObj, error) => { console.log('Error ', error) },
+      );
+    });
   });
 };
 
-exports.deleteWeightByID = (id) => {
-  console.log('delete id')
-  console.log(id)
+exports.deleteWeightByID = (id, tableMode) => {
+
+  let table = ''
+
+  if(tableMode == 'Weight')
+    table = 'weight'
+  if(tableMode == 'Goal')
+    table = 'weight_goals'
+
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("DELETE FROM weight WHERE id = ?", [id],
+      tx.executeSql("DELETE FROM " + table + " WHERE id = ?", [id],
         (txObj, ResultSet) => { console.log('sucess') },
         (txObj, error) => { console.log('Error ', error) },
       );
