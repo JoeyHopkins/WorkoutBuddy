@@ -32,6 +32,7 @@ exports.getReport = () => {
   
   const [editID, setEditID] = useState(-1);
 
+  const [quickDateMode, setQuickDateMode] = useState('1W');
 
   const showDatePicker = () => {
     //set timezone to help prevent issues with timezone
@@ -126,6 +127,10 @@ exports.getReport = () => {
     }
   }
   
+  function setQuickDateForPage(mode){
+    setQuickDateMode(mode)
+  }
+
   useEffect( () => {
     reportsSql.getAllWeight(setWeightList, setGoalWeightList)
   }, [])
@@ -319,43 +324,43 @@ exports.getReport = () => {
       <View style={styles.underGraphContainerDates}>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('Pick') }}
+          style={quickDateMode == 'Pick' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('Pick') }}
         >
           <Text>Pick</Text>
         </Pressable>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('All') }}
+          style={quickDateMode == 'All' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('All') }}
         >
           <Text>All</Text>
         </Pressable>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('6M') }}
+          style={quickDateMode == '6M' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('6M') }}
         >
           <Text>6M</Text>
         </Pressable>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('1M') }}
+          style={quickDateMode == '1M' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('1M') }}
         >
           <Text>1M</Text>
         </Pressable>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('2W') }}
+          style={quickDateMode == '2W' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('2W') }}
         >
           <Text>2W</Text>
         </Pressable>
 
         <Pressable 
-          style={styles.graphDateButtons}
-          onPress={() => { console.log('1W') }}
+          style={quickDateMode == '1W' ? styles.graphDateButtonsActive : styles.graphDateButtons}
+          onPress={() => { setQuickDateForPage('1W') }}
         >
           <Text>1W</Text>
         </Pressable>
@@ -431,6 +436,14 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
   graphDateButtons: {
+    width: 40,
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#c5c5c5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  graphDateButtonsActive: {
     width: 40,
     height: 50,
     borderRadius: 10,
