@@ -16,5 +16,13 @@ const padDigits = (number) => {
   return number.toString(16).padStart(2, '0');
 };
 
-export const primary = '#FF0000'; // Red
-export const altPrimary = darkenColor(primary, 20) 
+//e91e63
+//209ce3
+
+export const primary = '#209ce3';
+export const altPrimary = darkenColor(primary, 20)
+
+export const highlight = '#FF0000'; //red
+export const white = '#ffffff';
+
+export const background = white;

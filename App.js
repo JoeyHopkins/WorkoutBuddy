@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar  } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home } from './app/componets/Home/Home';
@@ -10,6 +10,7 @@ import FlashMessage from "react-native-flash-message";
 import { useEffect } from 'react'
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
+import * as Colors from './app/config/colors'
 
 const Tab = createBottomTabNavigator();
 
@@ -22,50 +23,66 @@ export default function App() {
     appSql.getTablesFromDB();
   })
   
+  const headerOptions = {
+    headerStyle: {
+      backgroundColor: Colors.primary,
+    },
+    headerTintColor: Colors.white,
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: '#e91e63',
-        }}
-      >
-        <Tab.Screen 
-          name="Home" 
-          component={Home} 
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <IonIcon name='home-outline' size={20} color={color} />
-            ),
+    <>
+      {/* <StatusBar backgroundColor="black"  /> */}
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarActiveTintColor: Colors.highlight,
+            tabBarActiveBackgroundColor: Colors.primary,
+            tabBarInactiveTintColor: Colors.white,
+            tabBarInactiveBackgroundColor: Colors.primary,
           }}
-        />
-        <Tab.Screen 
-          name="Reports" 
-          component={Reports}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <AntIcon name='linechart' size={20} color={color} />
-            ),
-          }}
-        />         
-        <Tab.Screen 
-          name="Workout" 
-          component={Workout} 
-        />
-        <Tab.Screen 
-          name="Planning" 
-          component={Planning} 
-        />
-      </Tab.Navigator>
-      <FlashMessage position="bottom" />
-    </NavigationContainer>
+        >
+          <Tab.Screen 
+            name="Home" 
+            component={Home} 
+            options={{
+              ...headerOptions,
+              tabBarIcon: ({ color, size }) => (
+                <IonIcon name='home-outline' size={20} color={color} />
+              ),
+            }}
+
+          />
+          <Tab.Screen 
+            name="Reports" 
+            component={Reports}
+            options={{
+              ...headerOptions,
+              tabBarIcon: ({ color, size }) => (
+                <AntIcon name='linechart' size={20} color={color} />
+              ),
+            }}
+          />         
+          <Tab.Screen 
+            name="Workout" 
+            component={Workout}
+            options={{
+              ...headerOptions,
+            }}
+          />
+          <Tab.Screen 
+            name="Planning" 
+            component={Planning}
+            options={{
+              ...headerOptions,
+            }}
+          />
+        </Tab.Navigator>
+        <FlashMessage position="bottom" />
+      </NavigationContainer>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
