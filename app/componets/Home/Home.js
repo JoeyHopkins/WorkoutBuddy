@@ -8,7 +8,7 @@ export const Home = ({navigation}) => {
 
   return (
     <>
-      <ScrollView>
+      <ScrollView style={styles.background}>
         <View style={styles.homeContainerTitle}>
           <Text style={styles.homeContainer}>Routines</Text>
         </View>
@@ -22,7 +22,7 @@ export const Home = ({navigation}) => {
 
 const styles = StyleSheet.create({
   homeContainer: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
     margin: 20,
@@ -31,5 +31,8 @@ const styles = StyleSheet.create({
   },
   homeContainerTitle: {
     alignItems: 'center',
+  },
+  background: {
+    backgroundColor: Colors.background,
   },
 });
