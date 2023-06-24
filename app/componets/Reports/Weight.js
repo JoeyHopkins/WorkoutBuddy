@@ -25,6 +25,7 @@ exports.getReport = () => {
 
   const [weightList, setWeightList] = useState([]);
   const [goalWeightList, setGoalWeightList] = useState([]);
+  const [showGoals, setShowGoals] = useState(true);
   const [tableMode, setTableMode] = useState('Weight');
   const [actionMode, setActionMode] = useState('read');
   const [addIcon, setAddIcon] = useState('add-to-list');
@@ -130,6 +131,11 @@ exports.getReport = () => {
   }, [])
   
   function RenderGraph() { 
+
+    let graphData = [weightList]
+
+    if(showGoals)
+      graphData.push(goalWeightList)
     
     if(weightList.length == 0)
       return(
@@ -138,7 +144,7 @@ exports.getReport = () => {
     else
     return (
       <LineChart
-        tableData={ [weightList, goalWeightList] }
+        tableData={graphData}
         dimensions={graphDimensions}
       ></LineChart>
       )
@@ -306,7 +312,7 @@ exports.getReport = () => {
           textStyle={{
             textDecorationLine: 'none',
           }}
-          // onPress={(isChecked: boolean) => {}}
+          onPress={() => setShowGoals(!showGoals)}        
         />
       </View>
       

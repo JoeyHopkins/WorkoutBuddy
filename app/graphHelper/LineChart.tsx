@@ -19,7 +19,7 @@ export const LineChart = (props) => {
   //lines on chart will cycle this color list
   const colors = [
     "#6231ff",
-    "#ffe84f"
+    "#ff0000",
   ]
 
   const CanvasHeight = dimensions.height;
