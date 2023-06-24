@@ -11,6 +11,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import * as Colors from '../../config/colors'
 
 const graphDimensions = {
   height: 400,
@@ -55,11 +56,11 @@ exports.getReport = () => {
   function toggleWeightGoal() {
     if(tableMode == 'Weight') {
       setTableMode('Goal')
-      styles.circleButton.backgroundColor = '#ffe84f'
+      styles.circleButton.backgroundColor = Colors.secondary
     }
     if(tableMode == 'Goal') {
       setTableMode('Weight')
-      styles.circleButton.backgroundColor = '#58dcff'
+      styles.circleButton.backgroundColor = Colors.primary
     }
     
     setAddIcon('add-to-list')
@@ -201,7 +202,7 @@ exports.getReport = () => {
             style={styles.circleButton}
             onPress={() => { addRecordSetup() }}
           >
-            <EntyoIcon name={addIcon} size={20} color="#000000" />
+            <EntyoIcon name={addIcon} size={20} color={Colors.black} />
           </Pressable>
         </View>
           
@@ -259,6 +260,8 @@ exports.getReport = () => {
           <AddOrEditMenu action={actionMode}></AddOrEditMenu>
         )}
 
+          <View style={styles.belowBottomSheetTable}></View>
+
       </View>
     )
   }
@@ -282,7 +285,7 @@ exports.getReport = () => {
         onPress={() => { deleteWeight(id) }}
         style={{ marginRight: 30 }}
       >
-        <Icon name="trash" size={20} color="#ff5124" />
+        <Icon name="trash" size={20} color={Colors.highlight} />
       </Pressable>
     </Pressable>
   );
@@ -290,7 +293,20 @@ exports.getReport = () => {
   const AddOrEditMenu = (item) => {
 
     let action = item.action
+    
+    let color
+    let altColor
 
+    if(tableMode == 'Weight')
+    {
+      color = Colors.primary
+      altColor = Colors.altPrimary
+    }
+    if(tableMode == 'Goal')
+    {
+      color = Colors.secondary
+      altColor = Colors.altSecondary
+    }
     return (
       <View style={styles.addEditDrawerSection}>
         <Text style={styles.dateText} onPress={showDatePicker}>
@@ -304,9 +320,9 @@ exports.getReport = () => {
             delayPressIn={100}
             type={"real"}
             step={0.1}
-            textColor={"#FFF"}
-            color={"#2d6bff"}
-            background={"#58dcff"}
+            textColor={Colors.black}
+            color={altColor}
+            background={color}
             rounded={false}
             showBorder
             onChange={(num) => {
@@ -321,7 +337,7 @@ exports.getReport = () => {
             style={styles.circleButton}
             onPress={() => { submitWeight(action) }}
           >
-            <MaterialIcon name='check-outline' size={20} color="#000000" />
+            <MaterialIcon name='check-outline' size={20} color={Colors.black} />
           </Pressable>
         </View>
       </View>
@@ -338,10 +354,10 @@ exports.getReport = () => {
         <BouncyCheckbox
           size={25}
           isChecked
-          fillColor="red"
-          unfillColor="#FFFFFF"
+          fillColor={Colors.primary}
+          unfillColor={Colors.background}
           text="Show Goals"
-          iconStyle={{ borderColor: "red" }}
+          iconStyle={{ borderColor: Colors.primary }}
           innerIconStyle={{ borderWidth: 2 }}
           textStyle={{
             textDecorationLine: 'none',
@@ -396,7 +412,7 @@ exports.getReport = () => {
 
       </View>
 
-      <BottomSheet isOpen={false}>
+      <BottomSheet isOpen={true}>
         <BottomDrawer></BottomDrawer>  
       </BottomSheet>
     </View>
@@ -413,14 +429,13 @@ const styles = StyleSheet.create({
   underGraphContainerChecks: {
     flexDirection: 'row',
     justifyContent: 'center',
-    // paddingHorizontal: 80,
     paddingTop: 30,
   },
   circleButton: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#58dcff',
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -429,23 +444,23 @@ const styles = StyleSheet.create({
     marginTop: -20
   },
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     flex: 1,
     flexDirection: 'column',
   },
   listBackground: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.backgroundGray,
     paddingBottom: 90
   },
   dateText: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     textAlign: 'center',
     color: 'blue',
     paddingBottom: 20
   },
   Weightrecord: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     padding: 20,
     marginTop: 1,
     flexDirection: 'row',
@@ -456,7 +471,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 90,
     paddingBottom: 30,
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
   },
   bottomDrawerSubmitButtonView: {
     flex: 1,
@@ -468,7 +483,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 50,
     borderRadius: 10,
-    backgroundColor: '#c5c5c5',
+    backgroundColor: Colors.backgroundGray,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -476,7 +491,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 50,
     borderRadius: 10,
-    backgroundColor: '#58dcff',
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -490,7 +505,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addEditDrawerSection: {
-    backgroundColor: '#ffffff',
+    backgroundColor: Colors.white,
     paddingBottom: 20
+  },
+  belowBottomSheetTable: {
+    backgroundColor: Colors.white,
+    paddingBottom: 500
   }
 });

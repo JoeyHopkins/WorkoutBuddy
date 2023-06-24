@@ -20,10 +20,15 @@ const padDigits = (number) => {
 //209ce3
 
 export const primary = '#209ce3';
+// export const primary = '#ff0000';
 export const altPrimary = darkenColor(primary, 20)
+
+export const secondary = '#9CE320';
+export const altSecondary = darkenColor(secondary, 20)
 
 export const highlight = '#FF0000'; //red
 export const white = '#ffffff';
+export const black = '#000000';
 
 export const background = white;
 export const backgroundGray = '#b9b9b9';
