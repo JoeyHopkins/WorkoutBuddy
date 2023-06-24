@@ -26,3 +26,4 @@ export const highlight = '#FF0000'; //red
 export const white = '#ffffff';
 
 export const background = white;
+export const backgroundGray = '#b9b9b9';

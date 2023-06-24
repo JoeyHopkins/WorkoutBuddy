@@ -1,8 +1,9 @@
 import React, {useRef, useState} from 'react';
-import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, Text} from 'react-native';
+import { Button, FlatList, DrawerLayoutAndroid, StyleSheet, View, Text, Pressable} from 'react-native';
 import { useEffect } from 'react'
 import reportsSql from '../../controllers/reports.controller'
 import weightReport from './Weight'
+import * as Colors from '../../config/colors'
 
 export const Reports = ({navigation}) => {
 
@@ -24,12 +25,11 @@ export const Reports = ({navigation}) => {
 
   const ReportListView = ({title, id}) => (
     <View style={styles.reportListItem}>
-      <Button
-        title={title}
-        onPress={() => {
-          drawerReportSelected(title, id)
-        }}
-      />
+      <Pressable 
+        onPress={() => { drawerReportSelected(title, id) }}
+      >
+        <Text>{title}</Text>
+      </Pressable>
     </View>
   );
   
@@ -72,18 +72,17 @@ export const Reports = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
     padding: 16,
   },
   containerReportList: {
     flex: 1,
     justifyContent: 'center',
     padding: 0,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: Colors.backgroundGray,
   },
   reportListItem: {
-    backgroundColor: '#f9c2ff',
-    marginVertical: 8,
-    marginHorizontal: 0,
+    backgroundColor: Colors.white,
+    marginTop: 1,
+    padding: 20
   },
 });
