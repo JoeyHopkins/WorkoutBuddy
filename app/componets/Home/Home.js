@@ -1,8 +1,9 @@
 import React, {useRef, useState} from 'react';
-import { Button, FlatList, DrawerLayoutAndroid, ScrollView, StyleSheet, View, Text, Dimensions} from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Dimensions} from 'react-native';
+import * as Colors from '../../config/colors'
 
 const width = Dimensions.get('window').width
-console.log(width)
+
 export const Home = ({navigation}) => {
 
   return (
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 20,
     padding: width / 2 - 50,
-    borderColor: '#58dcff'
+    borderColor: Colors.primary
   },
   homeContainerTitle: {
     alignItems: 'center',
