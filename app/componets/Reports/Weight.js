@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Pressable, StyleSheet, FlatList} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import reportsSql from '../../controllers/reports.controller'
 import { LineChart } from '../../graphHelper/LineChart'
@@ -10,6 +10,13 @@ import EntyoIcon from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+
+const graphDimensions = {
+  height: 400,
+  width: 350,
+  margin: 30,
+};
 
 exports.getReport = () => {
   let date = new Date()
@@ -23,6 +30,7 @@ exports.getReport = () => {
   const [addIcon, setAddIcon] = useState('add-to-list');
   
   const [editID, setEditID] = useState(-1);
+
 
   const showDatePicker = () => {
     //set timezone to help prevent issues with timezone
@@ -121,12 +129,7 @@ exports.getReport = () => {
     reportsSql.getAllWeight(setWeightList, setGoalWeightList)
   }, [])
   
-  function RenderTable() { 
-    const dimensions = {
-      height: 400,
-      width: 350,
-      margin: 30,
-    };
+  function RenderGraph() { 
     
     if(weightList.length == 0)
       return(
@@ -136,7 +139,7 @@ exports.getReport = () => {
     return (
       <LineChart
         tableData={ [weightList, goalWeightList] }
-        dimensions={dimensions}
+        dimensions={graphDimensions}
       ></LineChart>
       )
   }
@@ -287,9 +290,73 @@ exports.getReport = () => {
 
   return (
     <View style={styles.container}>
-      <RenderTable></RenderTable>
+      <View style={styles.graphContainer}>
+        <RenderGraph></RenderGraph>
+      </View>
 
-      <BottomSheet isOpen={true}>
+      <View style={styles.underGraphContainerChecks}>
+        <BouncyCheckbox
+          size={25}
+          isChecked
+          fillColor="red"
+          unfillColor="#FFFFFF"
+          text="Show Goals"
+          iconStyle={{ borderColor: "red" }}
+          innerIconStyle={{ borderWidth: 2 }}
+          textStyle={{
+            textDecorationLine: 'none',
+          }}
+          // onPress={(isChecked: boolean) => {}}
+        />
+      </View>
+      
+      <View style={styles.underGraphContainerDates}>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('Pick') }}
+        >
+          <Text>Pick</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('All') }}
+        >
+          <Text>All</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('6M') }}
+        >
+          <Text>6M</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('1M') }}
+        >
+          <Text>1M</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('2W') }}
+        >
+          <Text>2W</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.graphDateButtons}
+          onPress={() => { console.log('1W') }}
+        >
+          <Text>1W</Text>
+        </Pressable>
+
+      </View>
+
+      <BottomSheet isOpen={false}>
         <BottomDrawer></BottomDrawer>  
       </BottomSheet>
     </View>
@@ -297,7 +364,32 @@ exports.getReport = () => {
 };
 
 const styles = StyleSheet.create({
+  underGraphContainerDates: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 50,
+    paddingTop: 30,
+  },
+  underGraphContainerChecks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    // paddingHorizontal: 80,
+    paddingTop: 30,
+  },
+  circleButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#58dcff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  graphContainer: {
+    height: graphDimensions.height,
+    marginTop: -20
+  },
   container: {
+    backgroundColor: '#ffffff',
     flex: 1,
     flexDirection: 'column',
   },
@@ -332,10 +424,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 30
   },
-  circleButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  graphDateButtons: {
+    width: 40,
+    height: 50,
+    borderRadius: 10,
     backgroundColor: '#58dcff',
     justifyContent: 'center',
     alignItems: 'center',
