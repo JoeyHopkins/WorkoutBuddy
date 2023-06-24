@@ -1,17 +1,24 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable} from 'react-native';
 import * as Colors from '../../config/colors'
+
+import homeSql from '../../controllers/home.controller'
+import { Wander } from 'react-native-animated-spinkit'
 
 const width = Dimensions.get('window').width
 
 export const Home = ({navigation}) => {
 
-  const [routineList, setRoutineList] = useState([]);
+  const [routineList, setRoutineList] = useState(null);
+
+  useEffect( () => {
+    homeSql.getAllRoutines(setRoutineList)
+  }, [])
 
   return (
     <>
       <ScrollView style={styles.background}>
-        
+         
         <View style={styles.homeContainer}>
           <Text style={styles.homeContainerTitle}>You have no Routines...</Text>
 
@@ -29,10 +36,12 @@ export const Home = ({navigation}) => {
         </View>
 
         <View style={styles.homeContainer}>
-          {routineList.length > 0 ? (
+          {routineList === null ? (
+            // Render a loading state while fetching the routine list
+            <Wander size={48} color={Colors.primary} />
+          ) : routineList.length > 0 ? (
             <Text>Render the Reports screen here</Text>
-
-            ) : (
+          ) : (
             <Text>You have no Routines...</Text>
           )}
         </View>
@@ -63,8 +72,7 @@ const styles = StyleSheet.create({
   button: {
     width: 150,
     height: 30,
-    // padding: 30,
-    // borderRadius: 10,
+    borderRadius: 10,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center', 
