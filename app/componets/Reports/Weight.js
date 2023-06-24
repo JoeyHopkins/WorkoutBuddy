@@ -127,6 +127,33 @@ exports.getReport = () => {
     }
   }
   
+  function getEarliestDateByMode() {
+    const currentDate = new Date();
+    currentDate.setHours(6);
+
+    switch (quickDateMode) {
+      case '6M':
+        currentDate.setMonth(currentDate.getMonth() - 6);
+        break;
+      case '1M':
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        break;
+      case '2W':
+        currentDate.setDate(currentDate.getDate() - 14);
+        break;
+      case '1W':
+        currentDate.setDate(currentDate.getDate() - 7);
+        break;
+      case 'All':
+        return null
+        break;
+      default:
+        break;
+    }
+
+    return currentDate.toISOString().split('T')[0];
+  }
+
   function setQuickDateForPage(mode){
     setQuickDateMode(mode)
   }
@@ -137,6 +164,7 @@ exports.getReport = () => {
   
   function RenderGraph() { 
 
+    let earliestDate = getEarliestDateByMode()
     let graphData = [weightList]
 
     if(showGoals)
@@ -149,6 +177,7 @@ exports.getReport = () => {
     else
     return (
       <LineChart
+        earliestDate={earliestDate}
         tableData={graphData}
         dimensions={graphDimensions}
       ></LineChart>
@@ -323,12 +352,12 @@ exports.getReport = () => {
       
       <View style={styles.underGraphContainerDates}>
 
-        <Pressable 
+        {/* <Pressable 
           style={quickDateMode == 'Pick' ? styles.graphDateButtonsActive : styles.graphDateButtons}
           onPress={() => { setQuickDateForPage('Pick') }}
         >
           <Text>Pick</Text>
-        </Pressable>
+        </Pressable> */}
 
         <Pressable 
           style={quickDateMode == 'All' ? styles.graphDateButtonsActive : styles.graphDateButtons}

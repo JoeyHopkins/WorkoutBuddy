@@ -14,7 +14,7 @@ import * as d3 from "d3";
 import Utils from '../utils'
 
 export const LineChart = (props) => {
-  const { tableData, dimensions } = props; 
+  const { tableData, dimensions, earliestDate } = props; 
   
   //lines on chart will cycle this color list
   const colors = [
@@ -43,9 +43,13 @@ export const LineChart = (props) => {
   let  maxDate = findMaxDate(tableData);
   maxDate.setDate(maxDate.getDate() + 1);
   
-  const minDateConvert = minDate.toISOString().substring(0, 10).split('-')
   const maxDateConvert = maxDate.toISOString().substring(0, 10).split('-')
+  let minDateConvert = minDate.toISOString().substring(0, 10).split('-')
   
+  
+  if(earliestDate)
+  minDateConvert = earliestDate.split('-')
+    
   const y = d3.scaleLinear()
   .domain([minWeight, maxWeight])
   .range([graphHeight, 0]);
