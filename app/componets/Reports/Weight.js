@@ -37,7 +37,7 @@ exports.getReport = () => {
   
   const [editID, setEditID] = useState(-1);
 
-  const [quickDateMode, setQuickDateMode] = useState('1W');
+  const [quickDateMode, setQuickDateMode] = useState('All');
 
   const showDatePicker = () => {
     //set timezone to help prevent issues with timezone
@@ -305,11 +305,13 @@ exports.getReport = () => {
     {
       color = Colors.primary
       altColor = Colors.altPrimary
+      styles.dateText.color = Colors.primary
     }
     if(tableMode == 'Goal')
     {
       color = Colors.secondary
       altColor = Colors.altSecondary
+      styles.dateText.color = Colors.secondary
     }
     return (
       <View style={styles.addEditDrawerSection}>
@@ -460,7 +462,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
     textAlign: 'center',
-    color: 'blue',
+    color: Colors.primary,
     paddingBottom: 20
   },
   Weightrecord: {
