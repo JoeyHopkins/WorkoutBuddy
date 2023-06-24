@@ -16,8 +16,6 @@ import Utils from '../utils'
 export const LineChart = (props) => {
   const { tableData, dimensions } = props; 
   
-  let yScale = 10;
-
   const CanvasHeight = dimensions.height;
   const CanvasWidth = dimensions.width;
   const GRAPH_MARGIN = dimensions.margin;
@@ -26,33 +24,99 @@ export const LineChart = (props) => {
   const graphWidth = CanvasWidth - GRAPH_MARGIN * 2;
 
   const font = useFont(require("./Roboto-Bold.ttf"), 10);
-
-  const dates = tableData.map((val) => new Date(val.date));
-  const min = Math.min(...tableData.map((val) => val.weight)) - yScale < 0 ? 
-    Math.min(...tableData.map((val) => val.weight)) - yScale : 0
-
-  const max = Math.max(...tableData.map((val) => val.weight)) + yScale;
-  const minDate = new Date(Math.min(...dates));
-  const maxDate = new Date(Math.max(...dates));
+  
+  const maxWeight = findMaxWeight(tableData);
+  const minWeight = findMinWeight(tableData);
+  const minDate = findMinDate(tableData);
+  const maxDate = findMaxDate(tableData);
   const minDateConvert = minDate.toISOString().substring(0, 10).split('-')
   const maxDateConvert = maxDate.toISOString().substring(0, 10).split('-')
-
+  
   const y = d3.scaleLinear()
-    .domain([min, max])
-    .range([graphHeight, 0]);
+  .domain([minWeight, maxWeight])
+  .range([graphHeight, 0]);
   
   const x = d3.scaleTime().domain([
     new Date(parseInt(minDateConvert[0]), (parseInt(minDateConvert[1]) - 1), parseInt(minDateConvert[2])), 
     new Date(parseInt(maxDateConvert[0]), (parseInt(maxDateConvert[1]) - 1), parseInt(maxDateConvert[2]))
   ])
-    .range([0, graphWidth]);
-
-  const curvedLine = d3.line()
-    .x((d) => x(new Date(d.date + 'T06:00:00.000Z')) + GRAPH_MARGIN)
-    .y((d) => y(d.weight) + GRAPH_MARGIN)
-    .curve(d3.curveNatural)(tableData);
+  .range([0, graphWidth]);
   
-  const skPath = Skia.Path.MakeFromSVGString(curvedLine);
+  const skPaths = [];
+
+  tableData.forEach((data) => {
+    if (data.length > 0) {
+
+      const curvedLine = d3.line()
+        .x((d) => x(new Date(d.date + 'T06:00:00.000Z')) + GRAPH_MARGIN)
+        .y((d) => y(d.weight) + GRAPH_MARGIN)
+        .curve(d3.curveNatural)(data);
+    
+      const skPath = Skia.Path.MakeFromSVGString(curvedLine);
+
+      skPaths.push({ skPath });
+    }
+  });
+
+  function findMaxWeight(data) {
+    let maxWeight = Number.MIN_SAFE_INTEGER;
+  
+    data.forEach((array) => {
+      array.forEach((item) => {
+        const weight = parseFloat(item.weight);
+        if (weight > maxWeight) {
+          maxWeight = weight;
+        }
+      });
+    });
+  
+    return maxWeight;
+  }
+  
+  function findMinWeight(data) {
+    let minWeight = Number.MAX_SAFE_INTEGER;
+  
+    data.forEach((array) => {
+      array.forEach((item) => {
+        const weight = parseFloat(item.weight);
+        if (weight < minWeight) {
+          minWeight = weight;
+        }
+      });
+    });
+  
+    return minWeight;
+  }
+  
+  function findMinDate(data) {
+    let minDate = null;
+  
+    data.forEach((array) => {
+      array.forEach((item) => {
+        const date = new Date(item.date);
+        if (!minDate || date < minDate) {
+          minDate = date;
+        }
+      });
+    });
+  
+    return minDate;
+  }
+  
+  function findMaxDate(data) {
+    let maxDate = null;
+  
+    data.forEach((array) => {
+      array.forEach((item) => {
+        const date = new Date(item.date);
+        if (!maxDate || date > maxDate) {
+          maxDate = date;
+        }
+      });
+    });
+  
+    return maxDate;
+  }
 
   if(!font)
     return <View/>
@@ -66,8 +130,10 @@ export const LineChart = (props) => {
         backgroundColor: 'lightblue',
       }}>
 
-        {/* Draw the line path */}
-        <Path style="stroke" path={skPath} strokeWidth={4} color="#6231ff" />
+        {/* Draw the line paths */}
+        {skPaths.map((path, index) => (
+          <Path key={index} style="stroke" path={path.skPath} strokeWidth={4} color="#6231ff" />
+        ))}
 
         {/* Draw the y-axis ticks and labels */}
         {y.ticks().map((tick, index) => (

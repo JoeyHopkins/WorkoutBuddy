@@ -25,8 +25,8 @@ exports.getReport = () => {
   const [editID, setEditID] = useState(-1);
 
   const showDatePicker = () => {
-    let d = new Date(datePicked);
     //set timezone to help prevent issues with timezone
+    let d = new Date(datePicked);
     d.setUTCHours(6);
 
     DateTimePickerAndroid.open({
@@ -135,11 +135,11 @@ exports.getReport = () => {
     else
     return (
       <LineChart
-        tableData={weightList}
+        tableData={ [weightList, goalWeightList] }
         dimensions={dimensions}
       ></LineChart>
       )
-    }
+  }
 
   function BottomDrawer() {
     return (
@@ -164,7 +164,6 @@ exports.getReport = () => {
           
         {actionMode === 'read' &&  (
           <>
-
             {tableMode === 'Weight' &&  (
               <>
                 {/* if weight data exists */}
