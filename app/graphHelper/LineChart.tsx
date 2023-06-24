@@ -30,11 +30,11 @@ export const LineChart = (props) => {
 
   const font = useFont(require("./Roboto-Bold.ttf"), 10);
   
-  const maxWeight = findMaxWeight(tableData) + 15;
-  let minWeight = findMinWeight(tableData) - 10;
-
-  if(minWeight < 30)
-    minWeight = 0
+  const maxWeight = Math.ceil((findMaxWeight(tableData) + 15) / 10) * 10;
+  let minWeight = Math.floor((findMinWeight(tableData) - 10) / 10) * 10;
+  
+  if (minWeight < 30)
+    minWeight = 0;
 
   const minDate = findMinDate(tableData);
   minDate.setDate(minDate.getDate() - 1);
@@ -144,7 +144,7 @@ export const LineChart = (props) => {
       <Canvas style={{ 
         width: CanvasWidth, 
         height: CanvasHeight,
-        backgroundColor: 'lightblue',
+        backgroundColor: Colors.background,
       }}>
 
         {/* Draw the line paths */}
@@ -158,13 +158,13 @@ export const LineChart = (props) => {
             {/* Draw tick line */}
             <Line
               p1={{ x: graphWidth + GRAPH_MARGIN, y: y(tick) + GRAPH_MARGIN }}
-              p2={{ x: GRAPH_MARGIN - 5, y: y(tick) + GRAPH_MARGIN }}
+              p2={{ x: GRAPH_MARGIN , y: y(tick) + GRAPH_MARGIN }}
               color="black"
               style="stroke"
               strokeWidth={1}
             />
             {/* Draw tick label */}
-            <Text font={font} x={10} y={y(tick) + GRAPH_MARGIN} text={tick.toString()} />
+            <Text font={font} x={0} y={y(tick) + 23} text={tick.toString()} />
           </React.Fragment>
         ))}
 
@@ -174,13 +174,13 @@ export const LineChart = (props) => {
             {/* Draw tick line */}
             <Line
               p1={{ x: x(t) + GRAPH_MARGIN, y: GRAPH_MARGIN }}
-              p2={{ x: x(t) + GRAPH_MARGIN, y: graphHeight + GRAPH_MARGIN + 5}}
+              p2={{ x: x(t) + GRAPH_MARGIN, y: graphHeight + GRAPH_MARGIN}}
               color="black"
               style="stroke"
               strokeWidth={1}
             />
             {/* Draw tick label */}
-            <Text font={font} x={x(t) + GRAPH_MARGIN} y={CanvasHeight - GRAPH_MARGIN / 2} text={Utils.formatDate(t)} />
+            <Text font={font} x={x(t) + 10} y={CanvasHeight - GRAPH_MARGIN / 2 + 5} text={Utils.formatDate(t)} />
           </React.Fragment>
         ))}
       </Canvas>

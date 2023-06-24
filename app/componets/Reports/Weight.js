@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, FlatList} from 'react-native';
+import { View, Text, Pressable, StyleSheet, FlatList, Dimensions} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import reportsSql from '../../controllers/reports.controller'
 import { LineChart } from '../../graphHelper/LineChart'
@@ -13,10 +13,13 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import * as Colors from '../../config/colors'
 
+
+const width = Dimensions.get('window').width
+
 const graphDimensions = {
   height: 400,
-  width: 350,
-  margin: 30,
+  width: width,
+  margin: 20,
 };
 
 exports.getReport = () => {
@@ -412,7 +415,7 @@ exports.getReport = () => {
 
       </View>
 
-      <BottomSheet isOpen={true}>
+      <BottomSheet isOpen={false}>
         <BottomDrawer></BottomDrawer>  
       </BottomSheet>
     </View>
