@@ -68,7 +68,7 @@ export const LineChart = (props) => {
       const curvedLine = d3.line()
         .x((d) => x(new Date(d.date + 'T06:00:00.000Z')) + GRAPH_MARGIN)
         .y((d) => y(d.weight) + GRAPH_MARGIN)
-        .curve(d3.curveNatural)(data);
+        .curve(d3.curveMonotoneX)(data);
     
       const skPath = Skia.Path.MakeFromSVGString(curvedLine);
 
