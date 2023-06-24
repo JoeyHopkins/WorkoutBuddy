@@ -15,9 +15,10 @@ import * as Colors from '../../config/colors'
 
 
 const width = Dimensions.get('window').width
+const height = Dimensions.get('window').height
 
 const graphDimensions = {
-  height: 400,
+  height: 3 * height / 5,
   width: width,
   margin: 20,
 };
