@@ -31,10 +31,18 @@ export const LineChart = (props) => {
 
   const font = useFont(require("./Roboto-Bold.ttf"), 10);
   
-  const maxWeight = findMaxWeight(tableData);
-  const minWeight = findMinWeight(tableData);
+  const maxWeight = findMaxWeight(tableData) + 15;
+  let minWeight = findMinWeight(tableData) - 10;
+
+  if(minWeight < 30)
+    minWeight = 0
+
   const minDate = findMinDate(tableData);
-  const maxDate = findMaxDate(tableData);
+  minDate.setDate(minDate.getDate() - 1);
+  
+  let  maxDate = findMaxDate(tableData);
+  maxDate.setDate(maxDate.getDate() + 1);
+  
   const minDateConvert = minDate.toISOString().substring(0, 10).split('-')
   const maxDateConvert = maxDate.toISOString().substring(0, 10).split('-')
   
