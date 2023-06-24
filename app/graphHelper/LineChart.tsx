@@ -13,14 +13,13 @@ import { View, StyleSheet } from "react-native";
 import * as d3 from "d3";
 import Utils from '../utils'
 
+import * as Colors from '../config/colors' 
+
 export const LineChart = (props) => {
   const { tableData, dimensions, earliestDate } = props; 
   
   //lines on chart will cycle this color list
-  const colors = [
-    "#6231ff",
-    "#ff0000",
-  ]
+  const colors = Colors.linegraphColors
 
   const CanvasHeight = dimensions.height;
   const CanvasWidth = dimensions.width;

@@ -354,10 +354,10 @@ exports.getReport = () => {
         <BouncyCheckbox
           size={25}
           isChecked
-          fillColor={Colors.primary}
+          fillColor={Colors.secondary}
           unfillColor={Colors.background}
           text="Show Goals"
-          iconStyle={{ borderColor: Colors.primary }}
+          iconStyle={{ borderColor: Colors.secondary }}
           innerIconStyle={{ borderWidth: 2 }}
           textStyle={{
             textDecorationLine: 'none',

@@ -16,11 +16,7 @@ const padDigits = (number) => {
   return number.toString(16).padStart(2, '0');
 };
 
-//e91e63
-//209ce3
-
 export const primary = '#209ce3';
-// export const primary = '#ff0000';
 export const altPrimary = darkenColor(primary, 20)
 
 export const secondary = '#9CE320';
@@ -32,3 +28,9 @@ export const black = '#000000';
 
 export const background = white;
 export const backgroundGray = '#b9b9b9';
+
+//keep a primary and seconday as first and second respoctively
+export const linegraphColors = [
+  primary,
+  altSecondary,
+]
