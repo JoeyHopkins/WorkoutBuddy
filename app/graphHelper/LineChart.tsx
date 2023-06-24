@@ -16,6 +16,12 @@ import Utils from '../utils'
 export const LineChart = (props) => {
   const { tableData, dimensions } = props; 
   
+  //lines on chart will cycle this color list
+  const colors = [
+    "#6231ff",
+    "#ffe84f"
+  ]
+
   const CanvasHeight = dimensions.height;
   const CanvasWidth = dimensions.width;
   const GRAPH_MARGIN = dimensions.margin;
@@ -132,7 +138,7 @@ export const LineChart = (props) => {
 
         {/* Draw the line paths */}
         {skPaths.map((path, index) => (
-          <Path key={index} style="stroke" path={path.skPath} strokeWidth={4} color="#6231ff" />
+          <Path key={index} style="stroke" path={path.skPath} strokeWidth={4} color={colors[index % colors.length]} />
         ))}
 
         {/* Draw the y-axis ticks and labels */}
