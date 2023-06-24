@@ -22,22 +22,22 @@ export const Reports = ({navigation}) => {
     </View>
   );
 
-  // const ReportListView = ({title, id}) => (
-  //   <View style={styles.reportListItem}>
-  //     <Button
-  //       title={title}
-  //       onPress={() => {
-  //         drawerReportSelected(title, id)
-  //       }}
-  //     />
-  //   </View>
-  // );
+  const ReportListView = ({title, id}) => (
+    <View style={styles.reportListItem}>
+      <Button
+        title={title}
+        onPress={() => {
+          drawerReportSelected(title, id)
+        }}
+      />
+    </View>
+  );
   
-  // const drawerReportSelected = (title, id) => {
-  //   setTitleText("Selected Report: " + title);
-  //   setSelectedReportID(title)
-  //   drawer.current.closeDrawer()
-  // };
+  const drawerReportSelected = (title, id) => {
+    setTitleText("Selected Report: " + title);
+    setSelectedReportID(title)
+    drawer.current.closeDrawer()
+  };
 
   function RenderReportComponet(input) {
     switch(input.name)
@@ -49,9 +49,9 @@ export const Reports = ({navigation}) => {
     }
   }
 
-  // useEffect( () => {
-  //   reportsSql.getReportList(setReportList);
-  // }, [])
+  useEffect( () => {
+    reportsSql.getReportList(setReportList);
+  }, [])
 
   return (
     <DrawerLayoutAndroid
@@ -63,12 +63,6 @@ export const Reports = ({navigation}) => {
       <Text style={styles.titleText}>
         {titleText}
       </Text>
-      {/* <View>
-        <Button
-          title="open drawer"
-          onPress={() => drawer.current.openDrawer()}
-        />
-      </View> */}
 
       <RenderReportComponet name={selectedReportID}></RenderReportComponet>
     </DrawerLayoutAndroid>
