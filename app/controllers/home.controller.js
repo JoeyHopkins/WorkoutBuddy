@@ -4,7 +4,7 @@ const db = SQLite.openDatabase('workouBuddy.db');
 exports.getAllRoutines = (setRoutineList, setLoading) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("SELECT * FROM routines",
+      tx.executeSql("SELECT * FROM routines ORDER BY dayNum",
         null,
         (txObj, { rows: { _array } }) => { 
           setRoutineList(_array)
@@ -18,12 +18,7 @@ exports.getAllRoutines = (setRoutineList, setLoading) => {
 };
 
 exports.addRoutine = async (routine) => {
-  console.log('hit add routine')
   let dayNum = await findClosestDayNum() 
-  
-  console.log('\ndayNum')
-  console.log(dayNum)
-
 
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -31,7 +26,6 @@ exports.addRoutine = async (routine) => {
         "INSERT INTO routines (dayNum, routine) VALUES (?, ?)",
         [dayNum, routine],
         (txObj, resultSet) => {
-          console.log('Success');
           resolve();
         },
         (txObj, error) => {
