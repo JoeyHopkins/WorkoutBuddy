@@ -8,7 +8,8 @@ exports.getAllRoutines = (setRoutineList, setLoading) => {
         null,
         (txObj, { rows: { _array } }) => { 
           setRoutineList(_array)
-          setLoading(false)
+          resolve()
+          // setLoading(false)
         },
         (txObj, error) => { console.log('Error ', error) },
       );
@@ -17,15 +18,18 @@ exports.getAllRoutines = (setRoutineList, setLoading) => {
 };
 
 exports.addRoutine = async (routine) => {
-  
+  console.log('hit add routine')
   let dayNum = await findClosestDayNum() 
+  
+  console.log('\ndayNum')
+  console.log(dayNum)
+
 
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
         "INSERT INTO routines (dayNum, routine) VALUES (?, ?)",
         [dayNum, routine],
-        null,
         (txObj, resultSet) => {
           console.log('Success');
           resolve();
@@ -75,7 +79,9 @@ exports.deleteRoutineByID = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("DELETE FROM routines WHERE id = ?", [id],
-        (txObj, ResultSet) => { console.log('sucess') },
+        (txObj, ResultSet) => {
+          resolve()
+        },
         (txObj, error) => { console.log('Error ', error) },
       );
     });

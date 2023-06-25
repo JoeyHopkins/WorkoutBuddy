@@ -14,23 +14,25 @@ export const Home = ({navigation}) => {
 
   const [routineList, setRoutineList] = useState([]);
   const [newRoutine, setNewRoutine] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect( () => {
-    homeSql.getAllRoutines(setRoutineList, setLoading)
+    homeSql.getAllRoutines(setRoutineList)
   }, [])
 
-  function submitNewRoutine() {
+  async function submitNewRoutine() {
     setLoading(true)
-    homeSql.addRoutine(newRoutine)
-    homeSql.getAllRoutines(setRoutineList, setLoading)
+    await homeSql.addRoutine(newRoutine)
+    await homeSql.getAllRoutines(setRoutineList)
     setNewRoutine('')
+    setLoading(false)
   }
 
-  function deleteRoutine(id) {
+  async function deleteRoutine(id) {
     setLoading(true)
-    homeSql.deleteRoutineByID(id)
-    homeSql.getAllRoutines(setRoutineList, setLoading)
+    await homeSql.deleteRoutineByID(id)
+    await homeSql.getAllRoutines(setRoutineList)
+    setLoading(false)
   }
 
   const RoutineRecord = ({id, dayNum, routine}) => { 
