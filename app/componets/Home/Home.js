@@ -1,5 +1,5 @@
-import React, {useRef, useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable, TextInput, FlatListn, SectionList} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 
 import homeSql from '../../controllers/home.controller'
@@ -31,6 +31,16 @@ export const Home = ({navigation}) => {
 
       switch (submissionType) {
         case 'add':
+          if(newRoutine === '') 
+            {
+              showMessage({
+                message: 'Error',
+                description: 'Please enter a routine',
+                type: "danger",
+              });
+              setLoading(false)
+              return
+            }
           message = await homeSql.addRoutine(newRoutine)
           setNewRoutine('')
           break;
