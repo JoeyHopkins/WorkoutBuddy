@@ -81,3 +81,91 @@ exports.deleteRoutineByID = (id) => {
     });
   });
 };
+
+exports.moveRoutineUp = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT id, dayNum FROM routines ORDER BY dayNum ASC",
+        [],
+        async (txObj, resultSet) => {
+          const rows = resultSet.rows._array;
+          
+          if (rows.length === 0) {
+            reject(new Error('No routines found'));
+            return;
+          }
+
+          for(let i in rows) {
+            if (rows[i].id === id) {
+
+              if(parseInt(i) === 0 && rows[i].dayNum === 1)
+                return reject(new Error('Cannot move routine up anymore'));
+
+              let dayNum = rows[i].dayNum;
+              let priorID = rows[i-1].id;
+              let priorDayNum = rows[i-1].dayNum;
+
+              if(dayNum - 1 === priorDayNum)
+                resolve(await exchangeRoutineDayNum(id, dayNum, priorID, priorDayNum));
+              else 
+                resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
+            }
+          }
+        },
+        (txObj, error) => {
+          console.log('Error:', error);
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
+async function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      // Update the current routine's dayNum with priorDayNum
+      tx.executeSql(
+        "UPDATE routines SET dayNum = ? WHERE id = ?",
+        [priorDayNum, id],
+        (txObj, resultSet) => {
+          // Update the prior routine's dayNum with currentDayNum
+          tx.executeSql(
+            "UPDATE routines SET dayNum = ? WHERE id = ?",
+            [currentDayNum, priorID],
+            () => {
+              resolve();
+            },
+            (txObj, error) => {
+              console.log('Error:', error);
+              reject(error);
+            }
+          );
+        },
+        (txObj, error) => {
+          console.log('Error:', error);
+          reject(error);
+        }
+      );
+    });
+  });
+}
+
+async function updateRoutineDayNum(id, currentDayNum, newDayNum) {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE routines SET dayNum = ? WHERE id = ?",
+        [newDayNum, id],
+        () => {
+          resolve();
+        },
+        (txObj, error) => {
+          console.log('Error:', error);
+          reject(error);
+        }
+      );
+    });
+  });
+}

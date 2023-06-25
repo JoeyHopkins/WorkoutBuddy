@@ -35,6 +35,19 @@ export const Home = ({navigation}) => {
     setLoading(false)
   }
 
+  async function moveRoutineUp(id) {
+    setLoading(true)
+    try {
+      await homeSql.moveRoutineUp(id)
+      await homeSql.getAllRoutines(setRoutineList)
+    }
+    catch (error) {
+      // console.log(error)
+    }
+
+    setLoading(false)
+  }
+
   const RoutineRecord = ({id, dayNum, routine}) => { 
     return (
       <View style={styles.routineRecordContainer}>
@@ -44,7 +57,7 @@ export const Home = ({navigation}) => {
         </View>
 
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { console.log('hit') }}>
+          <Pressable onPress={() => { moveRoutineUp(id) }}>
             <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
           </Pressable>
 
