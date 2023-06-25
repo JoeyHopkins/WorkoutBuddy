@@ -151,7 +151,6 @@ exports.getReport = () => {
         break;
       case 'All':
         return null
-        break;
       default:
         break;
     }

@@ -1,19 +1,28 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable} from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 
 import homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
+
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const width = Dimensions.get('window').width
 
 export const Home = ({navigation}) => {
 
   const [routineList, setRoutineList] = useState(null);
+  const [newRoutine, setNewRoutine] = useState('');
 
   useEffect( () => {
     homeSql.getAllRoutines(setRoutineList)
   }, [])
+
+  function submitNewRoutine() {
+    homeSql.addRoutine(newRoutine)
+    homeSql.getAllRoutines(setRoutineList)
+    setNewRoutine('')
+  }
 
   return (
     <>
@@ -36,6 +45,22 @@ export const Home = ({navigation}) => {
         </View>
 
         <View style={styles.homeContainer}>
+
+          <View style={styles.addRoutineContainer}>
+            <TextInput
+              style={styles.input}
+              onChangeText={setNewRoutine}
+              value={newRoutine}
+              placeholder="New Routine"
+            />
+            <Pressable
+              style={styles.circleButton}
+              onPress={() => { submitNewRoutine() }}
+            >
+              <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+            </Pressable>
+          </View>
+
           {routineList === null ? (
             // Render a loading state while fetching the routine list
             <Wander size={48} color={Colors.primary} />
@@ -44,6 +69,7 @@ export const Home = ({navigation}) => {
           ) : (
             <Text>You have no Routines...</Text>
           )}
+
         </View>
 
       </ScrollView>
@@ -76,5 +102,29 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center', 
+  },
+  input: {
+    height: 40,
+    width: width - 150,
+    marginRight: 20,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: 10,
+    padding: 10,
+  },
+  circleButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addRoutineContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+    // marginVertical: 10,
   }
 });
