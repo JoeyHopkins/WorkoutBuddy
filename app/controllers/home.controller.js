@@ -91,10 +91,8 @@ exports.moveRoutineUp = (id) => {
         async (txObj, resultSet) => {
           const rows = resultSet.rows._array;
           
-          if (rows.length === 0) {
-            reject(new Error('No routines found'));
-            return;
-          }
+          if (rows.length === 0)
+            return reject(new Error('No routines found'));
 
           for(let i in rows) {
             if (rows[i].id === id) {
@@ -103,13 +101,17 @@ exports.moveRoutineUp = (id) => {
                 return reject(new Error('Cannot move routine up anymore'));
 
               let dayNum = rows[i].dayNum;
+
+              if(parseInt(i) === 0)
+                return resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
+
               let priorID = rows[i-1].id;
               let priorDayNum = rows[i-1].dayNum;
 
               if(dayNum - 1 === priorDayNum)
-                resolve(await exchangeRoutineDayNum(id, dayNum, priorID, priorDayNum));
+                return resolve(await exchangeRoutineDayNum(id, dayNum, priorID, priorDayNum));
               else 
-                resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
+                return resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
             }
           }
         },
