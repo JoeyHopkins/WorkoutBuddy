@@ -6,6 +6,7 @@ import homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const width = Dimensions.get('window').width
 
@@ -27,8 +28,21 @@ export const Home = ({navigation}) => {
   const RoutineRecord = ({dayNum, routine}) => { 
     return (
       <View style={styles.routineRecordContainer}>
-        <Text>{dayNum}</Text>
-        <Text>{routine}</Text>
+        
+        <View style={{flex: 1}}>
+          <Text>Day {dayNum + ':  ' + routine}</Text>
+        </View>
+
+        <View style={styles.iconsContainer}>
+          <Pressable onPress={() => { console.log('hit') }}>
+            <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
+          </Pressable>
+
+          <Pressable onPress={() => { console.log('hit') }}>
+            <Icon name="trash" size={20} color={Colors.highlight} />
+          </Pressable>
+        </View>
+        
       </View>
     )
   }
@@ -42,7 +56,7 @@ export const Home = ({navigation}) => {
 
           <Pressable 
             style={styles.button} 
-            onPress={() => { console.log('hit') }}
+            onPress={() => { console.log('hit') }}c
           >
             <Text>Create Routine</Text>
           </Pressable>
@@ -74,15 +88,14 @@ export const Home = ({navigation}) => {
             <Wander size={48} color={Colors.primary} />
           )}
 
-          <View style={{ backgroundColor: Colors.primary }}>
-            {routineList && routineList.length > 0 && (
-              <>
-                {routineList.map((routine, index) => (
-                  <RoutineRecord key={index} dayNum={routine.dayNum} routine={routine.routine} />
-                ))}
-              </>
-            )}
-          </View>
+          {routineList && routineList.length > 0 && (
+            <>
+              {routineList.map((routine, index) => (
+                <RoutineRecord key={index} dayNum={routine.dayNum} routine={routine.routine} />
+              ))}
+            </>
+          )}
+
         </View>
       </ScrollView>
     </>
@@ -138,7 +151,6 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems: 'center',
     marginBottom: 30,
-    // marginVertical: 10,
   },
   routineContainer: {
     flex: 1,
@@ -150,11 +162,20 @@ const styles = StyleSheet.create({
   },
   routineRecordContainer: {
     paddingVertical: 10,
-    paddingHorizontal: 100,
+    paddingHorizontal: 30,
     justifyContent: 'space-between',
+    alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
     marginTop: 1,
     backgroundColor: Colors.white,
-  }
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+  },
+  iconsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
+  },
 });
