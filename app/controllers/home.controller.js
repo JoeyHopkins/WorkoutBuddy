@@ -52,9 +52,13 @@ const findClosestDayNum = () => {
           if(resultSet.rows.length == 0)
             resolve(1);
           else {
-            //todo
-            console.log('\n\nresolving 0')
-            resolve(0);
+            const existingDayNums = resultSet.rows._array.map((row) => row.dayNum);
+            let lowestNonTakenNum = 1; // Start from 1
+            
+            while (existingDayNums.includes(lowestNonTakenNum)) 
+              lowestNonTakenNum++;
+            
+            resolve(lowestNonTakenNum);
           }
         },
         (txObj, error) => {
