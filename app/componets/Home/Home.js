@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable, TextInput} from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Dimensions, Button, Pressable, TextInput, FlatListn, SectionList} from 'react-native';
 import * as Colors from '../../config/colors'
 
 import homeSql from '../../controllers/home.controller'
@@ -11,7 +11,7 @@ const width = Dimensions.get('window').width
 
 export const Home = ({navigation}) => {
 
-  const [routineList, setRoutineList] = useState(null);
+  const [routineList, setRoutineList] = useState([]);
   const [newRoutine, setNewRoutine] = useState('');
 
   useEffect( () => {
@@ -22,6 +22,15 @@ export const Home = ({navigation}) => {
     homeSql.addRoutine(newRoutine)
     homeSql.getAllRoutines(setRoutineList)
     setNewRoutine('')
+  }
+
+  const RoutineRecord = ({dayNum, routine}) => { 
+    return (
+      <View style={styles.routineRecordContainer}>
+        <Text>{dayNum}</Text>
+        <Text>{routine}</Text>
+      </View>
+    )
   }
 
   return (
@@ -61,17 +70,20 @@ export const Home = ({navigation}) => {
             </Pressable>
           </View>
 
-          {routineList === null ? (
-            // Render a loading state while fetching the routine list
+          {routineList.length == 0 && (
             <Wander size={48} color={Colors.primary} />
-          ) : routineList.length > 0 ? (
-            <Text>Render the Reports screen here</Text>
-          ) : (
-            <Text>You have no Routines...</Text>
           )}
 
+          <View style={{ backgroundColor: Colors.primary }}>
+            {routineList && routineList.length > 0 && (
+              <>
+                {routineList.map((routine, index) => (
+                  <RoutineRecord key={index} dayNum={routine.dayNum} routine={routine.routine} />
+                ))}
+              </>
+            )}
+          </View>
         </View>
-
       </ScrollView>
     </>
   );
@@ -83,10 +95,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     marginTop: 20,
-    padding: 30,
+    paddingVertical: 30,
     marginHorizontal: 20,
     alignItems: 'center',
-    borderColor: Colors.primary
+    borderColor: Colors.primary,
+    overflow: 'hidden',
   },
   homeContainerTitle: {
     alignItems: 'center',
@@ -126,5 +139,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
     // marginVertical: 10,
+  },
+  routineContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  routineRecordContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 100,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: 1,
+    backgroundColor: Colors.white,
   }
 });

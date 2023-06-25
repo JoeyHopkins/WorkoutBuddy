@@ -42,7 +42,7 @@ exports.createTables = () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(50));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20));`,
       [],
       (sqlTxn, res) => {
         console.log("routines table created successfully")
