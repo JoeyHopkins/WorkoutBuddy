@@ -9,9 +9,8 @@ exports.getAllRoutines = (setRoutineList, setLoading) => {
         (txObj, { rows: { _array } }) => { 
           setRoutineList(_array)
           resolve()
-          // setLoading(false)
         },
-        (txObj, error) => { console.log('Error ', error) },
+        (txObj, error) => { reject(error) },
       );
     });
   });
@@ -26,10 +25,9 @@ exports.addRoutine = async (routine) => {
         "INSERT INTO routines (dayNum, routine) VALUES (?, ?)",
         [dayNum, routine],
         (txObj, resultSet) => {
-          resolve();
+          resolve('New routine added!');
         },
         (txObj, error) => {
-          console.log('Error:', error);
           reject(error);
         }
       );
@@ -61,7 +59,6 @@ const findClosestDayNum = () => {
           }
         },
         (txObj, error) => {
-          console.log('Error:', error);
           reject(error);
         }
       );
@@ -74,9 +71,9 @@ exports.deleteRoutineByID = (id) => {
     db.transaction(tx => {
       tx.executeSql("DELETE FROM routines WHERE id = ?", [id],
         (txObj, ResultSet) => {
-          resolve()
+          resolve('Routine deleted!');
         },
-        (txObj, error) => { console.log('Error ', error) },
+        (txObj, error) => { reject(error) },
       );
     });
   });
@@ -91,19 +88,16 @@ exports.moveRoutineUp = (id) => {
         async (txObj, resultSet) => {
           const rows = resultSet.rows._array;
           
-          if (rows.length === 0)
-            return reject(new Error('No routines found'));
-
           for(let i in rows) {
             if (rows[i].id === id) {
 
               if(parseInt(i) === 0 && rows[i].dayNum === 1)
-                return reject(new Error('Cannot move routine up anymore'));
+                return reject('Cannot move routine up anymore');
 
               let dayNum = rows[i].dayNum;
 
               if(parseInt(i) === 0)
-                return resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
+                return resolve(await updateRoutineDayNum(id, dayNum - 1));
 
               let priorID = rows[i-1].id;
               let priorDayNum = rows[i-1].dayNum;
@@ -111,12 +105,11 @@ exports.moveRoutineUp = (id) => {
               if(dayNum - 1 === priorDayNum)
                 return resolve(await exchangeRoutineDayNum(id, dayNum, priorID, priorDayNum));
               else 
-                return resolve(await updateRoutineDayNum(id, dayNum, dayNum - 1));
+                return resolve(await updateRoutineDayNum(id, dayNum - 1));
             }
           }
         },
         (txObj, error) => {
-          console.log('Error:', error);
           reject(error);
         }
       );
@@ -137,16 +130,14 @@ async function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
             "UPDATE routines SET dayNum = ? WHERE id = ?",
             [currentDayNum, priorID],
             () => {
-              resolve();
+              resolve('Routines have been exchanged');
             },
             (txObj, error) => {
-              console.log('Error:', error);
               reject(error);
             }
           );
         },
         (txObj, error) => {
-          console.log('Error:', error);
           reject(error);
         }
       );
@@ -154,17 +145,16 @@ async function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
   });
 }
 
-async function updateRoutineDayNum(id, currentDayNum, newDayNum) {
+async function updateRoutineDayNum(id, newDayNum) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
         "UPDATE routines SET dayNum = ? WHERE id = ?",
         [newDayNum, id],
         () => {
-          resolve();
+          resolve('Routine has been updated');
         },
         (txObj, error) => {
-          console.log('Error:', error);
           reject(error);
         }
       );

@@ -8,6 +8,8 @@ import { Wander } from 'react-native-animated-spinkit'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+import { showMessage } from "react-native-flash-message";
+
 const width = Dimensions.get('window').width
 
 export const Home = ({navigation}) => {
@@ -20,29 +22,40 @@ export const Home = ({navigation}) => {
     homeSql.getAllRoutines(setRoutineList)
   }, [])
 
-  async function submitNewRoutine() {
+  async function sendRoutineFuntion(submissionType, id = null) {
     setLoading(true)
-    await homeSql.addRoutine(newRoutine)
-    await homeSql.getAllRoutines(setRoutineList)
-    setNewRoutine('')
-    setLoading(false)
-  }
 
-  async function deleteRoutine(id) {
-    setLoading(true)
-    await homeSql.deleteRoutineByID(id)
-    await homeSql.getAllRoutines(setRoutineList)
-    setLoading(false)
-  }
+    let message = ''
 
-  async function moveRoutineUp(id) {
-    setLoading(true)
     try {
-      await homeSql.moveRoutineUp(id)
+
+      switch (submissionType) {
+        case 'add':
+          message = await homeSql.addRoutine(newRoutine)
+          setNewRoutine('')
+          break;
+        case 'delete':
+          message = await homeSql.deleteRoutineByID(id)
+          break;
+        case'moveUp':
+          message = await homeSql.moveRoutineUp(id)
+          break;
+      }
+
       await homeSql.getAllRoutines(setRoutineList)
+
+      showMessage({
+        message: 'Success!',
+        description: message,
+        type: "success",
+      });
     }
-    catch (error) {
-      // console.log(error)
+    catch (err) {
+      showMessage({
+        message: 'Error',
+        description: err,
+        type: "danger",
+      });
     }
 
     setLoading(false)
@@ -57,11 +70,11 @@ export const Home = ({navigation}) => {
         </View>
 
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { moveRoutineUp(id) }}>
+          <Pressable onPress={() => { sendRoutineFuntion('moveUp', id) }}>
             <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
           </Pressable>
 
-          <Pressable onPress={() => { deleteRoutine(id) }}>
+          <Pressable onPress={() => { sendRoutineFuntion('delete', id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
@@ -101,7 +114,7 @@ export const Home = ({navigation}) => {
             />
             <Pressable
               style={styles.circleButton}
-              onPress={() => { submitNewRoutine() }}
+              onPress={() => { sendRoutineFuntion('add') }}
             >
               <MaterialIcon name='check-outline' size={20} color={Colors.black} />
             </Pressable>
