@@ -15,6 +15,15 @@ exports.getTablesFromDB = () => {
 
 exports.createTables = () => {
   db.transaction(txn => {
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY AUTOINCREMENT, setting VARCHAR(20), config VARCHAR(50));`,
+      [],
+      (sqlTxn, res) => {
+        console.log("settings table created successfully")
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+    )
     txn.executeSql(`CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20));`,
       [],
       (sqlTxn, res) => {
