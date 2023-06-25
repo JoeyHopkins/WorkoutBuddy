@@ -14,18 +14,26 @@ export const Home = ({navigation}) => {
 
   const [routineList, setRoutineList] = useState([]);
   const [newRoutine, setNewRoutine] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect( () => {
-    homeSql.getAllRoutines(setRoutineList)
+    homeSql.getAllRoutines(setRoutineList, setLoading)
   }, [])
 
   function submitNewRoutine() {
+    setLoading(true)
     homeSql.addRoutine(newRoutine)
-    homeSql.getAllRoutines(setRoutineList)
+    homeSql.getAllRoutines(setRoutineList, setLoading)
     setNewRoutine('')
   }
 
-  const RoutineRecord = ({dayNum, routine}) => { 
+  function deleteRoutine(id) {
+    setLoading(true)
+    homeSql.deleteRoutineByID(id)
+    homeSql.getAllRoutines(setRoutineList, setLoading)
+  }
+
+  const RoutineRecord = ({id, dayNum, routine}) => { 
     return (
       <View style={styles.routineRecordContainer}>
         
@@ -38,7 +46,7 @@ export const Home = ({navigation}) => {
             <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
           </Pressable>
 
-          <Pressable onPress={() => { console.log('hit') }}>
+          <Pressable onPress={() => { deleteRoutine(id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
@@ -84,14 +92,14 @@ export const Home = ({navigation}) => {
             </Pressable>
           </View>
 
-          {routineList.length == 0 && (
+          {loading == true && (
             <Wander size={48} color={Colors.primary} />
           )}
 
-          {routineList && routineList.length > 0 && (
+          {routineList && routineList.length > 0 && loading == false && (
             <>
               {routineList.map((routine, index) => (
-                <RoutineRecord key={index} dayNum={routine.dayNum} routine={routine.routine} />
+                <RoutineRecord key={index} id={routine.id} dayNum={routine.dayNum} routine={routine.routine} />
               ))}
             </>
           )}
