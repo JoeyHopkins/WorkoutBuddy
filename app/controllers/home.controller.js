@@ -1,14 +1,14 @@
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('workouBuddy.db');
 
-exports.getAllRoutines = (setRoutineList, setLoading) => {
+exports.getAllRoutines = (setRoutineList) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("SELECT * FROM routines ORDER BY dayNum",
         null,
         (txObj, { rows: { _array } }) => { 
           setRoutineList(_array)
-          resolve()
+          resolve(_array.length)
         },
         (txObj, error) => { reject(error) },
       );

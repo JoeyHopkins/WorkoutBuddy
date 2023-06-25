@@ -1,4 +1,4 @@
-import { StyleSheet, StatusBar  } from 'react-native';
+import { StyleSheet, StatusBar, Text  } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home } from './app/componets/Home/Home';
@@ -17,12 +17,20 @@ const Tab = createBottomTabNavigator();
 //https://reactnavigation.org/docs/native-stack-navigator/#options
 export default function App() {
   
-  useEffect( () => {
-    // appSql.dropAllTables();
-    appSql.createTables();
-    appSql.getTablesFromDB();
-  })
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // await appSql.dropAllTables();
+        await appSql.createTables();
+        await appSql.getTablesFromDB();
+      } catch (error) {
+        console.log(error)
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const headerOptions = {
     headerStyle: {
       backgroundColor: Colors.primary,
@@ -65,7 +73,7 @@ export default function App() {
                 <AntIcon name='linechart' size={20} color={color} />
               ),
             }}
-          />         
+          />
           <Tab.Screen 
             name="Workout" 
             component={Workout}
