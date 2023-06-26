@@ -18,7 +18,8 @@ exports.createTables = () => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY AUTOINCREMENT, setting VARCHAR(20), config VARCHAR(50));`,
       [],
       (sqlTxn, res) => {
-        console.log("settings table created successfully")
+        if (res.rowsAffected !== 0)
+          console.log("settings table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
@@ -27,7 +28,8 @@ exports.createTables = () => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS reports (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20));`,
       [],
       (sqlTxn, res) => {
-        console.log("reports table created successfully")
+        if (res.rowsAffected !== 0)
+          console.log("reports table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
@@ -36,7 +38,8 @@ exports.createTables = () => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS weight (id INTEGER PRIMARY KEY AUTOINCREMENT, weight VARCHAR(20), date VARCHAR(24));`,
       [],
       (sqlTxn, res) => {
-        console.log("weight table created successfully")
+        if (res.rowsAffected !== 0)
+          console.log("weight table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
@@ -45,7 +48,8 @@ exports.createTables = () => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS weight_goals (id INTEGER PRIMARY KEY AUTOINCREMENT, weight VARCHAR(20), date VARCHAR(24));`,
       [],
       (sqlTxn, res) => {
-        console.log("goal table created successfully")
+        if (res.rowsAffected !== 0)
+          console.log("weight_goals table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
@@ -54,7 +58,18 @@ exports.createTables = () => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20));`,
       [],
       (sqlTxn, res) => {
-        console.log("routines table created successfully")
+        if (res.rowsAffected !== 0)
+          console.log("routines table created successfully");
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+    )   
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS activities (id INTEGER PRIMARY KEY AUTOINCREMENT, date VARCHAR(24), activity VARCHAR(30));`,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("activities table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
