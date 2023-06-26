@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import {Calendar, CalendarUtils} from 'react-native-calendars';
@@ -11,6 +12,7 @@ const width = Dimensions.get('window').width;
 export const ActivityTracker = ({navigation}) => {
 
   const [selectedDay, setSelectedDay] = useState(null);
+  const [newActivity, setNewActivity] = useState('');
 
   function formatString(dateObject) {
     return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
@@ -34,6 +36,21 @@ export const ActivityTracker = ({navigation}) => {
           <View>
             <Text style={styles.title}>{ formatString(selectedDay) } </Text>
           </View>
+
+          <View style={styles.addRoutineContainer}>
+            <TextInput
+              style={styles.input}
+              onChangeText={setNewActivity}
+              placeholder="New Custom Activity"
+            />
+            <Pressable
+              style={styles.circleButton}
+              onPress={() => { console.log(newActivity) }}
+            >
+              <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+            </Pressable>
+          </View>
+
           <View>
             <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
           </View>
@@ -52,12 +69,34 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingTop: 30,
+    paddingVertical: 30,
     color: Colors.primary
   },
   noActivitiesContainer: {
     fontSize: 15,
     textAlign: 'center',
-    paddingTop: 30,
-  }
+  },
+  addRoutineContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  circleButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    height: 40,
+    width: width - 150,
+    marginRight: 20,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: 10,
+    padding: 10,
+  },
 });
