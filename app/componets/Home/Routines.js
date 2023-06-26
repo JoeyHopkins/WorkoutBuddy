@@ -165,7 +165,7 @@ export const RoutineMain = (props) => {
   
       let settingValue = await settingSql.getSetting(settingName);
 
-      if (!settingValue) {
+      if (!settingValue || settingValue.length == 0) {
         // Setting does not exist, create it with initial value -1
         await settingSql.createNewSetting(settingName, null);
         return null;
