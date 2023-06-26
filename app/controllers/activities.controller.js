@@ -14,3 +14,20 @@ exports.getAllActivities = (setRoutineList) => {
     });
   });
 };
+
+exports.addCustomActivity = (activity, date) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "INSERT INTO activities (date, activity) VALUES (?, ?)",
+        [date, activity],
+        (txObj, res) => {
+          resolve(res);
+        },
+        (txObj, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+};

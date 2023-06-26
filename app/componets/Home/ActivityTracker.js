@@ -6,12 +6,13 @@ import * as activitiesSQL from '../../controllers/activities.controller'
 import { Wander } from 'react-native-animated-spinkit'
 
 import {Calendar, CalendarUtils} from 'react-native-calendars';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import * as Utils from '../../utils'
 
 const INITIAL_DATE = new Date().toISOString();
 const width = Dimensions.get('window').width;
 
 export const ActivityTracker = ({navigation}) => {
-
   const [selectedDay, setSelectedDay] = useState(null);
   const [newActivity, setNewActivity] = useState('');
   const [activities, setActivities] = useState([]);
@@ -38,6 +39,44 @@ export const ActivityTracker = ({navigation}) => {
     }
     fetchData()
   }, [])
+
+
+  //need to add type to activity
+  async function addCustomActivity() {
+    if (newActivity.trim() === '') {
+      return;
+    }
+    try {
+      setLoading(true)
+      await activitiesSQL.addCustomActivity(newActivity, selectedDay.dateString)
+      setNewActivity('')
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const ActivityRecord = ({id, date, activity}) => { 
+    return (
+      <View style={styles.activityRecordContainer}>
+        
+        <View style={{flex: 1}}>
+          <Text>{Utils.formatISOtoDisplayDate(new Date(date))}</Text>
+        </View>
+        <View style={{flex: 1}}>
+          <Text>{activity}</Text>
+        </View>
+
+        <View style={styles.iconsContainer}>
+          <Pressable onPress={() => { console.log('delete') }}>
+            <Icon name="trash" size={20} color={Colors.highlight} />
+          </Pressable>
+        </View>
+        
+      </View>
+    )
+  }
+
 
   return (
     <>
@@ -66,7 +105,7 @@ export const ActivityTracker = ({navigation}) => {
             />
             <Pressable
               style={styles.circleButton}
-              onPress={() => { console.log(newActivity) }}
+              onPress={() => { addCustomActivity() }}
             >
               <MaterialIcon name='check-outline' size={20} color={Colors.black} />
             </Pressable>
@@ -76,10 +115,18 @@ export const ActivityTracker = ({navigation}) => {
             <Wander size={48} color={Colors.primary} />
           )}
 
-          {loading === false && (
+          {loading === false && activities.length == 0 && (
             <View>
               <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
             </View>
+          )}
+
+          {activities && activities.length > 0 && loading == false && (
+            <>
+              {activities.map((activity, index) => (
+                <ActivityRecord key={index} id={activity.id} date={activity.date} activity={activity.activity} />
+              ))}
+            </>
           )}
 
         </>
@@ -126,5 +173,20 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     borderRadius: 10,
     padding: 10,
+  },
+  iconsContainer: {
+
+  },
+  activityRecordContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: 1,
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
   },
 });
