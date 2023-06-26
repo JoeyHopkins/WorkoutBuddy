@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import * as activitiesSQL from '../../controllers/activities.controller'
+import { Wander } from 'react-native-animated-spinkit'
 
 import {Calendar, CalendarUtils} from 'react-native-calendars';
 
@@ -13,10 +14,30 @@ export const ActivityTracker = ({navigation}) => {
 
   const [selectedDay, setSelectedDay] = useState(null);
   const [newActivity, setNewActivity] = useState('');
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   function formatString(dateObject) {
     return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
   }
+
+  function sleep (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        let allActivities = await activitiesSQL.getAllActivities()
+        setActivities(allActivities)
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <>
@@ -51,9 +72,16 @@ export const ActivityTracker = ({navigation}) => {
             </Pressable>
           </View>
 
-          <View>
-            <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
-          </View>
+          {loading === true && (
+            <Wander size={48} color={Colors.primary} />
+          )}
+
+          {loading === false && (
+            <View>
+              <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
+            </View>
+          )}
+
         </>
       )}
 
