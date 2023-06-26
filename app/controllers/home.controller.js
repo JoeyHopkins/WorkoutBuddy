@@ -117,7 +117,7 @@ exports.moveRoutineUp = (id) => {
   });
 };
 
-async function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
+function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       // Update the current routine's dayNum with priorDayNum
@@ -145,7 +145,7 @@ async function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
   });
 }
 
-async function updateRoutineDayNum(id, newDayNum) {
+function updateRoutineDayNum(id, newDayNum) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -161,3 +161,37 @@ async function updateRoutineDayNum(id, newDayNum) {
     });
   });
 }
+
+exports.getRoutineByID = (routineID) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM routines WHERE id = ?",
+        [routineID],
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array[0]);
+        },
+        (txObj, error) => { 
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
+exports.getEarliestRoutine = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM routines ORDER BY dayNum ASC LIMIT 1",
+        [],
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array[0]);
+        },
+        (txObj, error) => { 
+          reject(error);
+        }
+      );
+    });
+  });
+};

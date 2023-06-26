@@ -11,6 +11,7 @@ import { showMessage } from "react-native-flash-message";
 import * as Colors from '../../config/colors'
 
 import homeSql from '../../controllers/home.controller'
+import settingSql from '../../controllers/settings.controller'
 
 const width = Dimensions.get('window').width
 
@@ -127,41 +128,74 @@ export const RoutineChange = (props) => {
   )
 }
 
-
-
-
-
-
-
-
 export const RoutineMain = (props) => {
 
+  const [loading, setLoading] = useState(false);
+  const [routine, setRoutine] = useState(null);
+  const [todaysRoutine, setTodaysRoutine] = useState(null);
 
-  const [routineList, setRoutineList] = useState([]);
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+
+        let routineID = await getRoutineIDFromSettings('todaysRoutine')
+        
+        if(routineID != null)
+        {
+          let returnedRoutine = await homeSql.getRoutineByID(routineID, setRoutine)
+          setTodaysRoutine(returnedRoutine)
+        }
+        else
+        {
+          let returnedRoutine = await homeSql.getEarliestRoutine()
+          setTodaysRoutine(returnedRoutine)
+        }
+
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const getRoutineIDFromSettings = async (settingName) => {
+    try {
+  
+      let settingValue = await settingSql.getSetting(settingName);
+
+      if (!settingValue) {
+        // Setting does not exist, create it with initial value -1
+        await settingSql.createNewSetting(settingName, null);
+        return null;
+      } 
+      else
+        // Setting exists, retrieve the record that comes back
+        return settingValue[0].config;
+  
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
+      {loading == true && (
+        <Wander size={48} color={Colors.primary} />
+      )}
+      {loading == false && todaysRoutine && (
+        <Text>{todaysRoutine.routine + ' day'}</Text>
+      )}
+
 
     </>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
   addRoutineContainer: {
