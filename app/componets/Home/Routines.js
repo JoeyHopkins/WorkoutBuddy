@@ -134,10 +134,6 @@ export const RoutineMain = (props) => {
   const [routine, setRoutine] = useState(null);
   const [todaysRoutine, setTodaysRoutine] = useState(null);
 
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       try {

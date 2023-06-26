@@ -3,7 +3,13 @@ import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} f
 import * as Colors from '../../config/colors'
 
 import { RoutineChange, RoutineMain } from "./Routines"
+import { ActivityTracker } from "./ActivityTracker"
+
 import homeSql from '../../controllers/home.controller'
+
+import {Calendar, CalendarUtils} from 'react-native-calendars';
+
+const INITIAL_DATE = new Date().toISOString();
 
 export const Home = ({navigation}) => {
 
@@ -36,7 +42,7 @@ export const Home = ({navigation}) => {
         )}
 
         <View style={styles.homeContainer}>
-          <Text style={styles.homeContainerTitle}>Progress</Text>
+          <ActivityTracker></ActivityTracker>
         </View>
 
         <View style={styles.homeContainer}>
