@@ -50,7 +50,7 @@ export const ActivityTracker = ({navigation}) => {
     }
     try {
       setLoading(true)
-      await activitiesSQL.addCustomActivity(newActivity, selectedDay.dateString)
+      await activitiesSQL.addActivity(newActivity, selectedDay.dateString, 'custom')
       setNewActivity('')
       setLoading(false)
     } catch (error) {
@@ -60,11 +60,21 @@ export const ActivityTracker = ({navigation}) => {
 
   function setupCalander(activities) {
     let dates = {}
+    let color = ''
 
     for(let activity of activities) {
+
+      switch (activity.type) {
+        case 'custom':
+          color = Colors.primary
+          break;
+        default:
+          color = Colors.backgroundGray
+      }
+      
       dates[activity.date] = {
         marked: true,
-        dotColor:'red',
+        dotColor: color,
       }
     }
 

@@ -15,12 +15,12 @@ exports.getAllActivities = (setRoutineList) => {
   });
 };
 
-exports.addCustomActivity = (activity, date) => {
+exports.addActivity = (activity, date, type) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        "INSERT INTO activities (date, activity) VALUES (?, ?)",
-        [date, activity],
+        "INSERT INTO activities (date, activity, type) VALUES (?, ?, ?)",
+        [date, activity, type],
         (txObj, res) => {
           resolve(res);
         },
