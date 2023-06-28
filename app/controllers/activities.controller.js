@@ -31,3 +31,20 @@ exports.addActivity = (activity, date, type) => {
     });
   });
 };
+
+exports.deleteActivity = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "DELETE FROM activities WHERE id = ?",
+        [id],
+        (txObj, res) => {
+          resolve(res);
+        },
+        (txObj, error) => {
+          reject(error);
+        }
+      );
+    })
+  })
+};

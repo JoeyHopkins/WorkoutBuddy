@@ -107,6 +107,16 @@ export const ActivityTracker = ({navigation}) => {
     setActivities(todaysActivities)
   }
 
+  async function deleteActivity(id) {
+    try {
+      setLoading(true)
+      await activitiesSQL.deleteActivity(id)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const ActivityRecord = ({id, date, activity}) => { 
     return (
       <View style={styles.activityRecordContainer}>
@@ -119,7 +129,7 @@ export const ActivityTracker = ({navigation}) => {
         </View>
 
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { console.log('delete') }}>
+          <Pressable onPress={() => { deleteActivity(id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
