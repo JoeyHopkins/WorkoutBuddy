@@ -17,6 +17,7 @@ export const ActivityTracker = ({navigation}) => {
   const [newActivity, setNewActivity] = useState('');
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [markedDates, setMarkedDates] = useState({});
 
   function formatString(dateObject) {
     return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
@@ -32,6 +33,7 @@ export const ActivityTracker = ({navigation}) => {
         setLoading(true)
         let allActivities = await activitiesSQL.getAllActivities()
         setActivities(allActivities)
+        setupCalander(allActivities)
         setLoading(false)
       } catch (error) {
         console.log(error)
@@ -54,6 +56,19 @@ export const ActivityTracker = ({navigation}) => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function setupCalander(activities) {
+    let dates = {}
+
+    for(let activity of activities) {
+      dates[activity.date] = {
+        marked: true,
+        dotColor:'red',
+      }
+    }
+
+    setMarkedDates(dates)
   }
 
   const ActivityRecord = ({id, date, activity}) => { 
@@ -88,6 +103,7 @@ export const ActivityTracker = ({navigation}) => {
           onDayPress={day => {
             setSelectedDay(day);
           }}
+          markedDates={markedDates}
         />
       </View>
 
