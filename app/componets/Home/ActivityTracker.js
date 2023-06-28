@@ -16,6 +16,7 @@ export const ActivityTracker = ({navigation}) => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [newActivity, setNewActivity] = useState('');
   const [activities, setActivities] = useState([]);
+  const [allActivities, setAllActivities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
 
@@ -32,7 +33,7 @@ export const ActivityTracker = ({navigation}) => {
       try {
         setLoading(true)
         let allActivities = await activitiesSQL.getAllActivities()
-        setActivities(allActivities)
+        setAllActivities(allActivities)
         setupCalander(allActivities)
         setLoading(false)
       } catch (error) {
@@ -92,6 +93,18 @@ export const ActivityTracker = ({navigation}) => {
       markedDates[day.dateString] = {}
 
     markedDates[day.dateString].selected = true;
+
+    populateActivitesList(day)
+  }
+  
+  function populateActivitesList(day) {
+    let todaysActivities = []
+    
+    for(let activity of allActivities)
+      if(activity.date == day.dateString)
+        todaysActivities.push(activity)
+    
+    setActivities(todaysActivities)
   }
 
   const ActivityRecord = ({id, date, activity}) => { 
