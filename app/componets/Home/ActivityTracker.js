@@ -107,10 +107,24 @@ export const ActivityTracker = ({navigation}) => {
     setActivities(todaysActivities)
   }
 
-  async function deleteActivity(id) {
+  function removeActivityFromLists(id, date) {
+    for(let activity of allActivities)
+      if(activity.id == id)
+        allActivities.splice(allActivities.indexOf(activity), 1)
+
+    for(let activity of activities)
+      if(activity.id == id)
+        activities.splice(activities.indexOf(activity), 1)
+    
+    if(activities.length == 0)    
+      markedDates[date] = {}
+  }
+
+  async function deleteActivity(id, date) {
     try {
       setLoading(true)
       await activitiesSQL.deleteActivity(id)
+      removeActivityFromLists(id, date)
       setLoading(false)
     } catch (error) {
       console.log(error)
@@ -129,7 +143,7 @@ export const ActivityTracker = ({navigation}) => {
         </View>
 
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { deleteActivity(id) }}>
+          <Pressable onPress={() => { deleteActivity(id, date) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
