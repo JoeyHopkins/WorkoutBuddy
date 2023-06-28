@@ -81,6 +81,19 @@ export const ActivityTracker = ({navigation}) => {
     setMarkedDates(dates)
   }
 
+  function calanderDayPressed(day) {
+
+    if(selectedDay != null)
+      markedDates[selectedDay.dateString].selected = false;
+
+    setSelectedDay(day);
+
+    if(!markedDates[day.dateString])
+      markedDates[day.dateString] = {}
+
+    markedDates[day.dateString].selected = true;
+  }
+
   const ActivityRecord = ({id, date, activity}) => { 
     return (
       <View style={styles.activityRecordContainer}>
@@ -102,7 +115,6 @@ export const ActivityTracker = ({navigation}) => {
     )
   }
 
-
   return (
     <>
       <View>
@@ -111,7 +123,7 @@ export const ActivityTracker = ({navigation}) => {
           current={INITIAL_DATE}
           style={styles.calendar}
           onDayPress={day => {
-            setSelectedDay(day);
+            calanderDayPressed(day)
           }}
           markedDates={markedDates}
         />
