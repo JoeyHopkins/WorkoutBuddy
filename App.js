@@ -10,6 +10,7 @@ import FlashMessage from "react-native-flash-message";
 import { useEffect } from 'react'
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
+import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import * as Colors from './app/config/colors'
 
 const Tab = createBottomTabNavigator();
@@ -79,8 +80,12 @@ export default function App() {
             component={Workout}
             options={{
               ...headerOptions,
+              tabBarIcon: ({ color, size }) => (
+                <FontIcon name='dumbbell' size={20} color={color} />
+              ),
             }}
           />
+
           <Tab.Screen 
             name="Planning" 
             component={Planning}
