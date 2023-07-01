@@ -52,11 +52,31 @@ export const ActivityTracker = ({navigation}) => {
     try {
       setLoading(true)
       await activitiesSQL.addActivity(newActivity, selectedDay.dateString, 'custom')
+      addActivityToList()
       setNewActivity('')
       setLoading(false)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function addActivityToList(activity) {
+
+    activities.push({
+      activity: newActivity,
+      date: selectedDay.dateString,
+      type: 'custom'
+    })
+
+    allActivities.push({
+      activity: newActivity,
+      date: selectedDay.dateString,
+      type: 'custom'
+    })
+
+    markedDates[selectedDay.dateString].marked = true;
+    markedDates[selectedDay.dateString].dotColor = Colors.primary;
+
   }
 
   function setupCalander(activities) {
@@ -136,7 +156,7 @@ export const ActivityTracker = ({navigation}) => {
       <View style={styles.activityRecordContainer}>
         
         <View style={{flex: 1}}>
-          <Text>{Utils.formatISOtoDisplayDate(new Date(date))}</Text>
+          <Text>{ Utils.formatISOtoDisplayDate(new Date(date)) }</Text>
         </View>
         <View style={{flex: 1}}>
           <Text>{activity}</Text>
@@ -177,6 +197,7 @@ export const ActivityTracker = ({navigation}) => {
               style={styles.input}
               onChangeText={setNewActivity}
               placeholder="New Custom Activity"
+              value={newActivity}
             />
             <Pressable
               style={styles.circleButton}
