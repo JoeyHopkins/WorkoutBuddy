@@ -8,6 +8,7 @@ import { Wander } from 'react-native-animated-spinkit'
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as Utils from '../../utils'
+import { showMessage } from "react-native-flash-message";
 
 const INITIAL_DATE = new Date().toISOString();
 const width = Dimensions.get('window').width;
@@ -40,6 +41,11 @@ export const ActivityTracker = ({navigation}) => {
         await getData()
         setLoading(false)
       } catch (error) {
+        showMessage({
+          message: 'Error',
+          description: 'There was an error.',
+          type: "danger",
+        });
         console.error(error)
       }
     }
@@ -47,17 +53,25 @@ export const ActivityTracker = ({navigation}) => {
   }, [])
 
   async function getData(startDate = globalStartDate, endDate = globalEndDate, repopulate = false) {
+    try {
+      let allActivities = await activitiesSQL.getAllActivitiesByDate(startDate, endDate);
 
-    let allActivities = await activitiesSQL.getAllActivitiesByDate(startDate, endDate);
+      setGlobalStartDate(startDate)
+      setGlobalEndDate(endDate)
+      setAllActivities(allActivities)
+      setupCalander(startDate, allActivities)
 
-    setGlobalStartDate(startDate)
-    setGlobalEndDate(endDate)
-    setAllActivities(allActivities)
-    setupCalander(startDate, allActivities)
+      if(repopulate)
+        populateActivitesList(selectedDay, allActivities)
+    } 
+    catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error.',
+        type: "danger",
+      });
+    }
 
-    if(repopulate)
-      populateActivitesList(selectedDay, allActivities)
-  
     return
   }
 
@@ -155,7 +169,17 @@ export const ActivityTracker = ({navigation}) => {
       await getData(undefined, undefined, true)
       setNewActivity('')
       setLoadingList(false)
+      showMessage({
+        message: 'Success',
+        description: 'Custom activity was added.',
+        type: "success",
+      });
     } catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error.',
+        type: "danger",
+      });
       console.error(error)
     }
   }
@@ -166,7 +190,17 @@ export const ActivityTracker = ({navigation}) => {
       await activitiesSQL.deleteActivity(id)
       await getData(undefined, undefined, true)
       setLoadingList(false)
+      showMessage({
+        message: 'Success',
+        description: 'Custom activity was deleted.',
+        type: "success",
+      });
     } catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error.',
+        type: "danger",
+      });
       console.error(error)
     }
   }
