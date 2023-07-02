@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from'react-native-vector-icons/MaterialCommunityIcons';
 import * as Colors from './app/config/colors'
 
 const Tab = createBottomTabNavigator();
@@ -85,12 +86,14 @@ export default function App() {
               ),
             }}
           />
-
           <Tab.Screen 
-            name="Planning" 
+            name="Cardio" 
             component={Planning}
             options={{
               ...headerOptions,
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name='run-fast' size={22} color={color} />
+              ),
             }}
           />
         </Tab.Navigator>
