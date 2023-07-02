@@ -4,6 +4,8 @@ import SwitchSelector from "react-native-switch-selector";
 import * as Colors from '../../config/colors'
 import { useState } from 'react';
 
+import Carousel from 'react-native-snap-carousel';
+
 export const Workout = ({navigation}) => {
 
   const [pageMode, setPageMode] = useState("strengthMode");
@@ -12,6 +14,25 @@ export const Workout = ({navigation}) => {
     { label: "Strength", value: "strengthMode" },
     { label: "Cardio", value: "cardioMode" },
   ];
+
+  const data = [
+    { id: 1, date: '2023-07-01', activity: 'Activity 1', type: 'type1' },
+    { id: 2, date: '2023-07-02', activity: 'Activity 2', type: 'type2' },
+    { id: 3, date: '2023-07-03', activity: 'Activity 3', type: 'type3' },
+  ];
+
+  renderItem = ({item, index}) => {
+    return (
+        <View style={styles.slide}>
+            <Text style={styles.title}>{ item.activity }</Text>
+        </View>
+    );
+  }
+
+  const handleSnapToItem = (slideIndex) => {
+    console.log('Slide index:', slideIndex);
+    // Perform any desired actions based on the slide index
+  };
 
 
   const StrengthTotals = () => {
@@ -88,7 +109,20 @@ export const Workout = ({navigation}) => {
 
 
         <View style={styles.homeContainer}>
-          <Text>You have no routines...</Text>
+          {/* <Text>You have no routines...</Text> */}
+          <Carousel
+              data={data}
+              firstItem={data.length - 1}
+              activeSlideOffset={5}
+              lockScrollTimeoutDuration={2000}
+              renderItem={renderItem}
+              sliderWidth={800}
+              itemWidth={200}
+              layout={'stack'} layoutCardOffset={18}
+              onSnapToItem={handleSnapToItem}
+              // loop={true}
+            />
+
         </View>
 
         <Text>edit workouts...</Text>
@@ -102,6 +136,7 @@ export const Workout = ({navigation}) => {
             console.log('Start')
           }
         />
+
       </View>
     </>
   );
@@ -118,8 +153,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
-    marginTop: 20,
-    paddingVertical: 30,
+    marginTop: 10,
+    paddingVertical: 10,
     marginHorizontal: 20,
     alignItems: 'center',
     borderColor: Colors.primary,
@@ -139,10 +174,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   modeSwitchContainer: {
     marginHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 10,
+  },
+  slide: {
+    width: 200,
+    height: 200,
+    borderWidth: 10,
+    borderRadius: 20,    marginVertical: 0,
+    backgroundColor: Colors.white,
+    borderColor: Colors.primary,
   },
 });
