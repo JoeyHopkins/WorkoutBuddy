@@ -1,14 +1,20 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
+import React, {useState, useEffect} from 'react';
 
 import * as Colors from '../../config/colors'
-import { useState } from 'react';
 
 import Carousel from 'react-native-snap-carousel';
+
+import * as homeSql from '../../controllers/home.controller'
+
+import { Wander } from 'react-native-animated-spinkit'
 
 export const Workout = ({navigation}) => {
 
   const [pageMode, setPageMode] = useState("strengthMode");
+  const [loading, setLoading] = useState(false);
+  const [routineList, setRoutineList] = useState([])
 
   const options = [
     { label: "Strength", value: "strengthMode" },
@@ -21,6 +27,31 @@ export const Workout = ({navigation}) => {
     { id: 3, date: '2023-07-03', activity: 'Activity 3', type: 'type3' },
   ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        await getData()
+        setLoading(false)
+      } catch (error) {
+        // showMessage({
+        //   message: 'Error',
+        //   description: 'There was an error.',
+        //   type: "danger",
+        // });
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  async function getData() {
+    let routinesList = await homeSql.getAllRoutinesList()
+    setRoutineList(routinesList)  
+  }
+
+
+
   renderItem = ({item, index}) => {
     return (
         <View style={styles.slide}>
@@ -31,9 +62,7 @@ export const Workout = ({navigation}) => {
 
   const handleSnapToItem = (slideIndex) => {
     console.log('Slide index:', slideIndex);
-    // Perform any desired actions based on the slide index
   };
-
 
   const StrengthTotals = () => {
     return (
@@ -107,10 +136,15 @@ export const Workout = ({navigation}) => {
           />
         </View>
 
-
         <View style={styles.homeContainer}>
-          {/* <Text>You have no routines...</Text> */}
-          <Carousel
+
+          {loading == true && (
+            <Wander size={48} color={Colors.primary} />
+          )}
+
+          {loading == false && routineList && routineList.length > 0 && (
+
+            <Carousel
               data={data}
               firstItem={data.length - 1}
               activeSlideOffset={5}
@@ -120,10 +154,15 @@ export const Workout = ({navigation}) => {
               itemWidth={200}
               layout={'stack'} layoutCardOffset={18}
               onSnapToItem={handleSnapToItem}
-              // loop={true}
             />
+          )}
+          
+          {routineList.length == 0 && loading == false && (
+            <Text>You have no routines...</Text>
+          )}
 
         </View>
+
 
         <Text>edit workouts...</Text>
         <View style={styles.homeContainer}>

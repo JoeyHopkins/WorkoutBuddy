@@ -16,6 +16,20 @@ exports.getAllRoutines = (setRoutineList) => {
   });
 };
 
+exports.getAllRoutinesList = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM routines ORDER BY dayNum DESC",
+        null,
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array)
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};
+
 exports.addRoutine = async (routine) => {
   let dayNum = await findClosestDayNum() 
 
