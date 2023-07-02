@@ -209,23 +209,32 @@ export const ActivityTracker = ({navigation}) => {
     return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
   }
 
-  const ActivityRecord = ({id, date, activity}) => { 
+  const ActivityRecord = ({id, date, activity, type}) => { 
+    
+    const getColorByType = (type) => {
+      switch (type) {
+        case 'custom':
+          return Colors.customActivityColor;
+        default:
+          return Colors.defaultActivityColor;
+      }
+    };
+  
+    const textColor = getColorByType(type);
+
     return (
       <View style={styles.activityRecordContainer}>
-        
         <View style={{flex: 1}}>
-          <Text>{ Utils.formatISOtoDisplayDate(new Date(date)) }</Text>
+          <Text style={{ color: textColor }}>{ Utils.formatISOtoDisplayDate(new Date(date)) }</Text>
         </View>
         <View style={{flex: 1}}>
-          <Text>{activity}</Text>
+          <Text style={{ color: textColor }}>{activity}</Text>
         </View>
-
         <View style={styles.iconsContainer}>
           <Pressable onPress={() => { deleteActivity(id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
-        
       </View>
     )
   }
@@ -288,7 +297,7 @@ export const ActivityTracker = ({navigation}) => {
           {loadingList == false && activities && activities.length > 0 && (
             <>
               {activities.map((activity, index) => (
-                <ActivityRecord key={index} id={activity.id} date={activity.date} activity={activity.activity} />
+                <ActivityRecord key={index} id={activity.id} date={activity.date} activity={activity.activity} type={activity.type}/>
               ))}
             </>
           )}
