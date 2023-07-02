@@ -18,17 +18,17 @@ export const Workout = ({navigation}) => {
     return (
       <>
         <View style={styles.totalItem}>
-          <Text># of Reps</Text>
+          <Text>Reps</Text>
           <Text>0</Text>
         </View>
 
         <View style={styles.totalItem}>
-          <Text>Total Weight</Text>
+          <Text>Weight</Text>
           <Text>0 lbs</Text>
         </View>
 
         <View style={styles.totalItem}>
-          <Text>Avg per Rep</Text>
+          <Text>Avg</Text>
           <Text>0 lbs</Text>
         </View>      
       </>
@@ -61,7 +61,7 @@ export const Workout = ({navigation}) => {
       <View style={styles.background} >
         <View style={styles.homeContainer}>
           <View>
-            <Text>Weekly Summary</Text>
+            <Text>Weekly Total Summary</Text>
           </View>
           <View style={styles.totalContainer}>
             {pageMode === 'strengthMode' && (
@@ -73,24 +73,27 @@ export const Workout = ({navigation}) => {
             )}
           </View>
         </View>
-        
-        <SwitchSelector
-          options={options}
-          initial={0}
-          onPress={value => setPageMode(value)}
-          textColor={Colors.primary}
-          selectedColor={Colors.white}
-          buttonColor={Colors.primary}
-          borderColor={Colors.primary}
-        />
+
+        <View style={styles.modeSwitchContainer}>
+          <SwitchSelector
+            options={options}
+            initial={0}
+            onPress={value => setPageMode(value)}
+            textColor={Colors.primary}
+            selectedColor={Colors.white}
+            buttonColor={Colors.primary}
+            borderColor={Colors.primary}
+          />
+        </View>
+
 
         <View style={styles.homeContainer}>
-          <Text>Select Routine</Text>
+          <Text>You have no routines...</Text>
         </View>
 
         <Text>edit workouts...</Text>
         <View style={styles.homeContainer}>
-          <Text>List of workouts</Text>
+          <Text>You have no workouts...</Text>
         </View>
 
         <Button
@@ -137,5 +140,9 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems: 'center',
     marginTop: 20,
-  }
+  },
+  modeSwitchContainer: {
+    marginHorizontal: 20,
+    paddingTop: 20,
+  },
 });
