@@ -29,8 +29,17 @@ export const black = '#000000';
 export const background = white;
 export const backgroundGray = '#b9b9b9';
 
+
+
 //keep a primary and seconday as first and second respoctively
 export const linegraphColors = [
   primary,
   altSecondary,
 ]
+
+
+//Calendar Colors
+export const customActivityColor = '#fc8542';
+export const customActivitySelectedColor = '#fc8542';
+export const defaultActivityColor = '#b1b6af';
+export const defaultActivitySelectedColor = '#b1b6af';

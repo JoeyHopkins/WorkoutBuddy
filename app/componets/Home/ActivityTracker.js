@@ -31,8 +31,8 @@ export const ActivityTracker = ({navigation}) => {
   const [allActivities, setAllActivities] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
 
-  const custom = {key: 'custom', color: 'green', selectedDotColor: 'blue'};
-  const noType = {key: 'noType', color: 'gray', selectedDotColor: 'blue'};
+  const custom = {key: 'custom', color: Colors.customActivityColor, selectedDotColor: Colors.customActivitySelectedColor};
+  const noType = {key: 'noType', color: Colors.defaultActivityColor, selectedDotColor: Colors.defaultActivitySelectedColor};
 
   useEffect(() => {
     const fetchData = async () => {
