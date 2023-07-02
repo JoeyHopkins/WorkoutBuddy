@@ -86,7 +86,7 @@ export default function App() {
               ),
             }}
           />
-          <Tab.Screen 
+          {/* <Tab.Screen 
             name="Cardio" 
             component={Planning}
             options={{
@@ -95,7 +95,7 @@ export default function App() {
                 <MaterialCommunityIcons name='run-fast' size={22} color={color} />
               ),
             }}
-          />
+          /> */}
         </Tab.Navigator>
         <FlashMessage position="bottom" />
       </NavigationContainer>
