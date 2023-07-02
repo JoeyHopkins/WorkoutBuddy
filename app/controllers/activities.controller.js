@@ -15,6 +15,22 @@ exports.getAllActivities = (setRoutineList) => {
   });
 };
 
+exports.getAllActivitiesByDate = (startDate, endDate) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM activities WHERE date BETWEEN ? AND ?",
+        [startDate, endDate],
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array)
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};
+
+
 exports.addActivity = (activity, date, type) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {

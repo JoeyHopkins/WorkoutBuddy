@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
+import { StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as activitiesSQL from '../../controllers/activities.controller'
 import { Wander } from 'react-native-animated-spinkit'
 
-import {Calendar, CalendarUtils} from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as Utils from '../../utils'
 
@@ -13,93 +13,110 @@ const INITIAL_DATE = new Date().toISOString();
 const width = Dimensions.get('window').width;
 
 export const ActivityTracker = ({navigation}) => {
+
+  const currentDate = new Date();
+  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().substring(0, 10);
+  const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString().substring(0, 10);
+
+  const [globalStartDate, setGlobalStartDate] = useState(firstDayOfMonth);
+  const [globalEndDate, setGlobalEndDate] = useState(lastDayOfMonth);
+
+  const [loading, setLoading] = useState(false);
+  const [loadingList, setLoadingList] = useState(false);
+
   const [selectedDay, setSelectedDay] = useState(null);
   const [newActivity, setNewActivity] = useState('');
   const [activities, setActivities] = useState([]);
   const [allActivities, setAllActivities] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
 
-  function formatString(dateObject) {
-    return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
-  }
-
-  function sleep (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  const custom = {key: 'custom', color: 'green', selectedDotColor: 'blue'};
+  const noType = {key: 'noType', color: 'gray', selectedDotColor: 'blue'};
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        let allActivities = await activitiesSQL.getAllActivities()
-        setAllActivities(allActivities)
-        setupCalander(allActivities)
+        await getData()
         setLoading(false)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
     fetchData()
   }, [])
 
+  async function getData(startDate = globalStartDate, endDate = globalEndDate, repopulate = false) {
 
-  //need to add type to activity
-  async function addCustomActivity() {
-    if (newActivity.trim() === '') {
-      return;
-    }
-    try {
-      setLoading(true)
-      await activitiesSQL.addActivity(newActivity, selectedDay.dateString, 'custom')
-      addActivityToList()
-      setNewActivity('')
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-    }
+    let allActivities = await activitiesSQL.getAllActivitiesByDate(startDate, endDate);
+
+    setGlobalStartDate(startDate)
+    setGlobalEndDate(endDate)
+    setAllActivities(allActivities)
+    setupCalander(startDate, allActivities)
+
+    if(repopulate)
+      populateActivitesList(selectedDay, allActivities)
+  
+    return
   }
 
-  function addActivityToList(activity) {
+  function setupCalander(date, activities) {
 
-    activities.push({
-      activity: newActivity,
-      date: selectedDay.dateString,
-      type: 'custom'
-    })
-
-    allActivities.push({
-      activity: newActivity,
-      date: selectedDay.dateString,
-      type: 'custom'
-    })
-
-    markedDates[selectedDay.dateString].marked = true;
-    markedDates[selectedDay.dateString].dotColor = Colors.primary;
-
-  }
-
-  function setupCalander(activities) {
-    let dates = {}
-    let color = ''
+    let newMarkedDates = {};
 
     for(let activity of activities) {
 
+      let activityType = {}
+
       switch (activity.type) {
         case 'custom':
-          color = Colors.primary
+          activityType = custom;
           break;
         default:
-          color = Colors.backgroundGray
+          activityType = noType;
       }
-      
-      dates[activity.date] = {
-        marked: true,
-        dotColor: color,
-      }
+
+      addActivityToMarkedDates(newMarkedDates, activity, activityType)
     }
 
-    setMarkedDates(dates)
+    if(selectedDay)
+      if(newMarkedDates[selectedDay.dateString] === undefined)
+        newMarkedDates[selectedDay.dateString] = { selected: true };
+      else
+        newMarkedDates[selectedDay.dateString].selected = true;
+      
+    setMarkedDates(newMarkedDates)
+  }
+
+  function addActivityToMarkedDates(markedDates, activity, activityType) {
+
+    if (markedDates[activity.date]) {
+      if(markedDates[activity.date].dots) {
+        const dotsArray = markedDates[activity.date].dots;
+  
+        const objectExists = dotsArray.some(dot => dot.key === activityType.key);
+  
+        if (!objectExists) 
+          dotsArray.push(activityType);
+      }
+      else
+        markedDates[activity.date].dots = [activityType];
+    } 
+    else 
+      markedDates[activity.date] = { dots: [activityType] }; 
+  }
+
+  async function goToMonth(date, type) {
+    
+    const newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() + parseInt(type));
+    const startDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1).toISOString().substring(0, 10);
+    const lastDate = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).toISOString().substring(0, 10);
+    
+    setLoading(true)
+    await getData(startDate, lastDate)
+    setLoading(false)
   }
 
   function calanderDayPressed(day) {
@@ -117,38 +134,45 @@ export const ActivityTracker = ({navigation}) => {
     populateActivitesList(day)
   }
   
-  function populateActivitesList(day) {
+  function populateActivitesList(day, alternateData = null) {
     let todaysActivities = []
-    
-    for(let activity of allActivities)
+    let useData = alternateData ? alternateData : allActivities;
+
+    for(let activity of useData)
       if(activity.date == day.dateString)
         todaysActivities.push(activity)
-    
+
     setActivities(todaysActivities)
   }
 
-  function removeActivityFromLists(id, date) {
-    for(let activity of allActivities)
-      if(activity.id == id)
-        allActivities.splice(allActivities.indexOf(activity), 1)
-
-    for(let activity of activities)
-      if(activity.id == id)
-        activities.splice(activities.indexOf(activity), 1)
-    
-    if(activities.length == 0)    
-      markedDates[date] = {}
+  async function addCustomActivity() {
+    if (newActivity.trim() === '') {
+      return;
+    }
+    try {
+      setLoadingList(true)
+      await activitiesSQL.addActivity(newActivity, selectedDay.dateString, 'custom')
+      await getData(undefined, undefined, true)
+      setNewActivity('')
+      setLoadingList(false)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  async function deleteActivity(id, date) {
+  async function deleteActivity(id) {
     try {
-      setLoading(true)
+      setLoadingList(true)
       await activitiesSQL.deleteActivity(id)
-      removeActivityFromLists(id, date)
-      setLoading(false)
+      await getData(undefined, undefined, true)
+      setLoadingList(false)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
+  }
+
+  function formatString(dateObject) {
+    return `${dateObject.month}/${dateObject.day}/${dateObject.year}`
   }
 
   const ActivityRecord = ({id, date, activity}) => { 
@@ -163,7 +187,7 @@ export const ActivityTracker = ({navigation}) => {
         </View>
 
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { deleteActivity(id, date) }}>
+          <Pressable onPress={() => { deleteActivity(id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
@@ -176,13 +200,23 @@ export const ActivityTracker = ({navigation}) => {
     <>
       <View>
         <Calendar
+          displayLoadingIndicator={loading}
           enableSwipeMonths
           current={INITIAL_DATE}
           style={styles.calendar}
           onDayPress={day => {
             calanderDayPressed(day)
           }}
+          markingType={'multi-dot'}
           markedDates={markedDates}
+          onPressArrowLeft={(callback, month) => {
+            goToMonth(month, '-1')
+            callback();
+          }} 
+          onPressArrowRight={(callback, month) => {
+            goToMonth(month, '+1')
+            callback();
+          }} 
         />
       </View>
 
@@ -207,17 +241,17 @@ export const ActivityTracker = ({navigation}) => {
             </Pressable>
           </View>
 
-          {loading === true && (
+          {loadingList === true && (
             <Wander size={48} color={Colors.primary} />
           )}
 
-          {loading === false && activities.length == 0 && (
+          {loadingList === false && activities.length == 0 && (
             <View>
               <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
             </View>
           )}
 
-          {activities && activities.length > 0 && loading == false && (
+          {loadingList == false && activities && activities.length > 0 && (
             <>
               {activities.map((activity, index) => (
                 <ActivityRecord key={index} id={activity.id} date={activity.date} activity={activity.activity} />
