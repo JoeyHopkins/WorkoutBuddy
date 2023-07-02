@@ -2,9 +2,11 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 
 import * as Colors from '../../config/colors'
+import { useState } from 'react';
 
 export const Workout = ({navigation}) => {
 
+  const [pageMode, setPageMode] = useState("strengthMode");
 
   const options = [
     { label: "Strength", value: "strengthMode" },
@@ -12,17 +14,70 @@ export const Workout = ({navigation}) => {
   ];
 
 
+  const StrengthTotals = () => {
+    return (
+      <>
+        <View style={styles.totalItem}>
+          <Text># of Reps</Text>
+          <Text>0</Text>
+        </View>
+
+        <View style={styles.totalItem}>
+          <Text>Total Weight</Text>
+          <Text>0 lbs</Text>
+        </View>
+
+        <View style={styles.totalItem}>
+          <Text>Avg per Rep</Text>
+          <Text>0 lbs</Text>
+        </View>      
+      </>
+    ) 
+  };
+
+  const CardioTotals = () => {
+    return (
+      <>
+        <View style={styles.totalItem}>
+          <Text>Low</Text>
+          <Text>0 minutes</Text>
+        </View>
+
+        <View style={styles.totalItem}>
+          <Text>Medium</Text>
+          <Text>0 minutes</Text>
+        </View>
+
+        <View style={styles.totalItem}>
+          <Text>High</Text>
+          <Text>0 minutes</Text>
+        </View>      
+      </>
+    ) 
+  };
+
   return (
     <>
       <View style={styles.background} >
         <View style={styles.homeContainer}>
-          <Text>Minor Total Summary</Text>
+          <View>
+            <Text>Weekly Summary</Text>
+          </View>
+          <View style={styles.totalContainer}>
+            {pageMode === 'strengthMode' && (
+              <StrengthTotals/>
+            )}
+            
+            {pageMode === 'cardioMode' && (
+              <CardioTotals/>
+            )}
+          </View>
         </View>
         
         <SwitchSelector
           options={options}
           initial={0}
-          onPress={value => console.log(`Call onPress with value: ${value}`)}
+          onPress={value => setPageMode(value)}
           textColor={Colors.primary}
           selectedColor={Colors.white}
           buttonColor={Colors.primary}
@@ -69,5 +124,18 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: Colors.white,
+  },
+  totalItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+
+  },
+  totalContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginTop: 20,
   }
 });
