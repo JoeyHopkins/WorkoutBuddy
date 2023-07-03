@@ -200,8 +200,7 @@ export const Workout = ({navigation}) => {
         )}
 
         {pageMode == 'Edit' && (
-          // <Text>Edit Mode</Text>
-          <EditWorkout></EditWorkout>
+          <EditWorkout setPageMode={setPageMode}></EditWorkout>
         )}        
      
       </View>
