@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import * as Colors from '../../config/colors'
 import Carousel from 'react-native-snap-carousel';
@@ -19,6 +19,8 @@ export const Workout = ({navigation}) => {
   const [pageMode, setPageMode] = useState("Main");
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
+  let routineSelected = useRef({})
+  let routineSelectedID = useRef(0)
 
   const options = [
     { label: "Strength", value: "strengthMode" },
@@ -46,6 +48,8 @@ export const Workout = ({navigation}) => {
   async function getData() {
     let routinesList = await homeSql.getAllRoutinesList()
     setRoutineList(routinesList)  
+    routineSelected.current = routinesList[routinesList.length - 1]
+    routineSelectedID.current = routinesList.length - 1
   }
 
   renderItem = ({item, index}) => {
@@ -58,7 +62,8 @@ export const Workout = ({navigation}) => {
   }
 
   const handleSnapToItem = (slideIndex) => {
-    console.log('Slide index:', slideIndex);
+    routineSelected.current = routineList[slideIndex]
+    routineSelectedID.current = slideIndex
   };
 
   const StrengthTotals = () => {
@@ -135,7 +140,6 @@ export const Workout = ({navigation}) => {
           </View>
         </View>
 
-
         <View style={styles.homeContainer}>
 
           {loading == true && (
@@ -146,7 +150,7 @@ export const Workout = ({navigation}) => {
 
             <Carousel
               data={routineList}
-              firstItem={routineList.length - 1}
+              firstItem={routineSelectedID.current}
               activeSlideOffset={5}
               lockScrollTimeoutDuration={2000}
               renderItem={renderItem}
@@ -200,7 +204,9 @@ export const Workout = ({navigation}) => {
         )}
 
         {pageMode == 'Edit' && (
-          <EditWorkout setPageMode={setPageMode}></EditWorkout>
+          // <Text>Test</Text>
+          
+          <EditWorkout setPageMode={setPageMode} routineSelected={routineSelected}></EditWorkout>
         )}        
      
       </View>

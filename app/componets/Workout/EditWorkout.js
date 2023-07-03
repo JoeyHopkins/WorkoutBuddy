@@ -2,13 +2,14 @@ import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-nati
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
-export function EditWorkout({setPageMode}) {
-  let routine = 'Chest'
+export function EditWorkout({setPageMode, routineSelected}) {
+
+  let editRoutine = (routineSelected.current)
   return (
     <> 
       <View style={styles.homeContainer}>
         <View style={styles.center}>
-          <Text style={styles.title}>{routine} Day</Text>
+          <Text style={styles.title}>{editRoutine.routine} Workouts</Text>
         </View>
       </View>
       
@@ -51,6 +52,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.black,
+    color: Colors.primary,
   },
 });
