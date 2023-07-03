@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect} from 'react';
 
@@ -10,21 +10,18 @@ import * as homeSql from '../../controllers/home.controller'
 
 import { Wander } from 'react-native-animated-spinkit'
 
+const width = Dimensions.get('window').width;
+const slideWidth = width * 0.8 - 40;
+
 export const Workout = ({navigation}) => {
 
   const [pageMode, setPageMode] = useState("strengthMode");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
 
   const options = [
     { label: "Strength", value: "strengthMode" },
     { label: "Cardio", value: "cardioMode" },
-  ];
-
-  const data = [
-    { id: 1, date: '2023-07-01', activity: 'Activity 1', type: 'type1' },
-    { id: 2, date: '2023-07-02', activity: 'Activity 2', type: 'type2' },
-    { id: 3, date: '2023-07-03', activity: 'Activity 3', type: 'type3' },
   ];
 
   useEffect(() => {
@@ -50,13 +47,11 @@ export const Workout = ({navigation}) => {
     setRoutineList(routinesList)  
   }
 
-
-
   renderItem = ({item, index}) => {
     return (
-        <View style={styles.slide}>
-            <Text style={styles.title}>{ item.activity }</Text>
-        </View>
+      <View style={styles.slide}>
+        <Text style={styles.title}>{ item.routine }</Text>
+      </View>
     );
   }
 
@@ -145,24 +140,26 @@ export const Workout = ({navigation}) => {
           {loading == false && routineList && routineList.length > 0 && (
 
             <Carousel
-              data={data}
-              firstItem={data.length - 1}
+              data={routineList}
+              firstItem={routineList.length - 1}
               activeSlideOffset={5}
               lockScrollTimeoutDuration={2000}
               renderItem={renderItem}
-              sliderWidth={800}
-              itemWidth={200}
+              sliderWidth={width - 40}
+              itemWidth={slideWidth}
               layout={'stack'} layoutCardOffset={18}
               onSnapToItem={handleSnapToItem}
+              style={styles.carousel}
             />
           )}
           
           {routineList.length == 0 && loading == false && (
-            <Text>You have no routines...</Text>
+            <View style={styles.center}>
+              <Text style={styles.center}>You have no routines...</Text>
+            </View>
           )}
 
         </View>
-
 
         <Text>edit workouts...</Text>
         <View style={styles.homeContainer}>
@@ -195,7 +192,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 10,
     marginHorizontal: 20,
-    alignItems: 'center',
     borderColor: Colors.primary,
     overflow: 'hidden',
   },
@@ -220,11 +216,17 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   slide: {
-    width: 200,
+    width: slideWidth,
     height: 200,
     borderWidth: 10,
-    borderRadius: 20,    marginVertical: 0,
+    borderRadius: 20,    
+    alignItems: 'center',
+    marginVertical: 0,
     backgroundColor: Colors.white,
     borderColor: Colors.primary,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
