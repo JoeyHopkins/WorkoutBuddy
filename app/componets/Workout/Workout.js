@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Dimensions} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect} from 'react';
 
@@ -11,7 +11,9 @@ import * as homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 
 const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 const slideWidth = width * 0.8 - 40;
+const slideHeight = height * 0.22;
 
 export const Workout = ({navigation}) => {
 
@@ -51,6 +53,7 @@ export const Workout = ({navigation}) => {
     return (
       <View style={styles.slide}>
         <Text style={styles.title}>{ item.routine }</Text>
+        <Text style={styles.previousWorkoutContainer}>No previous workout...</Text>
       </View>
     );
   }
@@ -103,33 +106,37 @@ export const Workout = ({navigation}) => {
 
   return (
     <>
-      <View style={styles.background} >
-        <View style={styles.homeContainer}>
-          <View>
-            <Text>Weekly Total Summary</Text>
+      <View style={styles.background}>
+
+        <View style={styles.fillSpace}>
+          <View style={styles.homeContainer}>
+            <View>
+              <Text style={styles.title}>Weekly Total Summary</Text>
+            </View>
+            <View style={styles.totalContainer}>
+              {pageMode === 'strengthMode' && (
+                <StrengthTotals/>
+              )}
+              
+              {pageMode === 'cardioMode' && (
+                <CardioTotals/>
+              )}
+            </View>
           </View>
-          <View style={styles.totalContainer}>
-            {pageMode === 'strengthMode' && (
-              <StrengthTotals/>
-            )}
-            
-            {pageMode === 'cardioMode' && (
-              <CardioTotals/>
-            )}
+
+          <View style={styles.modeSwitchContainer}>
+            <SwitchSelector
+              options={options}
+              initial={0}
+              onPress={value => setPageMode(value)}
+              textColor={Colors.primary}
+              selectedColor={Colors.white}
+              buttonColor={Colors.primary}
+              borderColor={Colors.primary}
+            />
           </View>
         </View>
 
-        <View style={styles.modeSwitchContainer}>
-          <SwitchSelector
-            options={options}
-            initial={0}
-            onPress={value => setPageMode(value)}
-            textColor={Colors.primary}
-            selectedColor={Colors.white}
-            buttonColor={Colors.primary}
-            borderColor={Colors.primary}
-          />
-        </View>
 
         <View style={styles.homeContainer}>
 
@@ -161,17 +168,26 @@ export const Workout = ({navigation}) => {
 
         </View>
 
-        <Text>edit workouts...</Text>
-        <View style={styles.homeContainer}>
+        <View style={styles.homeContainerCenter}>
+          <Text>edit workouts...</Text>
           <Text>You have no workouts...</Text>
         </View>
 
-        <Button
+
+        {/* <Button
           title="Start Workout"
           onPress={() =>
             console.log('Start')
           }
-        />
+          style={styles.startWorkoutButton}
+        /> */}
+
+        <Pressable 
+          onPress={() => { console.log('Start') }}
+          style={styles.startWorkoutButton}
+        >
+          <Text>Start Workout</Text>
+        </Pressable>
 
       </View>
     </>
@@ -190,13 +206,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     marginTop: 10,
-    paddingVertical: 10,
+    paddingTop: 20,
     marginHorizontal: 20,
     borderColor: Colors.primary,
     overflow: 'hidden',
+    flex: 1,
+  },
+  homeContainerCenter: {
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderRadius: 20,
+    marginTop: 10,
+    paddingTop: 20,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: Colors.primary,
+    overflow: 'hidden',
+    flex: 1,
   },
   background: {
     backgroundColor: Colors.white,
+    flex: 1,
   },
   totalItem: {
     flex: 1,
@@ -217,7 +248,7 @@ const styles = StyleSheet.create({
   },
   slide: {
     width: slideWidth,
-    height: 200,
+    height: slideHeight,
     borderWidth: 10,
     borderRadius: 20,    
     alignItems: 'center',
@@ -228,5 +259,30 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  title: {
+    color: Colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  previousWorkoutContainer: {
+    color: Colors.primary,
+    fontSize: 16,
+    marginTop: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  fillSpace: {
+    flex: 1,
+  },
+  startWorkoutButton: {
+    paddingVertical: 10,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
   },
 });
