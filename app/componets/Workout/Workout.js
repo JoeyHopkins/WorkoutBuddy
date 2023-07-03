@@ -2,14 +2,11 @@ import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-nati
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-
 import * as Colors from '../../config/colors'
-
 import Carousel from 'react-native-snap-carousel';
-
 import * as homeSql from '../../controllers/home.controller'
-
 import { Wander } from 'react-native-animated-spinkit'
+import { EditWorkout } from './EditWorkout'
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -18,7 +15,8 @@ const slideHeight = height * 0.22;
 
 export const Workout = ({navigation}) => {
 
-  const [pageMode, setPageMode] = useState("strengthMode");
+  const [workoutMode, setWorkoutMode] = useState("strengthMode");
+  const [pageMode, setPageMode] = useState("Main");
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
 
@@ -105,21 +103,20 @@ export const Workout = ({navigation}) => {
     ) 
   };
 
-  return (
-    <>
-      <View style={styles.background}>
-
+  const Main = () => {
+    return (
+      <>
         <View style={styles.fillSpace}>
           <View style={styles.homeContainer}>
             <View>
               <Text style={styles.title}>Weekly Total Summary</Text>
             </View>
             <View style={styles.totalContainer}>
-              {pageMode === 'strengthMode' && (
+              {workoutMode === 'strengthMode' && (
                 <StrengthTotals/>
               )}
               
-              {pageMode === 'cardioMode' && (
+              {workoutMode === 'cardioMode' && (
                 <CardioTotals/>
               )}
             </View>
@@ -129,7 +126,7 @@ export const Workout = ({navigation}) => {
             <SwitchSelector
               options={options}
               initial={0}
-              onPress={value => setPageMode(value)}
+              onPress={value => setWorkoutMode(value)}
               textColor={Colors.primary}
               selectedColor={Colors.white}
               buttonColor={Colors.primary}
@@ -173,7 +170,7 @@ export const Workout = ({navigation}) => {
           <View style={styles.editButtonContainer}>
             <Pressable
               style={styles.circleButton}
-              onPress={() => { console.log('edit') }}
+              onPress={() => { setPageMode('Edit') }}
             >
               <EntypoIcon name='edit' size={20} color={Colors.black} />
             </Pressable>
@@ -189,8 +186,24 @@ export const Workout = ({navigation}) => {
           style={styles.startWorkoutButton}
         >
           <Text>Start Workout</Text>
-        </Pressable>
+        </Pressable>      
+      </>
+    )
+  }
 
+  return (
+    <>
+      <View style={styles.background}>
+
+        {pageMode == 'Main' && (
+          <Main></Main>
+        )}
+
+        {pageMode == 'Edit' && (
+          // <Text>Edit Mode</Text>
+          <EditWorkout></EditWorkout>
+        )}        
+     
       </View>
     </>
   );
