@@ -13,7 +13,17 @@ exports.getTablesFromDB = () => {
   }) // end transaction
 };
 
-exports.createTables = () => {
+// db.transaction(tx => {
+//   tx.executeSql(
+//     "ALTER TABLE routines ADD COLUMN type INTEGER DEFAULT 0",
+//     [],
+//     () => console.log("Column added successfully"),
+//     (txObj, error) => console.log("Error ", error)
+//   );
+// });
+
+exports.createTables =  () => {
+
   db.transaction(txn => {
     txn.executeSql(`CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY AUTOINCREMENT, setting VARCHAR(20), config VARCHAR(50));`,
       [],
@@ -55,7 +65,7 @@ exports.createTables = () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20), type INTEGER);`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)

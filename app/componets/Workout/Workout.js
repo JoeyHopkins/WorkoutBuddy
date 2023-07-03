@@ -130,7 +130,7 @@ export const Workout = ({navigation}) => {
           <View style={styles.modeSwitchContainer}>
             <SwitchSelector
               options={options}
-              initial={0}
+              initial={workoutMode === "strengthMode" ? 0 : 1}
               onPress={value => setWorkoutMode(value)}
               textColor={Colors.primary}
               selectedColor={Colors.white}
