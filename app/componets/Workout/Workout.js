@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect} from 'react';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 import * as Colors from '../../config/colors'
 
@@ -168,19 +169,20 @@ export const Workout = ({navigation}) => {
 
         </View>
 
-        <View style={styles.homeContainerCenter}>
-          <Text>edit workouts...</Text>
-          <Text>You have no workouts...</Text>
+        <View style={styles.homeContainer}>
+          <View style={styles.editButtonContainer}>
+            <Pressable
+              style={styles.circleButton}
+              onPress={() => { console.log('edit') }}
+            >
+              <EntypoIcon name='edit' size={20} color={Colors.black} />
+            </Pressable>
+          </View>
+          <View style={styles.center}>
+            <Text>You have no workouts...</Text>
+          </View>
+
         </View>
-
-
-        {/* <Button
-          title="Start Workout"
-          onPress={() =>
-            console.log('Start')
-          }
-          style={styles.startWorkoutButton}
-        /> */}
 
         <Pressable 
           onPress={() => { console.log('Start') }}
@@ -284,5 +286,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
+  },
+  circleButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editButtonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 30,
   },
 });
