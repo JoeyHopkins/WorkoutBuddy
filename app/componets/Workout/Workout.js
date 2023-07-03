@@ -15,41 +15,71 @@ const slideHeight = height * 0.22;
 
 export const Workout = ({navigation}) => {
 
-  const [workoutMode, setWorkoutMode] = useState("strengthMode");
+  const [workoutMode, setWorkoutMode] = useState("strength");
   const [pageMode, setPageMode] = useState("Main");
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
   let routineSelected = useRef({})
   let routineSelectedID = useRef(0)
 
+  let strengthRoutines = useRef([])
+  let cardioRoutines = useRef([])
+
   const options = [
-    { label: "Strength", value: "strengthMode" },
-    { label: "Cardio", value: "cardioMode" },
+    { label: "Strength", value: "strength" },
+    { label: "Cardio", value: "cardio" },
   ];
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        setLoading(true)
-        await getData()
-        setLoading(false)
-      } catch (error) {
-        // showMessage({
-        //   message: 'Error',
-        //   description: 'There was an error.',
-        //   type: "danger",
-        // });
-        console.error(error)
-      }
+      setLoading(true)
+      await getData()
+      setLoading(false)
     }
     fetchData()
   }, [])
 
+  function changeWorkoutMode(value) {
+    setWorkoutMode(value)
+
+    if(value === "strength")
+      setRoutineList(strengthRoutines.current)
+    else if(value === "cardio")
+      setRoutineList(cardioRoutines.current)
+
+    }
+
+  function seperateRoutinesByType(routinesList) {
+    for(let routine of routinesList)
+      // 0 == strength, 1 == cardio
+      if(routine.type === 0)
+        strengthRoutines.current.push(routine)
+      else if(routine.type === 1)
+        cardioRoutines.current.push(routine)
+
+  }
+
   async function getData() {
-    let routinesList = await homeSql.getAllRoutinesList()
-    setRoutineList(routinesList)  
-    routineSelected.current = routinesList[routinesList.length - 1]
-    routineSelectedID.current = routinesList.length - 1
+    try {
+      let routinesList = await homeSql.getAllRoutinesList()
+      seperateRoutinesByType(routinesList)
+
+      if(workoutMode === "strength")
+        setRoutineList(strengthRoutines.current)
+      else if(workoutMode === "cardio")
+        setRoutineList(cardioRoutines.current)
+
+        routineSelected.current = routinesList[routinesList.length - 1]
+      routineSelectedID.current = routinesList.length - 1
+    } catch (error) {
+      // showMessage({
+      //   message: 'Error',
+      //   description: 'There was an error.',
+      //   type: "danger",
+      // });
+      console.error(error)
+    }
+
   }
 
   renderItem = ({item, index}) => {
@@ -117,11 +147,11 @@ export const Workout = ({navigation}) => {
               <Text style={styles.title}>Weekly Total Summary</Text>
             </View>
             <View style={styles.totalContainer}>
-              {workoutMode === 'strengthMode' && (
+              {workoutMode === 'strength' && (
                 <StrengthTotals/>
               )}
               
-              {workoutMode === 'cardioMode' && (
+              {workoutMode === 'cardio' && (
                 <CardioTotals/>
               )}
             </View>
@@ -130,8 +160,8 @@ export const Workout = ({navigation}) => {
           <View style={styles.modeSwitchContainer}>
             <SwitchSelector
               options={options}
-              initial={workoutMode === "strengthMode" ? 0 : 1}
-              onPress={value => setWorkoutMode(value)}
+              initial={workoutMode === "strength" ? 0 : 1}
+              onPress={value => changeWorkoutMode(value)}
               textColor={Colors.primary}
               selectedColor={Colors.white}
               buttonColor={Colors.primary}
