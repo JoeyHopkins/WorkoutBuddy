@@ -69,8 +69,9 @@ export const Workout = ({navigation}) => {
       else if(workoutMode === "cardio")
         setRoutineList(cardioRoutines.current)
 
-        routineSelected.current = routinesList[routinesList.length - 1]
+      routineSelected.current = routinesList[routinesList.length - 1]
       routineSelectedID.current = routinesList.length - 1
+      
     } catch (error) {
       // showMessage({
       //   message: 'Error',
@@ -170,35 +171,37 @@ export const Workout = ({navigation}) => {
           </View>
         </View>
 
-        <View style={styles.homeContainer}>
+        {workoutMode == 'strength' && (
+          <View style={styles.homeContainer}>
 
-          {loading == true && (
-            <Wander size={48} color={Colors.primary} />
-          )}
+            {loading == true && (
+              <Wander size={48} color={Colors.primary} />
+            )}
 
-          {loading == false && routineList && routineList.length > 0 && (
+            {loading == false && routineList && routineList.length > 0 && (
 
-            <Carousel
-              data={routineList}
-              firstItem={routineSelectedID.current}
-              activeSlideOffset={5}
-              lockScrollTimeoutDuration={2000}
-              renderItem={renderItem}
-              sliderWidth={width - 40}
-              itemWidth={slideWidth}
-              layout={'stack'} layoutCardOffset={18}
-              onSnapToItem={handleSnapToItem}
-              style={styles.carousel}
-            />
-          )}
-          
-          {routineList.length == 0 && loading == false && (
-            <View style={styles.center}>
-              <Text style={styles.center}>You have no routines...</Text>
-            </View>
-          )}
+              <Carousel
+                data={routineList}
+                firstItem={routineSelectedID.current}
+                activeSlideOffset={5}
+                lockScrollTimeoutDuration={2000}
+                renderItem={renderItem}
+                sliderWidth={width - 40}
+                itemWidth={slideWidth}
+                layout={'stack'} layoutCardOffset={18}
+                onSnapToItem={handleSnapToItem}
+                style={styles.carousel}
+              />
+            )}
+            
+            {routineList.length == 0 && loading == false && (
+              <View style={styles.center}>
+                <Text style={styles.center}>You have no routines...</Text>
+              </View>
+            )}
 
-        </View>
+          </View>
+        )}
 
         <View style={styles.homeContainer}>
           <View style={styles.editButtonContainer}>

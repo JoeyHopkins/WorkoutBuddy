@@ -74,19 +74,19 @@ export const RoutineChange = (props) => {
     setLoading(false)
   }
 
-  const RoutineRecord = ({id, dayNum, routine}) => { 
+  const RoutineRecord = ({routine}) => { 
     return (
       <View style={styles.routineRecordContainer}>
         
         <View style={{flex: 1}}>
-          <Text>Day {dayNum + ':  ' + routine}</Text>
+          <Text>Day {routine.dayNum + ':  ' + routine.routine}</Text>
         </View>
   
         <View style={styles.iconsContainer}>
           <Pressable onPress={() => { sendRoutineFuntion('moveUp', id) }}>
             <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
           </Pressable>
-  
+
           <Pressable onPress={() => { sendRoutineFuntion('delete', id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
@@ -103,7 +103,7 @@ export const RoutineChange = (props) => {
           style={styles.input}
           onChangeText={setNewRoutine}
           value={newRoutine}
-          placeholder="New Routine"
+          placeholder="New Strength Routine"
         />
         <Pressable
           style={styles.circleButton}
@@ -120,7 +120,7 @@ export const RoutineChange = (props) => {
       {routineList && routineList.length > 0 && loading == false && (
         <>
           {routineList.map((routine, index) => (
-            <RoutineRecord key={index} id={routine.id} dayNum={routine.dayNum} routine={routine.routine} />
+            <RoutineRecord key={index} routine={routine} />
           ))}
         </>
       )}
@@ -185,7 +185,7 @@ export const RoutineMain = (props) => {
         <Wander size={48} color={Colors.primary} />
       )}
       {loading == false && todaysRoutine && (
-        <Text>{todaysRoutine.routine + ' day'}</Text>
+        <Text>{todaysRoutine.routine + ' Day'}</Text>
       )}
 
 
