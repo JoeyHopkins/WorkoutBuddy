@@ -14,3 +14,17 @@ exports.getAllCardioWorkouts = () => {
     });
   });
 };
+
+exports.addCardioWorkout = (workout) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("INSERT INTO cardioWorkouts (name) VALUES (?)",
+        [workout],
+        (txObj, { rows: { _array } }) => { 
+          resolve('Workout inserted successfully!!')
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};

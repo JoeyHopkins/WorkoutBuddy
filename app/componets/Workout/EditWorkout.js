@@ -1,15 +1,20 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
 import * as workoutSql from '../../controllers/workouts.controller'
 import { useEffect, useState } from 'react';
 import { Wander } from 'react-native-animated-spinkit'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { showMessage } from "react-native-flash-message";
+
+const width = Dimensions.get('window').width
 
 export function EditWorkout({workoutMode, setPageMode, routineSelected, navigation}) {
 
   const [loading, setLoading] = useState(false)
   const [workoutList, setWorkoutList] = useState([])
+  const [newWorkout, setNewWorkout] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,41 +24,111 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
       else
         navigation.setOptions({ headerTitle: routineSelected.current.routine + ' Workouts' });
 
-      await getData()
+      await workoutConnection()
       setLoading(false)
     }
     fetchData()
   }, [])
 
-  async function getData() {
+  // async function getData() {
+  //   try {
+  //     let workoutList = await workoutSql.getAllCardioWorkouts()
+  //     setWorkoutList(workoutList)
+  //   } catch (error) {
+  //     // showMessage({
+  //     //   message: 'Error',
+  //     //   description: 'There was an error.',
+  //     //   type: "danger",
+  //     // });
+  //     console.error(error)
+  //   }
+  // }
+
+  async function workoutConnection(submissionType = null, id = null) {
+    setLoading(true)
+
+    let message = ''
+
     try {
+
+      switch (submissionType) {
+        case 'add':
+          if(newWorkout === '') {
+            showMessage({
+              message: 'Error',
+              description: 'Please enter a workout name.',
+              type: "danger",
+            });
+            setLoading(false)
+            return
+          }
+
+          console.log('\n\nnewWorkout')
+          console.log(newWorkout)
+          message = await workoutSql.addCardioWorkout(newWorkout)
+          console.log('message')
+          console.log(message)
+          setNewWorkout('')
+          break;
+      }
+
       let workoutList = await workoutSql.getAllCardioWorkouts()
+      setWorkoutList(workoutList)
       console.log('workoutList')
       console.log(workoutList)
-      setWorkoutList(workoutList)
-    } catch (error) {
-      // showMessage({
-      //   message: 'Error',
-      //   description: 'There was an error.',
-      //   type: "danger",
-      // });
-      console.error(error)
+
+      if(submissionType != null)
+        showMessage({
+          message: 'Success!',
+          description: message,
+          type: "success",
+        });
     }
+    catch (err) {
+      console.log(err)
+      showMessage({
+        message: 'Error',
+        description: err,
+        type: "danger",
+      });
+    }
+
+    setLoading(false)
   }
+
 
   return (
     <> 
       <View style={styles.homeContainer}>
-        <View style={styles.centerAll}>
+
+        <View style={styles.addWorkoutContainer}>
+          <TextInput
+            style={styles.input}
+            onChangeText={setNewWorkout}
+            value={newWorkout}
+            placeholder="New Workout Name"
+          />
+          <Pressable
+            style={styles.circleButton}
+            onPress={() => { workoutConnection('add') }}
+          >
+            <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+          </Pressable>
+        </View>
+
+        <View style={styles.fillSpace}>
           {loading == true && (
             <Wander size={150} color={Colors.primary} />
           )}
-          {loading == false && (
+          {loading == false && workoutList.length == 0 && (
             <Text>No workouts exist...</Text>
+          )}
+          {loading == false && workoutList.length > 0 && (
+            <Text>Items exist...</Text>
           )}
         </View>
       </View>
-      
+
       <View style={styles.center}>
         <Pressable 
           style={styles.circleButton}
@@ -83,6 +158,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  input: {
+    height: 40,
+    width: width - 150,
+    marginRight: 20,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: 10,
+    padding: 10,
+  },
   circleButton: {
     width: 40,
     height: 40,
@@ -105,5 +189,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.primary,
+  },
+  fillSpace: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addWorkoutContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
   },
 });
