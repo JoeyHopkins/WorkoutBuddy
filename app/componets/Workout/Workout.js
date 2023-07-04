@@ -21,6 +21,7 @@ export const Workout = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
   const [workoutList, setWorkoutList] = useState([])
+
   let routineSelected = useRef({})
   let routineSelectedID = useRef(0)
 
@@ -41,8 +42,11 @@ export const Workout = ({navigation}) => {
       await getData()
       setLoading(false)
     }
-    fetchData()
-  }, [])
+
+    if(pageMode === "Main")
+      fetchData()
+  
+    }, [pageMode])
 
   function changeWorkoutMode(value) {
     setWorkoutMode(value)
@@ -85,6 +89,8 @@ export const Workout = ({navigation}) => {
         setRoutineList(strengthRoutines.current)
         strengthWorkouts.current = []
       }
+      if(workoutMode === "cardio")
+        setWorkoutList(cardioWorkoutList)
 
       routineSelected.current = routinesList[routinesList.length - 1]
       routineSelectedID.current = routinesList.length - 1      
