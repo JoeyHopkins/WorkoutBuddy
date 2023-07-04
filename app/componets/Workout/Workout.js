@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Pressable, ScrollView} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect, useRef} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import * as Colors from '../../config/colors'
 import Carousel from 'react-native-snap-carousel';
+import * as workoutSql from '../../controllers/workouts.controller'
 import * as homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
@@ -19,11 +20,15 @@ export const Workout = ({navigation}) => {
   const [pageMode, setPageMode] = useState("Main");
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
+  const [workoutList, setWorkoutList] = useState([])
   let routineSelected = useRef({})
   let routineSelectedID = useRef(0)
 
   let strengthRoutines = useRef([])
   let cardioRoutines = useRef([])
+
+  let strengthWorkouts = useRef([])
+  let cardioWorkouts = useRef([])
 
   const options = [
     { label: "Strength", value: "strength" },
@@ -46,12 +51,14 @@ export const Workout = ({navigation}) => {
     {
       styles.homeContainer.flex = 1
       setRoutineList(strengthRoutines.current)
+      setWorkoutList([])
 
     }
     else if(value === "cardio")
     {
       styles.homeContainer.flex = 2
       setRoutineList(cardioRoutines.current)
+      setWorkoutList(cardioWorkouts.current)
     }
   }
 
@@ -69,14 +76,19 @@ export const Workout = ({navigation}) => {
       let routinesList = await homeSql.getAllRoutinesList()
       seperateRoutinesByType(routinesList)
 
+      // strengthWorkoutList = await workoutSql.getAllWorkouts()
+      cardioWorkoutList = await workoutSql.getAllCardioWorkouts()
+      cardioWorkouts.current = cardioWorkoutList
+
       if(workoutMode === "strength")
+      {
         setRoutineList(strengthRoutines.current)
-      else if(workoutMode === "cardio")
-        setRoutineList(cardioRoutines.current)
+        strengthWorkouts.current = []
+      }
 
       routineSelected.current = routinesList[routinesList.length - 1]
-      routineSelectedID.current = routinesList.length - 1
-      
+      routineSelectedID.current = routinesList.length - 1      
+
     } catch (error) {
       // showMessage({
       //   message: 'Error',
@@ -85,6 +97,18 @@ export const Workout = ({navigation}) => {
       // });
       console.error(error)
     }
+  }
+
+  const CardioWorkoutRecord = ({workout}) => {
+    return (
+      <View style={styles.workoutRecordContainer}>
+        
+        <View>
+          <Text>{workout.name}</Text>
+        </View>
+        
+      </View>
+    )
   }
 
   renderItem = ({item, index}) => {
@@ -216,8 +240,21 @@ export const Workout = ({navigation}) => {
               <EntypoIcon name='edit' size={20} color={Colors.black} />
             </Pressable>
           </View>
+
           <View style={styles.center}>
-            <Text>You have no workouts...</Text>
+
+
+            {loading == false && workoutList.length == 0 && (
+              <Text>You have no workouts...</Text>
+            )}
+            
+            {loading == false && workoutList.length > 0 && (
+              <ScrollView>
+                {workoutList.map((workout, index) => (
+                  <CardioWorkoutRecord key={index} workout={workout} />
+                ))}
+              </ScrollView>
+            )}
           </View>
 
         </View>
@@ -357,5 +394,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 30,
+    marginBottom: 0,
+  },
+  workoutRecordContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    marginHorizontal: -30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: width,
+    marginTop: 1,
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
   },
 });
