@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('workouBuddy.db');
 
-exports.getAllCardioWorkouts = () => {
+const getAllCardioWorkouts = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("SELECT * FROM cardioWorkouts",
@@ -13,6 +13,11 @@ exports.getAllCardioWorkouts = () => {
       );
     });
   });
+};
+
+const getAllStrengthWorkouts = () => {
+  console.log('\n\nhit allStrengthWorkouts')
+  return []
 };
 
 exports.addCardioWorkout = (workout) => {
@@ -41,4 +46,16 @@ exports.deleteCardioWorkout = (id) => {
       );
     });
   });
+};
+
+
+exports.getAllCardioWorkouts = getAllCardioWorkouts
+exports.getAllStrengthWorkouts = getAllStrengthWorkouts
+
+exports.cardio = {
+  getAllWorkouts: getAllCardioWorkouts,
+};
+
+exports.strength = {
+  getAllWorkouts: getAllStrengthWorkouts,
 };

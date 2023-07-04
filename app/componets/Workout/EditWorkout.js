@@ -32,9 +32,14 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
   }, [])
 
   async function workoutConnection(submissionType = null, id = null) {
-    setLoading(true)
-
     let message = ''
+    let sql = null
+    setLoading(true)
+    
+    if(workoutMode === 'cardio')
+      sql = workoutSql.cardio
+    else if(workoutMode === 'strength')
+      sql = workoutSql.strength
 
     try {
 
@@ -58,7 +63,7 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           break;
       }
 
-      let workoutList = await workoutSql.getAllCardioWorkouts()
+      let workoutList = await sql.getAllWorkouts()
       setWorkoutList(workoutList)
 
       if(submissionType != null)
