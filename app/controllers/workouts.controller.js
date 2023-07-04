@@ -28,3 +28,17 @@ exports.addCardioWorkout = (workout) => {
     });
   });
 };
+
+exports.deleteCardioWorkout = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("DELETE FROM cardioWorkouts WHERE id =?",
+        [id],
+        (txObj, { rows: { _array } }) => { 
+          resolve('Workout deleted successfully!!')
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};

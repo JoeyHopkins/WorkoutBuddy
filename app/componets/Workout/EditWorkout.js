@@ -53,6 +53,9 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           message = await workoutSql.addCardioWorkout(newWorkout)
           setNewWorkout('')
           break;
+        case 'delete':
+          message = await workoutSql.deleteCardioWorkout(id)
+          break;
       }
 
       let workoutList = await workoutSql.getAllCardioWorkouts()
