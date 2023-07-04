@@ -2,15 +2,47 @@ import { StyleSheet, Text, View, Button, Dimensions, Pressable} from 'react-nati
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
+import * as workoutSql from '../../controllers/workouts.controller'
+import { useEffect, useState } from 'react';
+import { Wander } from 'react-native-animated-spinkit'
+
 export function EditWorkout({workoutMode, setPageMode, routineSelected}) {
 
+  const [loading, setLoading] = useState(false)
+  const [workoutList, setWorkoutList] = useState([])
+
   let editRoutine = ''
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      await getData()
+      setLoading(false)
+    }
+    fetchData()
+  }, [])
+
+  async function getData() {
+    try {
+      let workoutList = await workoutSql.getAllCardioWorkouts()
+      console.log('workoutList')
+      console.log(workoutList)
+      setWorkoutList(workoutList)
+    } catch (error) {
+      // showMessage({
+      //   message: 'Error',
+      //   description: 'There was an error.',
+      //   type: "danger",
+      // });
+      console.error(error)
+    }
+  }
 
   if(workoutMode === 'cardio')
     editRoutine = 'Cardio'
   else
     editRoutine = routineSelected.current.routine
-  
+
   return (
     <> 
       <View style={styles.centerTitle}>
@@ -18,6 +50,14 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected}) {
       </View>
 
       <View style={styles.homeContainer}>
+        <View style={styles.centerAll}>
+          {loading == true && (
+            <Wander size={150} color={Colors.primary} />
+          )}
+          {loading == false && (
+            <Text>No workouts exist...</Text>
+          )}
+        </View>
       </View>
       
       <View style={styles.center}>
@@ -43,6 +83,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     overflow: 'hidden',
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   circleButton: {
     width: 40,
