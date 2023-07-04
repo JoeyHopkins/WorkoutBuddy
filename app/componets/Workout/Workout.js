@@ -43,11 +43,17 @@ export const Workout = ({navigation}) => {
     setWorkoutMode(value)
 
     if(value === "strength")
+    {
+      styles.homeContainer.flex = 1
       setRoutineList(strengthRoutines.current)
-    else if(value === "cardio")
-      setRoutineList(cardioRoutines.current)
 
     }
+    else if(value === "cardio")
+    {
+      styles.homeContainer.flex = 2
+      setRoutineList(cardioRoutines.current)
+    }
+  }
 
   function seperateRoutinesByType(routinesList) {
     for(let routine of routinesList)
@@ -56,7 +62,6 @@ export const Workout = ({navigation}) => {
         strengthRoutines.current.push(routine)
       else if(routine.type === 1)
         cardioRoutines.current.push(routine)
-
   }
 
   async function getData() {
@@ -80,7 +85,6 @@ export const Workout = ({navigation}) => {
       // });
       console.error(error)
     }
-
   }
 
   renderItem = ({item, index}) => {
@@ -236,10 +240,8 @@ export const Workout = ({navigation}) => {
           <Main></Main>
         )}
 
-        {pageMode == 'Edit' && (
-          // <Text>Test</Text>
-          
-          <EditWorkout setPageMode={setPageMode} routineSelected={routineSelected}></EditWorkout>
+        {pageMode == 'Edit' && (          
+          <EditWorkout workoutMode={workoutMode} setPageMode={setPageMode} routineSelected={routineSelected}></EditWorkout>
         )}        
      
       </View>
