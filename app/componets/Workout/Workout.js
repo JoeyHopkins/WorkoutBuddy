@@ -241,7 +241,12 @@ export const Workout = ({navigation}) => {
         )}
 
         {pageMode == 'Edit' && (          
-          <EditWorkout workoutMode={workoutMode} setPageMode={setPageMode} routineSelected={routineSelected}></EditWorkout>
+          <EditWorkout 
+            workoutMode={workoutMode} 
+            setPageMode={setPageMode} 
+            routineSelected={routineSelected}
+            navigation={navigation}
+          ></EditWorkout>
         )}        
      
       </View>

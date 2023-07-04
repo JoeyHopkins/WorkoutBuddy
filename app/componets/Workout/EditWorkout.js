@@ -6,16 +6,19 @@ import * as workoutSql from '../../controllers/workouts.controller'
 import { useEffect, useState } from 'react';
 import { Wander } from 'react-native-animated-spinkit'
 
-export function EditWorkout({workoutMode, setPageMode, routineSelected}) {
+export function EditWorkout({workoutMode, setPageMode, routineSelected, navigation}) {
 
   const [loading, setLoading] = useState(false)
   const [workoutList, setWorkoutList] = useState([])
 
-  let editRoutine = ''
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
+      if(workoutMode === 'cardio')
+        navigation.setOptions({ headerTitle: 'Cardio Workouts' });
+      else
+        navigation.setOptions({ headerTitle: routineSelected.current.routine + ' Workouts' });
+
       await getData()
       setLoading(false)
     }
@@ -38,17 +41,8 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected}) {
     }
   }
 
-  if(workoutMode === 'cardio')
-    editRoutine = 'Cardio'
-  else
-    editRoutine = routineSelected.current.routine
-
   return (
     <> 
-      <View style={styles.centerTitle}>
-        <Text style={styles.title}>{editRoutine} Workouts</Text>
-      </View>
-
       <View style={styles.homeContainer}>
         <View style={styles.centerAll}>
           {loading == true && (
@@ -63,7 +57,10 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected}) {
       <View style={styles.center}>
         <Pressable 
           style={styles.circleButton}
-          onPress={() => { setPageMode('Main') }}
+          onPress={() => { 
+            setPageMode('Main') 
+            navigation.setOptions({headerTitle: 'Workout'});
+          }}
           >
           <EntyoIcon name={'cross'} size={20} color={Colors.black} />
         </Pressable>      
