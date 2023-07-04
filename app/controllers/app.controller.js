@@ -85,6 +85,16 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50));`,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("cardioWorkouts table created successfully");
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+    )
   });
 };
 
