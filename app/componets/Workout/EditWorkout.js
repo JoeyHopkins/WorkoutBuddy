@@ -5,6 +5,7 @@ import EntyoIcon from 'react-native-vector-icons/Entypo';
 import * as workoutSql from '../../controllers/workouts.controller'
 import { useEffect, useState } from 'react';
 import { Wander } from 'react-native-animated-spinkit'
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showMessage } from "react-native-flash-message";
 
@@ -30,20 +31,6 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
     fetchData()
   }, [])
 
-  // async function getData() {
-  //   try {
-  //     let workoutList = await workoutSql.getAllCardioWorkouts()
-  //     setWorkoutList(workoutList)
-  //   } catch (error) {
-  //     // showMessage({
-  //     //   message: 'Error',
-  //     //   description: 'There was an error.',
-  //     //   type: "danger",
-  //     // });
-  //     console.error(error)
-  //   }
-  // }
-
   async function workoutConnection(submissionType = null, id = null) {
     setLoading(true)
 
@@ -63,19 +50,13 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
             return
           }
 
-          console.log('\n\nnewWorkout')
-          console.log(newWorkout)
           message = await workoutSql.addCardioWorkout(newWorkout)
-          console.log('message')
-          console.log(message)
           setNewWorkout('')
           break;
       }
 
       let workoutList = await workoutSql.getAllCardioWorkouts()
       setWorkoutList(workoutList)
-      console.log('workoutList')
-      console.log(workoutList)
 
       if(submissionType != null)
         showMessage({
@@ -96,6 +77,21 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
     setLoading(false)
   }
 
+  const CardioWorkoutRecord = ({workout}) => {
+    return (
+      <View style={styles.workoutRecordContainer}>
+        
+        <View>
+          <Text>{workout.name}</Text>
+        </View>
+  
+        <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
+          <Icon name="trash" size={20} color={Colors.highlight} />
+        </Pressable>
+        
+      </View>
+    )
+  }
 
   return (
     <> 
@@ -123,8 +119,13 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           {loading == false && workoutList.length == 0 && (
             <Text>No workouts exist...</Text>
           )}
+
           {loading == false && workoutList.length > 0 && (
-            <Text>Items exist...</Text>
+            <>
+              {workoutList.map((workout, index) => (
+                <CardioWorkoutRecord key={index} workout={workout} />
+              ))}
+            </>
           )}
         </View>
       </View>
@@ -179,26 +180,26 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
   },
-  centerTitle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
   fillSpace: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   addWorkoutContainer: {
     flexDirection: 'row',
     justifyContent:'space-between',
     alignItems: 'center',
     marginBottom: 30,
+  },
+  workoutRecordContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    marginHorizontal: -30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: width,
+    marginTop: 1,
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
   },
 });
