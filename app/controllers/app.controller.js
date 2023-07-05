@@ -95,6 +95,16 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50), routineId INTEGER);`,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("strengthWorkouts table created successfully");
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+    )
   });
 };
 
