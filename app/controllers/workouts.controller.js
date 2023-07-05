@@ -20,7 +20,8 @@ const getAllStrengthWorkouts = () => {
   return []
 };
 
-exports.addCardioWorkout = (workout) => {
+
+const addCardioWorkout = (workout) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("INSERT INTO cardioWorkouts (name) VALUES (?)",
@@ -33,6 +34,24 @@ exports.addCardioWorkout = (workout) => {
     });
   });
 };
+
+const addStrengthWorkout = (name, routineId) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "INSERT INTO strengthWorkouts (name, routineId) VALUES (?, ?)",
+        [name, routineId],
+        (txObj, { rows: { _array } }) => {
+          resolve('Workout inserted successfully!');
+        },
+        (txObj, error) => {
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
 
 exports.deleteCardioWorkout = (id) => {
   return new Promise((resolve, reject) => {
@@ -50,12 +69,16 @@ exports.deleteCardioWorkout = (id) => {
 
 
 exports.getAllCardioWorkouts = getAllCardioWorkouts
+exports.addCardioWorkout = addCardioWorkout
 exports.getAllStrengthWorkouts = getAllStrengthWorkouts
+exports.addStrengthWorkout = addStrengthWorkout
 
 exports.cardio = {
   getAllWorkouts: getAllCardioWorkouts,
+  addWorkout: addCardioWorkout,
 };
 
 exports.strength = {
   getAllWorkouts: getAllStrengthWorkouts,
+  addWorkout: addStrengthWorkout,
 };
