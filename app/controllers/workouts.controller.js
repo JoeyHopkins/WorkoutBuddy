@@ -29,6 +29,23 @@ const getAllStrengthWorkouts = () => {
   });
 };
 
+const getAllStrengthWorkoutsByRoutine = (routineId) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM strengthWorkouts WHERE routineId = ?",
+        [routineId],
+        (txObj, { rows: { _array } }) => {
+          resolve(_array);
+        },
+        (txObj, error) => {
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
 
 const addCardioWorkout = (workout) => {
   return new Promise((resolve, reject) => {
@@ -81,6 +98,7 @@ exports.getAllCardioWorkouts = getAllCardioWorkouts
 exports.addCardioWorkout = addCardioWorkout
 exports.getAllStrengthWorkouts = getAllStrengthWorkouts
 exports.addStrengthWorkout = addStrengthWorkout
+exports.getAllStrengthWorkoutsByRoutine = getAllStrengthWorkoutsByRoutine
 
 exports.cardio = {
   getAllWorkouts: getAllCardioWorkouts,
@@ -88,6 +106,6 @@ exports.cardio = {
 };
 
 exports.strength = {
-  getAllWorkouts: getAllStrengthWorkouts,
+  getAllWorkouts: getAllStrengthWorkoutsByRoutine,
   addWorkout: addStrengthWorkout,
 };

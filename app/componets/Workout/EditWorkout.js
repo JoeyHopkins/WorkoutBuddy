@@ -64,7 +64,7 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           break;
       }
 
-      let workoutList = await sql.getAllWorkouts()
+      let workoutList = await sql.getAllWorkouts(routineSelected.current.id)
       setWorkoutList(workoutList)
 
       if(submissionType != null)
