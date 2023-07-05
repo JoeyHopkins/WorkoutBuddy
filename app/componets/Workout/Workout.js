@@ -23,7 +23,7 @@ export const Workout = ({navigation}) => {
   const [workoutList, setWorkoutList] = useState([])
 
   let routineSelected = useRef({})
-  let routineSelectedID = useRef(0)
+  let routineSelectedID = useRef(-1)
 
   let strengthRoutines = useRef([])
   let cardioRoutines = useRef([])
@@ -55,8 +55,7 @@ export const Workout = ({navigation}) => {
     {
       styles.homeContainer.flex = 1
       setRoutineList(strengthRoutines.current)
-      setWorkoutList([])
-
+      setWorkoutList(routineSelected.current.workouts)
     }
     else if(value === "cardio")
     {
@@ -71,8 +70,10 @@ export const Workout = ({navigation}) => {
       // 0 == strength, 1 == cardio
       if(routine.type === 0)
         strengthRoutines.current.push(routine)
-      else if(routine.type === 1)
-        cardioRoutines.current.push(routine)
+      //not used currently
+      // else if(routine.type === 1)
+      //   cardioRoutines.current.push(routine)
+
   }
 
   async function getData() {
@@ -80,20 +81,39 @@ export const Workout = ({navigation}) => {
       let routinesList = await homeSql.getAllRoutinesList()
       seperateRoutinesByType(routinesList)
 
-      // strengthWorkoutList = await workoutSql.getAllWorkouts()
-      cardioWorkoutList = await workoutSql.getAllCardioWorkouts()
+      let cardioWorkoutList = await workoutSql.getAllCardioWorkouts()
       cardioWorkouts.current = cardioWorkoutList
+
+
+      let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
+
+      for(let i in routinesList)
+      {
+
+        if(routinesList[i].workouts === undefined)
+          routinesList[i].workouts = []
+
+        for(let workout of strengthWorkoutList)
+          if(workout.routineId === routinesList[i].id)
+            routinesList[i].workouts.push(workout)
+
+      }
+
+      if(routineSelectedID.current == -1)
+      {
+        routineSelected.current = routinesList[routinesList.length - 1]
+        routineSelectedID.current = routinesList.length - 1      
+      } 
 
       if(workoutMode === "strength")
       {
         setRoutineList(strengthRoutines.current)
-        strengthWorkouts.current = []
+        // strengthWorkouts.current = []
+        setWorkoutList(routinesList[routineSelectedID.current].workouts)
       }
       if(workoutMode === "cardio")
         setWorkoutList(cardioWorkoutList)
 
-      routineSelected.current = routinesList[routinesList.length - 1]
-      routineSelectedID.current = routinesList.length - 1      
 
     } catch (error) {
       // showMessage({
@@ -129,6 +149,7 @@ export const Workout = ({navigation}) => {
   const handleSnapToItem = (slideIndex) => {
     routineSelected.current = routineList[slideIndex]
     routineSelectedID.current = slideIndex
+    setWorkoutList(routineList[slideIndex].workouts)
   };
 
   const StrengthTotals = () => {
@@ -248,7 +269,6 @@ export const Workout = ({navigation}) => {
           </View>
 
           <View style={styles.center}>
-
 
             {loading == false && workoutList.length == 0 && (
               <Text>You have no workouts...</Text>
