@@ -78,8 +78,7 @@ const addStrengthWorkout = (name, routineId) => {
   });
 };
 
-
-exports.deleteCardioWorkout = (id) => {
+const deleteCardioWorkout = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql("DELETE FROM cardioWorkouts WHERE id =?",
@@ -93,19 +92,36 @@ exports.deleteCardioWorkout = (id) => {
   });
 };
 
+const deleteStrengthWorkout = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("DELETE FROM strengthWorkouts WHERE id =?",
+        [id],
+        (txObj, { rows: { _array } }) => { 
+          resolve('Workout deleted successfully!!')
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};
 
 exports.getAllCardioWorkouts = getAllCardioWorkouts
 exports.addCardioWorkout = addCardioWorkout
 exports.getAllStrengthWorkouts = getAllStrengthWorkouts
 exports.addStrengthWorkout = addStrengthWorkout
 exports.getAllStrengthWorkoutsByRoutine = getAllStrengthWorkoutsByRoutine
+exports.deleteCardioWorkout = deleteCardioWorkout
+exports.deleteStrengthWorkout = deleteStrengthWorkout
 
 exports.cardio = {
   getAllWorkouts: getAllCardioWorkouts,
   addWorkout: addCardioWorkout,
+  deleteWorkout: deleteCardioWorkout,
 };
 
 exports.strength = {
   getAllWorkouts: getAllStrengthWorkoutsByRoutine,
   addWorkout: addStrengthWorkout,
+  deleteWorkout: deleteStrengthWorkout,
 };

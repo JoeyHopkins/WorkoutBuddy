@@ -60,7 +60,7 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           setNewWorkout('')
           break;
         case 'delete':
-          message = await workoutSql.deleteCardioWorkout(id)
+          message = await sql.deleteWorkout(id)
           break;
       }
 
