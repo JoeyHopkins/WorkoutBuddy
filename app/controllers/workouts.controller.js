@@ -16,8 +16,17 @@ const getAllCardioWorkouts = () => {
 };
 
 const getAllStrengthWorkouts = () => {
-  console.log('\n\nhit allStrengthWorkouts')
-  return []
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("SELECT * FROM strengthWorkouts",
+        null,
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array)
+        },
+        (txObj, error) => { reject(error) },
+      );
+    });
+  });
 };
 
 
