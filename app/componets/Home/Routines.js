@@ -83,11 +83,11 @@ export const RoutineChange = (props) => {
         </View>
   
         <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { sendRoutineFuntion('moveUp', id) }}>
+          <Pressable onPress={() => { sendRoutineFuntion('moveUp', routine.id) }}>
             <MaterialIcon name='arrow-up' size={20} color={Colors.primary} />
           </Pressable>
 
-          <Pressable onPress={() => { sendRoutineFuntion('delete', id) }}>
+          <Pressable onPress={() => { sendRoutineFuntion('delete', routine.id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
