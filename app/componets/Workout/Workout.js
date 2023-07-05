@@ -78,6 +78,7 @@ export const Workout = ({navigation}) => {
 
   async function getData() {
     try {
+      strengthRoutines.current = []
       let routinesList = await homeSql.getAllRoutinesList()
       seperateRoutinesByType(routinesList)
 
