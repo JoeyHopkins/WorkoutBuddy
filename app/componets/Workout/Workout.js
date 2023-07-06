@@ -53,7 +53,6 @@ export const Workout = ({navigation}) => {
   }
 
   async function getData() {
-    console.log('hit getData')
     try {
       let routinesList = await homeSql.getAllRoutinesList()
       let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
@@ -97,9 +96,10 @@ export const Workout = ({navigation}) => {
     return (
       <View style={styles.slide}>
         <Text style={styles.title}>{ item.routine }</Text>
-
         {loading == false && item.workouts.length == 0 && (
-          <Text>You have no workouts...</Text>
+          <View style={styles.center}>
+            <Text>You have no workouts...</Text>
+          </View>
         )}
         {loading == false && item.workouts.length > 0 && (
           <View style={styles.strengthWorkoutListContainer}>
@@ -110,7 +110,6 @@ export const Workout = ({navigation}) => {
             </ScrollView>
           </View>
         )}
-
       </View>
     );
   }
@@ -128,12 +127,10 @@ export const Workout = ({navigation}) => {
           <Text>Reps</Text>
           <Text>0</Text>
         </View>
-
         <View style={styles.totalItem}>
           <Text>Weight</Text>
           <Text>0 lbs</Text>
         </View>
-
         <View style={styles.totalItem}>
           <Text>Avg</Text>
           <Text>0 lbs</Text>
@@ -149,12 +146,10 @@ export const Workout = ({navigation}) => {
           <Text>Low</Text>
           <Text>0 minutes</Text>
         </View>
-
         <View style={styles.totalItem}>
           <Text>Medium</Text>
           <Text>0 minutes</Text>
         </View>
-
         <View style={styles.totalItem}>
           <Text>High</Text>
           <Text>0 minutes</Text>
@@ -220,7 +215,7 @@ export const Workout = ({navigation}) => {
             )}
             {routineList.length == 0 && loading == false && (
               <View style={styles.center}>
-                <Text style={styles.center}>You have no routines...</Text>
+                <Text>You have no routines...</Text>
               </View>
             )}
           </View>
@@ -331,6 +326,7 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
   },
   title: {
     color: Colors.primary,
