@@ -24,12 +24,12 @@ export const Workout = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
   const [workoutList, setWorkoutList] = useState([])
+  const [selectedWorkout, setSelectedWorkout] = useState(-1)
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
 
   let cardioWorkouts = useRef([])
-  let rerenderKey = useRef(0)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,9 +85,12 @@ export const Workout = ({navigation}) => {
   const CardioWorkoutRecord = ({workout}) => {
     return (
       <View style={styles.workoutRecordContainer}>      
-        <View>
-          <Text>{workout.name}</Text>
-        </View>
+        <Pressable
+          onPress={() => { setSelectedWorkout(workout.id) }}
+          style={selectedWorkout == workout.id ? styles.workoutRecordSelected : styles.workoutRecord}
+        >
+          <Text>{workout.id + ': ' + workout.name}</Text>
+        </Pressable>
       </View>
     )
   }
@@ -117,7 +120,6 @@ export const Workout = ({navigation}) => {
   function handleSnapToItem(slideIndex) {
     routineSelected.current = routineList[slideIndex]
     routineSelectedID.current = slideIndex
-    rerenderKey.current = rerenderKey.current + 1
   };
 
   const StrengthTotals = () => {
@@ -240,7 +242,7 @@ export const Workout = ({navigation}) => {
         )}
 
         <Pressable 
-          onPress={() => { setTest(!test) }}
+          onPress={() => { console.log('hit') }}
           style={styles.startWorkoutButton}
         >
           <Text>Start Workout</Text>
@@ -269,6 +271,30 @@ export const Workout = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
+  workoutRecordContainer: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: width,
+    marginTop: 1,
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+  },
+  workoutRecord: {
+    flex: 1,
+    paddingVertical: 10,
+    marginLeft: -90,
+    alignItems: 'center',
+  },
+  workoutRecordSelected: {
+    marginTop: -1,
+    backgroundColor: Colors.primary,
+    flex: 1,
+    paddingVertical: 10,
+    marginLeft: -90,
+    alignItems: 'center',
+  },
   homeContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
@@ -362,18 +388,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     marginBottom: 0,
-  },
-  workoutRecordContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 50,
-    marginHorizontal: -30,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: width,
-    marginTop: 1,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.primary,
   },
 });
