@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Button, Dimensions, Pressable, ScrollView} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, memo} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import * as Colors from '../../config/colors'
 import Carousel from 'react-native-snap-carousel';
@@ -10,9 +10,12 @@ import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-const slideWidth = width * 0.8 - 40;
-const slideHeight = height * 0.22;
+const slideWidth = width * 0.8 - 0;
+
+const options = [
+  { label: "Strength", value: "strength" },
+  { label: "Cardio", value: "cardio" },
+];
 
 export const Workout = ({navigation}) => {
 
@@ -25,16 +28,8 @@ export const Workout = ({navigation}) => {
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
 
-  let strengthRoutines = useRef([])
-  let cardioRoutines = useRef([])
-
-  let strengthWorkouts = useRef([])
   let cardioWorkouts = useRef([])
-
-  const options = [
-    { label: "Strength", value: "strength" },
-    { label: "Cardio", value: "cardio" },
-  ];
+  let rerenderKey = useRef(0)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,111 +41,84 @@ export const Workout = ({navigation}) => {
     if(pageMode === "Main")
       fetchData()
   
-    }, [pageMode])
+  }, [pageMode])
 
   function changeWorkoutMode(value) {
     setWorkoutMode(value)
 
     if(value === "strength")
-    {
-      styles.homeContainer.flex = 1
-      setRoutineList(strengthRoutines.current)
       setWorkoutList(routineSelected.current.workouts)
-    }
-    else if(value === "cardio")
-    {
-      styles.homeContainer.flex = 2
-      setRoutineList(cardioRoutines.current)
+    else if(value === "cardio") 
       setWorkoutList(cardioWorkouts.current)
-    }
-  }
-
-  function seperateRoutinesByType(routinesList) {
-    for(let routine of routinesList)
-      // 0 == strength, 1 == cardio
-      if(routine.type === 0)
-        strengthRoutines.current.push(routine)
-      //not used currently
-      // else if(routine.type === 1)
-      //   cardioRoutines.current.push(routine)
-
   }
 
   async function getData() {
+    console.log('hit getData')
     try {
-      strengthRoutines.current = []
       let routinesList = await homeSql.getAllRoutinesList()
-      seperateRoutinesByType(routinesList)
-
-      let cardioWorkoutList = await workoutSql.getAllCardioWorkouts()
-      cardioWorkouts.current = cardioWorkoutList
-
-
       let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
+      cardioWorkouts.current = await workoutSql.getAllCardioWorkouts()
 
-      for(let i in routinesList)
-      {
-
+      for(let i in routinesList) {
         if(routinesList[i].workouts === undefined)
           routinesList[i].workouts = []
 
         for(let workout of strengthWorkoutList)
           if(workout.routineId === routinesList[i].id)
             routinesList[i].workouts.push(workout)
-
       }
 
-      if(routineSelectedID.current == -1)
-      {
+      if(routineSelectedID.current == -1) {
         routineSelected.current = routinesList[routinesList.length - 1]
         routineSelectedID.current = routinesList.length - 1      
       } 
 
       if(workoutMode === "strength")
-      {
-        setRoutineList(strengthRoutines.current)
-        // strengthWorkouts.current = []
-        setWorkoutList(routinesList[routineSelectedID.current].workouts)
-      }
+        setRoutineList(routinesList)
       if(workoutMode === "cardio")
-        setWorkoutList(cardioWorkoutList)
-
+        setWorkoutList(cardioWorkouts.current)
 
     } catch (error) {
-      // showMessage({
-      //   message: 'Error',
-      //   description: 'There was an error.',
-      //   type: "danger",
-      // });
       console.error(error)
     }
   }
 
   const CardioWorkoutRecord = ({workout}) => {
     return (
-      <View style={styles.workoutRecordContainer}>
-        
+      <View style={styles.workoutRecordContainer}>      
         <View>
           <Text>{workout.name}</Text>
         </View>
-        
       </View>
     )
   }
 
-  renderItem = ({item, index}) => {
+  renderItem = ({item}) => {
     return (
       <View style={styles.slide}>
         <Text style={styles.title}>{ item.routine }</Text>
-        <Text style={styles.previousWorkoutContainer}>No previous workout...</Text>
+
+        {loading == false && item.workouts.length == 0 && (
+          <Text>You have no workouts...</Text>
+        )}
+        {loading == false && item.workouts.length > 0 && (
+          <View style={styles.strengthWorkoutListContainer}>
+            <ScrollView>
+              {item.workouts.map((workout, index) => (
+                <CardioWorkoutRecord key={index} workout={workout} />
+                ))}
+            </ScrollView>
+          </View>
+        )}
+
       </View>
     );
   }
 
-  const handleSnapToItem = (slideIndex) => {
+  function handleSnapToItem(slideIndex) {
     routineSelected.current = routineList[slideIndex]
     routineSelectedID.current = slideIndex
-    setWorkoutList(routineList[slideIndex].workouts)
+    rerenderKey.current = rerenderKey.current + 1
   };
 
   const StrengthTotals = () => {
@@ -198,44 +166,45 @@ export const Workout = ({navigation}) => {
   const Main = () => {
     return (
       <>
-        <View style={styles.fillSpace}>
-          <View style={styles.homeContainer}>
-            <View>
-              <Text style={styles.title}>Weekly Total Summary</Text>
-            </View>
-            <View style={styles.totalContainer}>
-              {workoutMode === 'strength' && (
-                <StrengthTotals/>
-              )}
-              
-              {workoutMode === 'cardio' && (
-                <CardioTotals/>
-              )}
-            </View>
+        <View style={styles.homeContainer}>
+          <View>
+            <Text style={styles.title}>Weekly Total Summary</Text>
           </View>
-
-          <View style={styles.modeSwitchContainer}>
-            <SwitchSelector
-              options={options}
-              initial={workoutMode === "strength" ? 0 : 1}
-              onPress={value => changeWorkoutMode(value)}
-              textColor={Colors.primary}
-              selectedColor={Colors.white}
-              buttonColor={Colors.primary}
-              borderColor={Colors.primary}
-            />
+          <View style={styles.totalContainer}>
+            {workoutMode === 'strength' && (
+              <StrengthTotals/>
+            )}
+            {workoutMode === 'cardio' && (
+              <CardioTotals/>
+            )}
           </View>
+        </View>
+        <View style={styles.modeSwitchContainer}>
+          <SwitchSelector
+            options={options}
+            initial={workoutMode === "strength" ? 0 : 1}
+            onPress={value => changeWorkoutMode(value)}
+            textColor={Colors.primary}
+            selectedColor={Colors.white}
+            buttonColor={Colors.primary}
+            borderColor={Colors.primary}
+          />
         </View>
 
         {workoutMode == 'strength' && (
-          <View style={styles.homeContainer}>
-
+          <View style={styles.routineListContainer}>
+            <View style={styles.editButtonContainer}>
+              <Pressable
+                style={styles.circleButton}
+                onPress={() => { setPageMode('Edit') }}
+              >
+                <EntypoIcon name='edit' size={20} color={Colors.black} />
+              </Pressable>
+            </View>
             {loading == true && (
               <Wander size={48} color={Colors.primary} />
             )}
-
             {loading == false && routineList && routineList.length > 0 && (
-
               <Carousel
                 data={routineList}
                 firstItem={routineSelectedID.current}
@@ -244,54 +213,43 @@ export const Workout = ({navigation}) => {
                 renderItem={renderItem}
                 sliderWidth={width - 40}
                 itemWidth={slideWidth}
-                layout={'stack'} layoutCardOffset={18}
+                layout={'stack'} 
+                layoutCardOffset={8}
                 onSnapToItem={handleSnapToItem}
-                style={styles.carousel}
               />
             )}
-            
             {routineList.length == 0 && loading == false && (
               <View style={styles.center}>
                 <Text style={styles.center}>You have no routines...</Text>
               </View>
             )}
-
           </View>
         )}
 
-        <View style={styles.homeContainer}>
-          <View style={styles.editButtonContainer}>
-            <Pressable
-              style={styles.circleButton}
-              onPress={() => { setPageMode('Edit') }}
-            >
-              <EntypoIcon name='edit' size={20} color={Colors.black} />
-            </Pressable>
+        {workoutMode == 'cardio' && (
+          <View style={[styles.homeContainer, styles.fillSpace]}>
+            <View style={styles.editButtonContainer}>
+              <Pressable
+                style={styles.circleButton}
+                onPress={() => { setPageMode('Edit') }}
+              >
+                <EntypoIcon name='edit' size={20} color={Colors.black} />
+              </Pressable>
+            </View>
+            <ScrollView>
+              {workoutList.map((workout, index) => (
+                <CardioWorkoutRecord key={index} workout={workout} />
+              ))}
+            </ScrollView>    
           </View>
-
-          <View style={styles.center}>
-
-            {loading == false && workoutList.length == 0 && (
-              <Text>You have no workouts...</Text>
-            )}
-            
-            {loading == false && workoutList.length > 0 && (
-              <ScrollView>
-                {workoutList.map((workout, index) => (
-                  <CardioWorkoutRecord key={index} workout={workout} />
-                ))}
-              </ScrollView>
-            )}
-          </View>
-
-        </View>
+        )}
 
         <Pressable 
-          onPress={() => { console.log('Start') }}
+          onPress={() => { setTest(!test) }}
           style={styles.startWorkoutButton}
         >
           <Text>Start Workout</Text>
-        </Pressable>      
+        </Pressable>
       </>
     )
   }
@@ -299,11 +257,9 @@ export const Workout = ({navigation}) => {
   return (
     <>
       <View style={styles.background}>
-
         {pageMode == 'Main' && (
           <Main></Main>
         )}
-
         {pageMode == 'Edit' && (          
           <EditWorkout 
             workoutMode={workoutMode} 
@@ -312,39 +268,30 @@ export const Workout = ({navigation}) => {
             navigation={navigation}
           ></EditWorkout>
         )}        
-     
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   homeContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
     marginTop: 10,
-    paddingTop: 20,
     marginHorizontal: 20,
     borderColor: Colors.primary,
     overflow: 'hidden',
+  },
+  fillSpace: {
     flex: 1,
   },
-  homeContainerCenter: {
+  routineListContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
     marginTop: 10,
-    paddingTop: 20,
     marginHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderColor: Colors.primary,
     overflow: 'hidden',
     flex: 1,
@@ -358,25 +305,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 20,
-
+    paddingBottom: 5,
   },
   totalContainer: {
     flexDirection: 'row',
     justifyContent:'space-between',
     alignItems: 'center',
-    marginTop: 10,
+    marginVertical: 10,
   },
   modeSwitchContainer: {
     marginHorizontal: 20,
     paddingTop: 10,
   },
   slide: {
-    width: slideWidth,
-    height: slideHeight,
-    borderWidth: 10,
+    flex: 1,
+    width: width - 80,
+    borderWidth: 3,
     borderRadius: 20,    
     alignItems: 'center',
-    marginVertical: 0,
+    marginBottom: 20,
+    marginLeft: -3,
     backgroundColor: Colors.white,
     borderColor: Colors.primary,
   },
@@ -389,15 +337,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingTop: 10,
   },
-  previousWorkoutContainer: {
-    color: Colors.primary,
-    fontSize: 16,
-    marginTop: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  fillSpace: {
+  strengthWorkoutListContainer: {
+    backgroundColor: Colors.background,
+    marginBottom: 20,
     flex: 1,
   },
   startWorkoutButton: {
@@ -420,7 +364,7 @@ const styles = StyleSheet.create({
   editButtonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 30,
+    paddingVertical: 20,
     marginBottom: 0,
   },
   workoutRecordContainer: {
