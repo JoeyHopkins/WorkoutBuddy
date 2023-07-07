@@ -133,6 +133,7 @@ export const Workout = ({navigation}) => {
   function handleSnapToItem(slideIndex) {
     routineSelected.current = routineList[slideIndex]
     routineSelectedID.current = slideIndex
+    setSelectedWorkouts([])
   };
 
   const StrengthTotals = () => {
