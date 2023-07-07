@@ -90,12 +90,36 @@ export const Workout = ({navigation}) => {
   }
 
   function addOrRemoveSelectedWorkout(workout) {
-    if(selectedWorkouts.some(item => item.name === workout.name)) {
-      setSelectedWorkouts(prevArray =>
-        prevArray.filter(item => item.name !== workout.name)
-      );
-    } else {
-      setSelectedWorkouts((prevArray) => [...prevArray, workout]);
+
+    let selected = []
+    let workoutExists = false;
+
+    if(workoutMode === "strength") {
+
+      for (let activity of selectedWorkouts) {
+        if (activity.routineId === routineSelected.current.id) {
+          selected.push(activity);
+
+          if (activity === workout) 
+            workoutExists = true;
+        }
+      }
+      
+      if (!workoutExists)
+        selected.push(workout);
+      else
+        selected = selected.filter(activity => activity !== workout);
+
+      setSelectedWorkouts(selected);
+    }
+    else if(workoutMode === "cardio") {
+
+      if(selectedWorkouts.some(item => item === workout))
+        setSelectedWorkouts(prevArray =>
+          prevArray.filter(item => item !== workout)
+        );
+      else
+        setSelectedWorkouts((prevArray) => [...prevArray, workout]);
     }
   }
 
@@ -106,7 +130,7 @@ export const Workout = ({navigation}) => {
           onPress={() => { 
             addOrRemoveSelectedWorkout(workout)
           }}
-          style={selectedWorkouts.some(item => item.name === workout.name) ? [styles.selected, styles.workoutRecord] : styles.workoutRecord}
+          style={selectedWorkouts.some(item => item === workout) ? [styles.selected, styles.workoutRecord] : styles.workoutRecord}
         >
           <Text>{workout.name}</Text>
         </Pressable>
@@ -139,7 +163,6 @@ export const Workout = ({navigation}) => {
   function handleSnapToItem(slideIndex) {
     routineSelected.current = routineList[slideIndex]
     routineSelectedID.current = slideIndex
-    setSelectedWorkouts([])
   };
 
   const StrengthTotals = () => {
@@ -231,7 +254,7 @@ export const Workout = ({navigation}) => {
                 sliderWidth={width - 40}
                 itemWidth={slideWidth}
                 layout={'stack'} 
-                layoutCardOffset={8}
+                layoutCardOffset={5}
                 onSnapToItem={handleSnapToItem}
               />
             )}
