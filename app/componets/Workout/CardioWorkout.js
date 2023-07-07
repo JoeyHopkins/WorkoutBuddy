@@ -14,6 +14,7 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(true);
   
   const milliseconds = elapsedTime % 1000;
   const seconds = (elapsedTime / 1000) % 60;
@@ -38,20 +39,41 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     navigation.setOptions({ headerTitle: 'Cardio - ' + workout.name });
   }, [])
 
+
   const toggleStopwatch = () => {
     if (isRunning) {
       setIsRunning(false);
+      setDisableSubmit(false);
     } else {
       const now = performance.now();
       setStartTime(now - elapsedTime);
       setIsRunning(true);
+      setDisableSubmit(true);
     }
+  };
+
+  const getCurrentDateTimeInUserTimezone = () => {
+    const date = new Date();
+    const timezoneOffset = date.getTimezoneOffset();
+    const offsetInMilliseconds = timezoneOffset * 60 * 1000;
+    const localTime = date.getTime() - offsetInMilliseconds;
+    const userDateTime = new Date(localTime);
+    return isoString = userDateTime.toISOString();
+  };
+
+  const submitCardioWorkout = () => {
+    let duration = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}:${formatTime(Math.floor(milliseconds / 10))}`
+    let now = getCurrentDateTimeInUserTimezone();
+
+    //submit cardio workout
+    // sql.submitBasicCardioWorkout(workout.id, duration, now)
   };
 
   const resetStopwatch = () => {
     setStartTime(0);
     setElapsedTime(0);
     setIsRunning(false);
+    setDisableSubmit(true);
   };
 
   const formatTime = (time) => {
@@ -93,8 +115,9 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
       </Pressable>
 
       <Pressable 
-        style={styles.button}
-        onPress={resetStopwatch}
+        style={disableSubmit ? [styles.button, styles.disabled] : styles.button }
+        disabled={disableSubmit}
+        onPress={submitCardioWorkout}
         >
           <Text>Submit</Text>
       </Pressable>
@@ -145,4 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.primary,
   },
+  disabled: {
+    backgroundColor: Colors.backgroundGray,
+  }
 });
