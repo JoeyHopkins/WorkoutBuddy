@@ -45,6 +45,7 @@ export const Workout = ({navigation}) => {
 
   function changeWorkoutMode(value) {
     setWorkoutMode(value)
+    setSelectedWorkouts([])
 
     if(value === "strength")
       setWorkoutList(routineSelected.current.workouts)
@@ -101,7 +102,7 @@ export const Workout = ({navigation}) => {
           }}
           style={selectedWorkouts.some(item => item.name === workout.name) ? styles.workoutRecordSelected : styles.workoutRecord}
         >
-          <Text>{workout.id + ': ' + workout.name}</Text>
+          <Text>{workout.name}</Text>
         </Pressable>
       </View>
     )
