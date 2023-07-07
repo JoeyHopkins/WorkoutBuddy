@@ -31,7 +31,7 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   useEffect(() => {
     navigation.setOptions({ headerTitle: 'Cardio - ' + workout.name });
   }, [])
-  
+
   const toggleStopwatch = () => {
     if (isRunning) {
       setIsRunning(false);
@@ -77,15 +77,6 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         onPress={resetStopwatch}
         >
           <Text>Reset</Text>
-      </Pressable>
-
-      <Pressable 
-        style={[styles.button]}
-        onPress={() => { 
-          setPageMode('Main') 
-          navigation.setOptions({headerTitle: 'Workout'});
-        }}>
-          <Text>Exit</Text>
       </Pressable>
     </>
   );

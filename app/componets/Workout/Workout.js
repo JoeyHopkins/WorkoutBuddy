@@ -9,6 +9,8 @@ import * as homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
 import { CardioWorkout } from './CardioWorkout'
+import { useNavigation } from '@react-navigation/native';
+import IonIcon from 'react-native-vector-icons/Ionicons';
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -34,6 +36,35 @@ export const Workout = ({navigation}) => {
   
   let refresh = useRef(true)
 
+  //handle header between the pages
+  React.useLayoutEffect(() => {
+    if(pageMode === "Workout" || pageMode === "Edit")
+      navigation.setOptions({
+        headerLeft: () => <CustomHeader />,
+      });
+    else if (pageMode === "Main") 
+      navigation.setOptions({
+        headerLeft: undefined,
+      });
+    
+  }, [pageMode]);
+
+  const CustomHeader = () => {
+    const navigation = useNavigation();
+  
+    const handleBackButton = () => {
+      setPageMode('Main') 
+      navigation.setOptions({headerTitle: 'Workout'});
+    };
+  
+    return (
+      <Pressable style={styles.headerButton} onPress={handleBackButton}>
+        <IonIcon name="md-chevron-back" size={20} color={Colors.white} />
+      </Pressable>
+    );
+  }
+    
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -45,7 +76,7 @@ export const Workout = ({navigation}) => {
       fetchData()
       refresh.current = true
     }
-  
+ 
   }, [pageMode])
 
   function changeWorkoutMode(value) {
@@ -397,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width - 80,
     borderWidth: 3,
-    borderRadius: 20,    
+    borderRadius: 20,
     alignItems: 'center',
     marginBottom: 20,
     marginLeft: -3,
@@ -443,5 +474,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     marginBottom: 0,
+  },
+  headerButton: {
+    marginLeft: 10,
+    marginRight: -10,
   },
 });
