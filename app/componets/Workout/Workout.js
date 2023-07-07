@@ -24,7 +24,7 @@ export const Workout = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [routineList, setRoutineList] = useState([])
   const [workoutList, setWorkoutList] = useState([])
-  const [selectedWorkout, setSelectedWorkout] = useState(-1)
+  const [selectedWorkouts, setSelectedWorkouts] = useState([])
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -82,12 +82,24 @@ export const Workout = ({navigation}) => {
     }
   }
 
+  function addOrRemoveSelectedWorkout(workout) {
+    if(selectedWorkouts.some(item => item.name === workout.name)) {
+      setSelectedWorkouts(prevArray =>
+        prevArray.filter(item => item.name !== workout.name)
+      );
+    } else {
+      setSelectedWorkouts((prevArray) => [...prevArray, workout]);
+    }
+  }
+
   const CardioWorkoutRecord = ({workout}) => {
     return (
       <View style={styles.workoutRecordContainer}>      
         <Pressable
-          onPress={() => { setSelectedWorkout(workout.id) }}
-          style={selectedWorkout == workout.id ? styles.workoutRecordSelected : styles.workoutRecord}
+          onPress={() => { 
+            addOrRemoveSelectedWorkout(workout)
+          }}
+          style={selectedWorkouts.some(item => item.name === workout.name) ? styles.workoutRecordSelected : styles.workoutRecord}
         >
           <Text>{workout.id + ': ' + workout.name}</Text>
         </Pressable>
@@ -109,7 +121,7 @@ export const Workout = ({navigation}) => {
             <ScrollView>
               {item.workouts.map((workout, index) => (
                 <CardioWorkoutRecord key={index} workout={workout} />
-                ))}
+              ))}
             </ScrollView>
           </View>
         )}
