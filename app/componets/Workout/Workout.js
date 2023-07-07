@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Pressable, ScrollView} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect, useRef, memo} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -8,6 +8,7 @@ import * as workoutSql from '../../controllers/workouts.controller'
 import * as homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
+import { CardioWorkout } from './CardioWorkout'
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -30,6 +31,8 @@ export const Workout = ({navigation}) => {
   let routineSelectedID = useRef(-1)
 
   let cardioWorkouts = useRef([])
+  
+  let refresh = useRef(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,8 +41,10 @@ export const Workout = ({navigation}) => {
       setLoading(false)
     }
 
-    if(pageMode === "Main")
+    if(pageMode === "Main" && refresh.current) {
       fetchData()
+      refresh.current = true
+    }
   
   }, [pageMode])
 
@@ -113,13 +118,8 @@ export const Workout = ({navigation}) => {
       setSelectedWorkouts(selected);
     }
     else if(workoutMode === "cardio") {
-
-      if(selectedWorkouts.some(item => item === workout))
-        setSelectedWorkouts(prevArray =>
-          prevArray.filter(item => item !== workout)
-        );
-      else
-        setSelectedWorkouts((prevArray) => [...prevArray, workout]);
+      selected.push(workout);
+      setSelectedWorkouts(selected)
     }
   }
 
@@ -285,7 +285,10 @@ export const Workout = ({navigation}) => {
         )}
 
         <Pressable 
-          onPress={() => { console.log('hit') }}
+          onPress={() => { 
+            refresh.current = false;
+            setPageMode('Workout') 
+          }}
           style={styles.startWorkoutButton}
         >
           <Text>Start Workout</Text>
@@ -300,14 +303,28 @@ export const Workout = ({navigation}) => {
         {pageMode == 'Main' && (
           <Main></Main>
         )}
-        {pageMode == 'Edit' && (          
+        {pageMode == 'Edit' && (
           <EditWorkout 
             workoutMode={workoutMode} 
             setPageMode={setPageMode} 
             routineSelected={routineSelected}
             navigation={navigation}
           ></EditWorkout>
-        )}        
+        )}
+        {pageMode == 'Workout' && (
+          <>
+            {workoutMode == 'strength' && (
+              <Text>strength</Text>
+            )}
+            {workoutMode == 'cardio' && (
+              <CardioWorkout
+                navigation={navigation}
+                setPageMode={setPageMode}
+                workout={selectedWorkouts[0]}
+              ></CardioWorkout>
+            )}
+          </>
+        )}
       </View>
     </>
   );
