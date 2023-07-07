@@ -48,9 +48,15 @@ export const Workout = ({navigation}) => {
     setSelectedWorkouts([])
 
     if(value === "strength")
+    {
       setWorkoutList(routineSelected.current.workouts)
+      styles.workoutRecord.marginLeft = -90;
+    }
     else if(value === "cardio") 
+    {
       setWorkoutList(cardioWorkouts.current)
+      styles.workoutRecord.marginLeft = -40;
+    }
   }
 
   async function getData() {
@@ -100,7 +106,7 @@ export const Workout = ({navigation}) => {
           onPress={() => { 
             addOrRemoveSelectedWorkout(workout)
           }}
-          style={selectedWorkouts.some(item => item.name === workout.name) ? styles.workoutRecordSelected : styles.workoutRecord}
+          style={selectedWorkouts.some(item => item.name === workout.name) ? [styles.selected, styles.workoutRecord] : styles.workoutRecord}
         >
           <Text>{workout.name}</Text>
         </Pressable>
@@ -301,13 +307,8 @@ const styles = StyleSheet.create({
     marginLeft: -90,
     alignItems: 'center',
   },
-  workoutRecordSelected: {
-    marginTop: -1,
+  selected: {
     backgroundColor: Colors.primary,
-    flex: 1,
-    paddingVertical: 10,
-    marginLeft: -90,
-    alignItems: 'center',
   },
   homeContainer: {
     backgroundColor: Colors.background,
