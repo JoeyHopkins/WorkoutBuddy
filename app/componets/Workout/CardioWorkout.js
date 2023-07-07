@@ -1,10 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import * as Colors from '../../config/colors'
+import React from'react';
+
+import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 export const CardioWorkout = ({navigation, setPageMode, workout}) => {
+
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -56,12 +62,19 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   return (
     <>
 
-      <View style={styles.center}>
+      <View style={[styles.center, styles.fillSpace]}>
         <View style={styles.timerContainer}>
           <Text style={styles.timer}>
             {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}:
             {formatTime(Math.floor(milliseconds / 10))}
           </Text>
+
+          <Pressable 
+            onPress={resetStopwatch}
+          >
+            <MatIcon name="clock-edit-outline" size={50} color={Colors.primary} />
+          </Pressable>
+
         </View>
       </View>
 
@@ -78,6 +91,14 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         >
           <Text>Reset</Text>
       </Pressable>
+
+      <Pressable 
+        style={styles.button}
+        onPress={resetStopwatch}
+        >
+          <Text>Submit</Text>
+      </Pressable>
+
     </>
   );
 }
@@ -90,9 +111,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  orText: {
+    fontSize: 20,
+    color: Colors.primary,
+    textAlign: 'center',
+  },
   timer: {
     fontSize: 48,
     marginBottom: 20,
+    marginTop: 80,
   },
   center: {
     justifyContent: 'center',
@@ -111,7 +138,7 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 10,
-    marginVertical: 10,
+    marginBottom: 10,
     marginHorizontal: 20,
     borderRadius: 20,
     alignItems: 'center',
