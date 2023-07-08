@@ -74,10 +74,8 @@ export const Workout = ({navigation}) => {
       setLoading(false)
     }
 
-    if(pageMode === "Main" && (refresh.current || completed)) {
-      console.log('refreshing...')
+    if(pageMode === "Main" && (refresh.current || completed)) 
       fetchData()
-    }
 
     refresh.current = true
     setCompleted(false)
@@ -107,6 +105,7 @@ export const Workout = ({navigation}) => {
       weeklyTotals = await workoutSql.getWeeklyTotals()
 
       setCardioTotals(weeklyTotals)
+      setSelectedWorkouts([])
 
       for(let i in routinesList) {
         if(routinesList[i].workouts === undefined)
@@ -336,11 +335,9 @@ export const Workout = ({navigation}) => {
         )}
 
         <Pressable 
-          onPress={() => { 
-            // refresh.current = false;
-            setPageMode('Workout') 
-          }}
-          style={styles.startWorkoutButton}
+          onPress={() => { setPageMode('Workout') }}
+          style={ selectedWorkouts.length == 0 ? [styles.startWorkoutButton, styles.disabled] : styles.startWorkoutButton }
+          disabled={selectedWorkouts.length == 0}
         >
           <Text>Start Workout</Text>
         </Pressable>
@@ -500,4 +497,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: -10,
   },
+  disabled: {
+    backgroundColor: Colors.backgroundGray,
+  }
 });
