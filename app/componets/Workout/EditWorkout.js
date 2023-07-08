@@ -106,6 +106,10 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           <Text>{workout.name}</Text>
         </View>
   
+        {workout.trackDistance == 1 && (
+          <EntyoIcon name="ruler" size={20} color={Colors.secondary} />
+        )}
+        
         <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
           <Icon name="trash" size={20} color={Colors.highlight} />
         </Pressable>
