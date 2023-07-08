@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput, Switch} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput, Switch, ScrollView} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
@@ -161,9 +161,11 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
           {loading == false && workoutList.length > 0 && (
             <>
-              {workoutList.map((workout, index) => (
-                <CardioWorkoutRecord key={index} workout={workout} />
-              ))}
+              <ScrollView>
+                {workoutList.map((workout, index) => (
+                  <CardioWorkoutRecord key={index} workout={workout} />
+                ))}
+              </ScrollView>  
             </>
           )}
         </View>
