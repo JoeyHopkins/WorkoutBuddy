@@ -67,9 +67,9 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   const submitCardioWorkout = () => {
     let duration = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}:${formatTime(Math.floor(milliseconds / 10))}`
     let now = getCurrentDateTimeInUserTimezone();
-
+    
     //submit cardio workout
-    // sql.submitBasicCardioWorkout(workout.id, duration, intensity, now)
+    sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
   };
 
   const changeIntensity = () => {
