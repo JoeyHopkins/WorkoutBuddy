@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import * as Colors from '../../config/colors'
 import React from'react';
+import { showMessage } from "react-native-flash-message";
 
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -64,12 +65,41 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     return isoString = userDateTime.toISOString();
   };
 
-  const submitCardioWorkout = () => {
+  function goBackToWorkouts() {
+    setPageMode('Main') 
+    navigation.setOptions({headerTitle: 'Workout'});
+  }
+
+  const submitCardioWorkout = async () => {
     let duration = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}:${formatTime(Math.floor(milliseconds / 10))}`
     let now = getCurrentDateTimeInUserTimezone();
-    
-    //submit cardio workout
-    sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
+
+    try {
+      if(intensity !== 0){
+        await sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
+        showMessage({
+          message: 'Success',
+          description: 'Submitted successfully',
+          type: "success",
+        });
+        goBackToWorkouts()
+      }
+      else
+        showMessage({
+          message: 'Error',
+          description: 'Please select an intensity',
+          type: "danger",
+        });
+    }
+    catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error',
+        type: "danger",
+      });
+    }
+
+
   };
 
   const changeIntensity = () => {
@@ -90,7 +120,6 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
 
   return (
     <>
-
       <View style={[styles.center, styles.fillSpace]}>
         <View style={styles.timerContainer}>
           <Text style={styles.timer}>
