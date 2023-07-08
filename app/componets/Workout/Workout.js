@@ -29,6 +29,7 @@ export const Workout = ({navigation}) => {
   const [workoutList, setWorkoutList] = useState([])
   const [selectedWorkouts, setSelectedWorkouts] = useState([])
   const [cardioTotals, setCardioTotals] = useState([])
+  const [completed, setCompleted] = useState(false)
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -54,6 +55,7 @@ export const Workout = ({navigation}) => {
     const navigation = useNavigation();
   
     const handleBackButton = () => {
+      refresh.current = false
       setPageMode('Main') 
       navigation.setOptions({headerTitle: 'Workout'});
     };
@@ -65,7 +67,6 @@ export const Workout = ({navigation}) => {
     );
   }
     
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -73,11 +74,13 @@ export const Workout = ({navigation}) => {
       setLoading(false)
     }
 
-    if(pageMode === "Main" && refresh.current) {
+    if(pageMode === "Main" && (refresh.current || completed)) {
+      console.log('refreshing...')
       fetchData()
-      refresh.current = true
     }
- 
+
+    refresh.current = true
+    setCompleted(false)
   }, [pageMode])
 
   function changeWorkoutMode(value) {
@@ -334,7 +337,7 @@ export const Workout = ({navigation}) => {
 
         <Pressable 
           onPress={() => { 
-            refresh.current = false;
+            // refresh.current = false;
             setPageMode('Workout') 
           }}
           style={styles.startWorkoutButton}
@@ -354,7 +357,8 @@ export const Workout = ({navigation}) => {
         {pageMode == 'Edit' && (
           <EditWorkout 
             workoutMode={workoutMode} 
-            setPageMode={setPageMode} 
+            setPageMode={setPageMode}
+            setCompleted={setCompleted}
             routineSelected={routineSelected}
             navigation={navigation}
           ></EditWorkout>

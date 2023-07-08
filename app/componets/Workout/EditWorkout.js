@@ -11,7 +11,7 @@ import { showMessage } from "react-native-flash-message";
 
 const width = Dimensions.get('window').width
 
-export function EditWorkout({workoutMode, setPageMode, routineSelected, navigation}) {
+export function EditWorkout({workoutMode, setCompleted, routineSelected, navigation}) {
 
   const [loading, setLoading] = useState(false)
   const [workoutList, setWorkoutList] = useState([])
@@ -40,6 +40,9 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
       sql = workoutSql.cardio
     else if(workoutMode === 'strength')
       sql = workoutSql.strength
+
+    if(submissionType !== null)
+      setCompleted(true)
 
     try {
 
@@ -138,18 +141,6 @@ export function EditWorkout({workoutMode, setPageMode, routineSelected, navigati
           )}
         </View>
       </View>
-
-      <View style={styles.center}>
-        <Pressable 
-          style={styles.circleButton}
-          onPress={() => { 
-            setPageMode('Main') 
-            navigation.setOptions({headerTitle: 'Workout'});
-          }}
-          >
-          <EntyoIcon name={'cross'} size={20} color={Colors.black} />
-        </Pressable>      
-      </View>
     </>
   );
 }
@@ -159,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
-    marginTop: 10,
+    marginVertical: 20,
     paddingTop: 20,
     marginHorizontal: 20,
     borderColor: Colors.primary,
