@@ -29,7 +29,7 @@ export const black = '#000000';
 export const background = white;
 export const backgroundGray = '#b9b9b9';
 
-
+export const red = '#ff675d';
 
 //keep a primary and seconday as first and second respoctively
 export const linegraphColors = [

@@ -7,6 +7,8 @@ import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useNavigation } from '@react-navigation/native';
 
+import * as sqlCardio from '../../controllers/cardioWorkouts.controller';
+
 const { width, height } = Dimensions.get('window');
 
 export const CardioWorkout = ({navigation, setPageMode, workout}) => {
@@ -100,19 +102,27 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         </View>
       </View>
 
-      <Pressable 
-        style={styles.button}
-        onPress={toggleStopwatch}
+      <View style={styles.row}>
+        <Pressable 
+          style={[styles.smallButton, styles.marginLeft]}
+          onPress={resetStopwatch}
+          >
+            <Text>Reset</Text>
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.smallButton,
+            styles.marginRight,
+            isRunning ? styles.stopButton : null ,
+          ]}
+          onPress={toggleStopwatch}
         >
           <Text>{isRunning ? 'Stop' : 'Start'}</Text>
-      </Pressable>
+        </Pressable>
 
-      <Pressable 
-        style={styles.button}
-        onPress={resetStopwatch}
-        >
-          <Text>Reset</Text>
-      </Pressable>
+      </View>
+
 
       <Pressable 
         style={disableSubmit ? [styles.button, styles.disabled] : styles.button }
@@ -130,6 +140,10 @@ const styles = StyleSheet.create({
   fillSpace: {
     flex: 1,
   },
+  row: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+  },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -143,6 +157,9 @@ const styles = StyleSheet.create({
     fontSize: 48,
     marginBottom: 20,
     marginTop: 80,
+  },
+  stopButton: {
+    backgroundColor: Colors.red,
   },
   center: {
     justifyContent: 'center',
@@ -167,6 +184,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
+  },
+  smallButton: {
+    width: width * .42,
+    paddingVertical: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    backgroundColor: Colors.primary,
+  },
+  marginLeft: {
+    marginLeft: 20, 
+  },
+  marginRight: {
+    marginRight: 20, 
   },
   disabled: {
     backgroundColor: Colors.backgroundGray,
