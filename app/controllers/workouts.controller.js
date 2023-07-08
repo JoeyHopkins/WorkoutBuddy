@@ -66,7 +66,9 @@ const addCardioWorkout = (params) => {
   });
 };
 
-const addStrengthWorkout = (name, routineId) => {
+const addStrengthWorkout = (params) => {
+  let routineId = params.routineId
+  let name = params.newWorkout
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
