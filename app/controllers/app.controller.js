@@ -9,8 +9,8 @@ exports.getTablesFromDB = () => {
       (txObj, { rows: { _array } }) => console.log(_array),
       // failure callback which sends two things Transaction object and Error
       (txObj, error) => console.log('Error ', error)
-      ) // end executeSQL
-  }) // end transaction
+      ) 
+  })
 };
 
 // db.transaction(tx => {
@@ -21,6 +21,22 @@ exports.getTablesFromDB = () => {
 //     (txObj, error) => console.log("Error ", error)
 //   );
 // });
+
+
+exports.dropTable = (table) => {
+  db.transaction(tx => {
+    tx.executeSql(`DROP TABLE ` + table,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("table deleted successfully");
+      },
+      error => {
+        console.log("error dropping table " + error.message)
+      }
+    )
+  })
+};
 
 exports.createTables =  () => {
 
@@ -85,7 +101,7 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50), trackDistance INTEGER);`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)
@@ -120,13 +136,9 @@ exports.createTables =  () => {
 };
 
 exports.dropAllTables = () => {
-  
   db.transaction(tx => {
-    // sending 4 arguments in executeSql
     tx.executeSql("SELECT name FROM sqlite_master WHERE type='table'", null, 
-      // success callback which sends two things Transaction object and ResultSet Object
       (txObj, { rows: { _array } }) => {
-      
         _array.forEach(row => {
           const tableName = row.name;
           if(tableName =='sqlite_sequence')
@@ -146,6 +158,6 @@ exports.dropAllTables = () => {
 
       // failure callback which sends two things Transaction object and Error
       (txObj, error) => console.log('Error ', error)
-      ) // end executeSQL
-  }) // end transaction
+      )
+  })
 };

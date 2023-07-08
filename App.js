@@ -22,6 +22,7 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // await appSql.dropTable('cardioWorkouts')
         // await appSql.dropAllTables();
         await appSql.createTables();
         await appSql.getTablesFromDB();
