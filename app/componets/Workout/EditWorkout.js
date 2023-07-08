@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput, Switch} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
@@ -16,6 +16,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const [loading, setLoading] = useState(false)
   const [workoutList, setWorkoutList] = useState([])
   const [newWorkout, setNewWorkout] = useState('')
+  const [distanceEnabled, setDistanceEnabled] = useState(false)
+
+  const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +61,13 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             return
           }
 
-          message = await sql.addWorkout(newWorkout, routineSelected.current.id)
+          let params = {
+            newWorkout: newWorkout,
+            routineId: routineSelected.current.id,
+            distanceEnabled: distanceEnabled,
+          }
+          
+          message = await sql.addWorkout(params)
 
           setNewWorkout('')
           break;
@@ -116,13 +125,27 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             value={newWorkout}
             placeholder="New Workout Name"
           />
-          <Pressable
-            style={styles.circleButton}
-            onPress={() => { workoutConnection('add') }}
-          >
-            <MaterialIcon name='check-outline' size={20} color={Colors.black} />
-          </Pressable>
-        </View>
+
+
+          {workoutMode === 'cardio' && (
+            <View style={styles.switchContainer}>
+              <Switch
+                trackColor={{false: Colors.backgroundGray, true: Colors.primary}}
+                thumbColor={distanceEnabled ? Colors.secondary : '#f4f3f4'}
+                onValueChange={toggleSwitch}
+                value={distanceEnabled}
+              />
+              <Text style={styles.switchText}>{'Track\nDistance'}</Text>
+            </View>
+          )}
+
+            <Pressable
+              style={styles.circleButton}
+              onPress={() => { workoutConnection('add') }}
+            >
+              <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+            </Pressable>
+          </View>
 
         <View style={styles.fillSpace}>
           {loading == true && (
@@ -156,13 +179,28 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     overflow: 'hidden',
     flex: 1,
-    justifyContent: 'center',
+  },
+  addWorkoutContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
     alignItems: 'center',
+    marginHorizontal: 20,
+    marginBottom: 30,
+  },
+  switchText: {
+    fontSize: 10,
+    textAlign: 'center',
+    marginTop: -10,
+    color: Colors.primary,
+  },
+  switchContainer: {
+    marginBottom: -15,
+    borderColor: Colors.primary,
+    marginLeft: 20,
   },
   input: {
     height: 40,
-    width: width - 150,
-    marginRight: 20,
+    flex: 1,
     borderWidth: 1,
     borderColor: Colors.primary,
     borderRadius: 10,
@@ -171,8 +209,8 @@ const styles = StyleSheet.create({
   circleButton: {
     width: 40,
     height: 40,
+    marginLeft: 20,
     borderRadius: 30,
-    marginVertical: 10,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
@@ -182,12 +220,6 @@ const styles = StyleSheet.create({
   },
   fillSpace: {
     flex: 1,
-  },
-  addWorkoutContainer: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    alignItems: 'center',
-    marginBottom: 30,
   },
   workoutRecordContainer: {
     paddingVertical: 10,

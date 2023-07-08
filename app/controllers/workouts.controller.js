@@ -47,15 +47,20 @@ const getAllStrengthWorkoutsByRoutine = (routineId) => {
 };
 
 
-const addCardioWorkout = (workout) => {
+const addCardioWorkout = (params) => {
+  let workout = params.newWorkout
+  let distanceEnabled = params.distanceEnabled
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO cardioWorkouts (name) VALUES (?)",
-        [workout],
-        (txObj, { rows: { _array } }) => { 
-          resolve('Workout inserted successfully!!')
+      tx.executeSql(
+        "INSERT INTO cardioWorkouts (name, trackDistance) VALUES (?, ?)",
+        [workout, distanceEnabled],
+        (txObj, { rows: { _array } }) => {
+          resolve('Workout inserted successfully!!');
         },
-        (txObj, error) => { reject(error) },
+        (txObj, error) => {
+          reject(error);
+        }
       );
     });
   });
