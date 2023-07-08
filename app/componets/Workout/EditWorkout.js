@@ -66,7 +66,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             routineId: routineSelected.current.id,
             distanceEnabled: distanceEnabled,
           }
-          
+
           message = await sql.addWorkout(params)
 
           setNewWorkout('')
@@ -147,7 +147,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             </Pressable>
           </View>
 
-        <View style={styles.fillSpace}>
+        <View style={ (loading == false && workoutList.length > 0) ? styles.fillSpace : [styles.fillSpace, styles.center] }>
           {loading == true && (
             <Wander size={150} color={Colors.primary} />
           )}
@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
   },
   center: {
     alignItems: 'center',
+    justifyContent: 'center',
   },
   fillSpace: {
     flex: 1,
