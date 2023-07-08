@@ -19,7 +19,7 @@ const padDigits = (number) => {
 export const primary = '#209ce3';
 export const altPrimary = darkenColor(primary, 20)
 
-export const secondary = '#9CE320';
+export const secondary = '#008a45';
 export const altSecondary = darkenColor(secondary, 20)
 
 export const highlight = '#FF0000'; //red

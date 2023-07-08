@@ -21,7 +21,7 @@ const options = [
 ];
 
 export const Workout = ({navigation}) => {
-
+  
   const [workoutMode, setWorkoutMode] = useState("strength");
   const [pageMode, setPageMode] = useState("Main");
   const [loading, setLoading] = useState(true);
@@ -162,16 +162,26 @@ export const Workout = ({navigation}) => {
 
   const CardioWorkoutRecord = ({workout}) => {
     return (
-      <View style={styles.workoutRecordContainer}>      
-        <Pressable
-          onPress={() => { 
-            addOrRemoveSelectedWorkout(workout)
-          }}
-          style={selectedWorkouts.some(item => item === workout) ? [styles.selected, styles.workoutRecord] : styles.workoutRecord}
-        >
-          <Text>{workout.name}</Text>
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => { 
+          addOrRemoveSelectedWorkout(workout)
+        }}
+        style={
+          selectedWorkouts.some((item) => item === workout)
+            ? [styles.selected, styles.workoutRecord]
+            : styles.workoutRecord
+        }
+      >
+
+        <View style={(workoutMode == 'strength') ? styles.workoutRecordItemContainerStrength : styles.workoutRecordItemContainerCardio}>
+          <Text style={styles.workoutName}>{workout.name}</Text>
+
+          {workout.trackDistance == true && (
+            <EntypoIcon name='ruler' size={20} color={Colors.secondary} />
+          )}
+
+        </View>
+      </Pressable>
     )
   }
 
@@ -347,7 +357,7 @@ export const Workout = ({navigation}) => {
 
   return (
     <>
-      <View style={styles.background}>
+      <View style={[styles.background, styles.fillSpace]}>
         {pageMode == 'Main' && (
           <Main></Main>
         )}
@@ -380,22 +390,6 @@ export const Workout = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-  workoutRecordContainer: {
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: width,
-    marginTop: 1,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.primary,
-  },
-  workoutRecord: {
-    flex: 1,
-    paddingVertical: 10,
-    marginLeft: -90,
-    alignItems: 'center',
-  },
   selected: {
     backgroundColor: Colors.primary,
   },
@@ -406,7 +400,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 20,
     borderColor: Colors.primary,
-    overflow: 'hidden',
+  },
+  workoutRecord: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+    paddingVertical: 10,
+  },
+  workoutRecordItemContainerStrength: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  workoutRecordItemContainerCardio: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 40,
   },
   fillSpace: {
     flex: 1,
@@ -423,7 +430,6 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: Colors.white,
-    flex: 1,
   },
   totalItem: {
     flex: 1,
@@ -444,12 +450,9 @@ const styles = StyleSheet.create({
   },
   slide: {
     flex: 1,
-    width: width - 80,
     borderWidth: 3,
     borderRadius: 20,
-    alignItems: 'center',
     marginBottom: 20,
-    marginLeft: -3,
     backgroundColor: Colors.white,
     borderColor: Colors.primary,
   },
@@ -466,8 +469,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   strengthWorkoutListContainer: {
-    backgroundColor: Colors.background,
     marginBottom: 20,
+    borderRadius: 20,
     flex: 1,
   },
   startWorkoutButton: {
@@ -500,4 +503,4 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: Colors.backgroundGray,
   }
-});
+})
