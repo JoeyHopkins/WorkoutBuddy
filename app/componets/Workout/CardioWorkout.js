@@ -17,6 +17,7 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(true);
+  const [intensity, setIntensity] = useState(0);
   
   const milliseconds = elapsedTime % 1000;
   const seconds = (elapsedTime / 1000) % 60;
@@ -68,7 +69,11 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     let now = getCurrentDateTimeInUserTimezone();
 
     //submit cardio workout
-    // sql.submitBasicCardioWorkout(workout.id, duration, now)
+    // sql.submitBasicCardioWorkout(workout.id, duration, intensity, now)
+  };
+
+  const changeIntensity = () => {
+    setIntensity(prevIntensity => (prevIntensity === 3 ? 1 : prevIntensity + 1));
   };
 
   const resetStopwatch = () => {
@@ -102,6 +107,23 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         </View>
       </View>
 
+      <Pressable
+        style={[
+          styles.button,
+          intensity === 1 && styles.buttonLow,
+          intensity === 2 && styles.buttonMedium,
+          intensity === 3 && styles.stopButton,
+        ]}
+        onPress={changeIntensity}
+      >
+        <Text>
+          Intensity:
+          {intensity === 1 && ' Low'}
+          {intensity === 2 && ' Medium'}
+          {intensity === 3 && ' High'}
+        </Text>
+      </Pressable>
+
       <View style={styles.row}>
         <Pressable 
           style={[styles.smallButton, styles.marginLeft]}
@@ -114,15 +136,13 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
           style={[
             styles.smallButton,
             styles.marginRight,
-            isRunning ? styles.stopButton : null ,
+            isRunning ? styles.stopButton : null,
           ]}
           onPress={toggleStopwatch}
         >
           <Text>{isRunning ? 'Stop' : 'Start'}</Text>
         </Pressable>
-
       </View>
-
 
       <Pressable 
         style={disableSubmit ? [styles.button, styles.disabled] : styles.button }
@@ -131,7 +151,6 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         >
           <Text>Submit</Text>
       </Pressable>
-
     </>
   );
 }
@@ -157,6 +176,12 @@ const styles = StyleSheet.create({
     fontSize: 48,
     marginBottom: 20,
     marginTop: 80,
+  },
+  buttonLow: {
+    backgroundColor: Colors.green,
+  },
+  buttonMedium: {
+    backgroundColor: Colors.yellow,
   },
   stopButton: {
     backgroundColor: Colors.red,
