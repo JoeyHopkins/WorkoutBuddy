@@ -125,3 +125,23 @@ exports.strength = {
   addWorkout: addStrengthWorkout,
   deleteWorkout: deleteStrengthWorkout,
 };
+
+exports.getWeeklyTotals = () => {
+  return new Promise((resolve, reject) => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT intensity, SUM(duration) AS totalDuration FROM cardioWorkoutsL1 WHERE date >= ? GROUP BY intensity",
+        [oneWeekAgo.toISOString()],
+        (txObj, { rows: { _array } }) => {
+          resolve(_array);
+        },
+        (txObj, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+};

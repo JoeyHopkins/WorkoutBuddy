@@ -28,6 +28,7 @@ export const Workout = ({navigation}) => {
   const [routineList, setRoutineList] = useState([])
   const [workoutList, setWorkoutList] = useState([])
   const [selectedWorkouts, setSelectedWorkouts] = useState([])
+  const [cardioTotals, setCardioTotals] = useState([])
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -100,6 +101,9 @@ export const Workout = ({navigation}) => {
       let routinesList = await homeSql.getAllRoutinesList()
       let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
       cardioWorkouts.current = await workoutSql.getAllCardioWorkouts()
+      weeklyTotals = await workoutSql.getWeeklyTotals()
+
+      setCardioTotals(weeklyTotals)
 
       for(let i in routinesList) {
         if(routinesList[i].workouts === undefined)
@@ -218,20 +222,33 @@ export const Workout = ({navigation}) => {
   const CardioTotals = () => {
     return (
       <>
-        <View style={styles.totalItem}>
-          <Text>Low</Text>
-          <Text>0 minutes</Text>
-        </View>
-        <View style={styles.totalItem}>
-          <Text>Medium</Text>
-          <Text>0 minutes</Text>
-        </View>
-        <View style={styles.totalItem}>
-          <Text>High</Text>
-          <Text>0 minutes</Text>
-        </View>      
+        {cardioTotals && cardioTotals.length > 0 ? (
+          cardioTotals.map(item => (
+            <View style={styles.totalItem} key={item.intensity}>
+              <Text>
+                {item.intensity === 1 ? 'Low' : item.intensity === 2 ? 'Medium' : 'High'}
+              </Text>
+              <Text>{(item.totalDuration / 60).toFixed(2)} minutes</Text>
+            </View>
+          ))
+        ) : (
+          <>
+            <View style={styles.totalItem}>
+              <Text>Low</Text>
+              <Text>0 minutes</Text>
+            </View>
+            <View style={styles.totalItem}>
+              <Text>Medium</Text>
+              <Text>0 minutes</Text>
+            </View>
+            <View style={styles.totalItem}>
+              <Text>High</Text>
+              <Text>0 minutes</Text>
+            </View>
+          </>
+        )}
       </>
-    ) 
+    );
   };
 
   const Main = () => {

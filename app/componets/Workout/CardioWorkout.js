@@ -6,8 +6,6 @@ import { showMessage } from "react-native-flash-message";
 
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { useNavigation } from '@react-navigation/native';
-
 import * as sqlCardio from '../../controllers/cardioWorkouts.controller';
 
 const { width, height } = Dimensions.get('window');
@@ -43,7 +41,6 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     navigation.setOptions({ headerTitle: 'Cardio - ' + workout.name });
   }, [])
 
-
   const toggleStopwatch = () => {
     if (isRunning) {
       setIsRunning(false);
@@ -56,6 +53,27 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     }
   };
 
+  const resetStopwatch = () => {
+    setStartTime(0);
+    setElapsedTime(0);
+    setIsRunning(false);
+    setDisableSubmit(true);
+  };
+
+  const changeIntensity = () => {
+    setIntensity(prevIntensity => (prevIntensity === 3 ? 1 : prevIntensity + 1));
+  };
+
+  function goBackToWorkouts() {
+    setPageMode('Main') 
+    navigation.setOptions({headerTitle: 'Workout'});
+  }
+
+  const formatTime = (time) => {
+    const paddedTime = Math.floor(time).toString().padStart(2, '0');
+    return paddedTime;
+  };
+
   const getCurrentDateTimeInUserTimezone = () => {
     const date = new Date();
     const timezoneOffset = date.getTimezoneOffset();
@@ -65,13 +83,8 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     return isoString = userDateTime.toISOString();
   };
 
-  function goBackToWorkouts() {
-    setPageMode('Main') 
-    navigation.setOptions({headerTitle: 'Workout'});
-  }
-
   const submitCardioWorkout = async () => {
-    let duration = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}:${formatTime(Math.floor(milliseconds / 10))}`
+    let duration = elapsedTime / 1000;
     let now = getCurrentDateTimeInUserTimezone();
 
     try {
@@ -98,24 +111,6 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         type: "danger",
       });
     }
-
-
-  };
-
-  const changeIntensity = () => {
-    setIntensity(prevIntensity => (prevIntensity === 3 ? 1 : prevIntensity + 1));
-  };
-
-  const resetStopwatch = () => {
-    setStartTime(0);
-    setElapsedTime(0);
-    setIsRunning(false);
-    setDisableSubmit(true);
-  };
-
-  const formatTime = (time) => {
-    const paddedTime = Math.floor(time).toString().padStart(2, '0');
-    return paddedTime;
   };
 
   return (
