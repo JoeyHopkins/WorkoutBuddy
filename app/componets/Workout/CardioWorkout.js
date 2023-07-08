@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
+import { Dimensions, Pressable, StyleSheet, Text, View, TouchableOpacity, Button, TextInput } from 'react-native';
 import * as Colors from '../../config/colors'
 import React from'react';
 import { showMessage } from "react-native-flash-message";
@@ -117,6 +117,22 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     <>
       <View style={[styles.center, styles.fillSpace]}>
         <View style={styles.timerContainer}>
+
+          {workout.trackDistance == true && (
+            <View style={styles.row}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Distance"
+                  placeholderTextColor="#888"
+                  keyboardType="numeric"
+                  textAlign="center"
+                />
+              </View>
+              <Text style={styles.distanceText}>Miles</Text>
+            </View>
+          )}
+
           <Text style={styles.timer}>
             {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}:
             {formatTime(Math.floor(milliseconds / 10))}
@@ -180,6 +196,16 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
 }
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginLeft: 45,
+    marginRight: 10,
+  },
+  input: {
+    fontSize: 14,
+    color: '#333',
+  },
   fillSpace: {
     flex: 1,
   },
@@ -187,19 +213,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent:'space-between',
   },
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  orText: {
-    fontSize: 20,
-    color: Colors.primary,
-    textAlign: 'center',
-  },
   timer: {
     fontSize: 48,
     marginBottom: 20,
-    marginTop: 80,
+    marginTop: 40,
+  },
+  distanceText: {
+    marginTop: 5,
   },
   buttonLow: {
     backgroundColor: Colors.green,
