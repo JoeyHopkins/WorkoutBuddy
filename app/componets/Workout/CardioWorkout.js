@@ -17,7 +17,8 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   const [isRunning, setIsRunning] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(true);
   const [intensity, setIntensity] = useState(0);
-  
+  const [distance, setDistance] = useState(0);
+
   const milliseconds = elapsedTime % 1000;
   const seconds = (elapsedTime / 1000) % 60;
   const minutes = (elapsedTime / (1000 * 60)) % 60;
@@ -74,6 +75,10 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     return paddedTime;
   };
 
+  const onInputChange = (number) => {
+    setDistance(number);
+  };
+
   const getCurrentDateTimeInUserTimezone = () => {
     const date = new Date();
     const timezoneOffset = date.getTimezoneOffset();
@@ -88,21 +93,35 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     let now = getCurrentDateTimeInUserTimezone();
 
     try {
-      if(intensity !== 0){
-        await sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
-        showMessage({
-          message: 'Success',
-          description: 'Submitted successfully',
-          type: "success",
-        });
-        goBackToWorkouts()
-      }
-      else
+      if(intensity === 0) {
         showMessage({
           message: 'Error',
           description: 'Please select an intensity',
           type: "danger",
         });
+        return
+      }
+      if(workout.trackDistance == true && distance === 0) {
+        showMessage({
+          message: 'Error',
+          description: 'Please enter a distance',
+          type: "danger",
+        });
+        return
+      }
+
+      if(workout.trackDistance == false)
+        await sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
+      else
+        await sqlCardio.insertL2CardioWorkout(workout.id, duration, intensity, now, distance);
+
+      showMessage({
+        message: 'Success',
+        description: 'Submitted successfully',
+        type: "success",
+      });
+      goBackToWorkouts()
+
     }
     catch (error) {
       showMessage({
@@ -121,12 +140,14 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
           {workout.trackDistance == true && (
             <View style={styles.row}>
               <View style={styles.inputContainer}>
+
                 <TextInput
                   style={styles.input}
                   placeholder="Distance"
                   placeholderTextColor="#888"
                   keyboardType="numeric"
                   textAlign="center"
+                  onChangeText={onInputChange}
                 />
               </View>
               <Text style={styles.distanceText}>Miles</Text>
@@ -188,8 +209,8 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
         style={disableSubmit ? [styles.button, styles.disabled] : styles.button }
         disabled={disableSubmit}
         onPress={submitCardioWorkout}
-        >
-          <Text>Submit</Text>
+      >
+        <Text>Submit</Text>
       </Pressable>
     </>
   );
