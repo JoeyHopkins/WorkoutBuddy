@@ -24,9 +24,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
     const fetchData = async () => {
       setLoading(true)
       if(workoutMode === 'cardio')
-        navigation.setOptions({ headerTitle: 'Cardio Workouts' });
+        navigation.setOptions({ headerTitle: 'Edit Cardio Workouts' });
       else
-        navigation.setOptions({ headerTitle: routineSelected.current.routine + ' Workouts' });
+        navigation.setOptions({ headerTitle: 'Edit ' + routineSelected.current.routine + ' Workouts' });
 
       await workoutConnection()
       setLoading(false)
@@ -60,9 +60,21 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             setLoading(false)
             return
           }
+          if (!/^[a-zA-Z]+$/.test(newWorkout)) {
+            showMessage({
+              message: 'Error',
+              description: 'Workout name should only contain letters.',
+              type: 'danger',
+            });
+            setLoading(false);
+            return;
+          }
+
+          const lowerCaseWorkout = newWorkout.toLowerCase();
+          const capitalizedWorkout = lowerCaseWorkout.charAt(0).toUpperCase() + lowerCaseWorkout.slice(1);
 
           let params = {
-            newWorkout: newWorkout,
+            newWorkout: capitalizedWorkout,
             routineId: routineSelected.current.id,
             distanceEnabled: distanceEnabled,
           }
