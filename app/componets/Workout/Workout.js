@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, Pressable, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Pressable, ScrollView, Switch} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect, useRef, memo} from 'react';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
@@ -30,6 +30,7 @@ export const Workout = ({navigation}) => {
   const [selectedWorkouts, setSelectedWorkouts] = useState([])
   const [cardioTotals, setCardioTotals] = useState([])
   const [completed, setCompleted] = useState(false)
+  const [showDistanceTotals, setShowDistanceTotals] = useState(false)
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -37,6 +38,8 @@ export const Workout = ({navigation}) => {
   let cardioWorkouts = useRef([])
   
   let refresh = useRef(true)
+
+  const toggleCardioTotalSwitch = () => setShowDistanceTotals(previousState => !previousState);
 
   //handle header between the pages
   React.useLayoutEffect(() => {
@@ -232,43 +235,71 @@ export const Workout = ({navigation}) => {
   };
 
   const CardioTotals = () => {
-    return (
-      <>
-        {cardioTotals && cardioTotals.length > 0 ? (
-          cardioTotals.map(item => (
-            <View style={styles.totalItem} key={item.intensity}>
-              <Text>
-                {item.intensity === 1 ? 'Low' : item.intensity === 2 ? 'Medium' : 'High'}
-              </Text>
-              <Text>{(item.totalDuration / 60).toFixed(2)} minutes</Text>
-            </View>
-          ))
-        ) : (
-          <>
-            <View style={styles.totalItem}>
-              <Text>Low</Text>
-              <Text>0 minutes</Text>
-            </View>
-            <View style={styles.totalItem}>
-              <Text>Medium</Text>
-              <Text>0 minutes</Text>
-            </View>
-            <View style={styles.totalItem}>
-              <Text>High</Text>
-              <Text>0 minutes</Text>
-            </View>
-          </>
-        )}
-      </>
-    );
+
+    if(showDistanceTotals)
+      return (
+        <>
+          <View style={styles.totalItem}>
+            <Text>Weekly Distance</Text>
+            <Text>0 miles</Text>
+          </View>
+          <View style={styles.totalItem}>
+            <Text>Overall Distance</Text>
+            <Text>0 miles</Text>
+          </View>
+        </>
+      )
+    else
+      return (
+        <>
+          {cardioTotals && cardioTotals.length > 0 ? (
+            cardioTotals.map(item => (
+              <View style={styles.totalItem} key={item.intensity}>
+                <Text>
+                  {item.intensity === 1 ? 'Low' : item.intensity === 2 ? 'Medium' : 'High'}
+                </Text>
+                <Text>{(item.totalDuration / 60).toFixed(2)} min</Text>
+              </View>
+            ))
+          ) : (
+            <>
+              <View style={styles.totalItem}>
+                <Text>Low</Text>
+                <Text>0 min</Text>
+              </View>
+              <View style={styles.totalItem}>
+                <Text>Medium</Text>
+                <Text>0 min</Text>
+              </View>
+              <View style={styles.totalItem}>
+                <Text>High</Text>
+                <Text>0 min</Text>
+              </View>
+            </>
+          )}
+        </>
+      );
   };
 
   const Main = () => {
     return (
       <>
         <View style={styles.homeContainer}>
-          <View>
-            <Text style={styles.title}>Weekly Total Summary</Text>
+          <View style={styles.row}>
+            <View style={styles.fillSpace}></View>
+            <Text style={[styles.title]}>Weekly Total Summary</Text>
+            
+            <View style={[styles.fillSpace, styles.switchContainer]}>
+              {workoutMode === 'cardio' && (
+                <Switch
+                  trackColor={{false: Colors.altSecondary, true: Colors.altPrimary}}
+                  thumbColor={!showDistanceTotals ? Colors.secondary : Colors.primary}
+                  onValueChange={toggleCardioTotalSwitch}
+                  value={showDistanceTotals}
+                />              
+              )}
+            </View>
+            
           </View>
           <View style={styles.totalContainer}>
             {workoutMode === 'strength' && (
@@ -393,6 +424,23 @@ const styles = StyleSheet.create({
   selected: {
     backgroundColor: Colors.primary,
   },
+  switchContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: -12,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fillSpace: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    // borderWidth: 1,
+  },
   homeContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
@@ -417,6 +465,9 @@ const styles = StyleSheet.create({
   },
   fillSpace: {
     flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
   },
   routineListContainer: {
     backgroundColor: Colors.background,
@@ -459,7 +510,6 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1,
   },
   title: {
     color: Colors.primary,
