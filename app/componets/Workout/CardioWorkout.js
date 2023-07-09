@@ -309,18 +309,14 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
 const styles = StyleSheet.create({
   topTimerEditButtons: {
     justifyContent: "space-between",
-    // borderWidth: 1,
   },
   timer: {
     fontSize: 48,
     textAlign: 'center',
   },
   inputContainer: {
-    // borderWidth: 1,
     borderBottomWidth: 1,
     borderColor: "#ccc",
-    // marginLeft: 45,
-    // marginRight: 10,
   },
   input: {
     fontSize: 14,
@@ -349,7 +345,6 @@ const styles = StyleSheet.create({
   center: {
     justifyContent: "center",
     alignSelf: "center",
-    // borderWidth: 4,
   },
   timerContainer: {
     flex: 1,

@@ -88,12 +88,39 @@ const addStrengthWorkout = (params) => {
 const deleteCardioWorkout = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("DELETE FROM cardioWorkouts WHERE id =?",
+      tx.executeSql(
+        "DELETE FROM cardioWorkouts WHERE id = ?",
         [id],
-        (txObj, { rows: { _array } }) => { 
-          resolve('Workout deleted successfully!!')
+        (txObj, { rows: { _array } }) => {
+          // First delete operation completed successfully
+          tx.executeSql(
+            "DELETE FROM cardioWorkoutsL1 WHERE workoutId = ?",
+            [id],
+            (txObj, { rows: { _array } }) => {
+              // Second delete operation completed successfully
+              tx.executeSql(
+                "DELETE FROM cardioWorkoutsL2 WHERE workoutId = ?",
+                [id],
+                (txObj, { rows: { _array } }) => {
+                  // Third delete operation completed successfully
+                  resolve('Workout deleted successfully!!');
+                },
+                (txObj, error) => {
+                  // Error occurred during the third delete operation
+                  reject(error);
+                }
+              );
+            },
+            (txObj, error) => {
+              // Error occurred during the second delete operation
+              reject(error);
+            }
+          );
         },
-        (txObj, error) => { reject(error) },
+        (txObj, error) => {
+          // Error occurred during the first delete operation
+          reject(error);
+        }
       );
     });
   });
