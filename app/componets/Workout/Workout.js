@@ -9,6 +9,7 @@ import * as homeSql from '../../controllers/home.controller'
 import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
 import { CardioWorkout } from './CardioWorkout'
+import { StrengthWorkout } from './StrengthWorkout'
 import { useNavigation } from '@react-navigation/native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
@@ -407,7 +408,11 @@ export const Workout = ({navigation}) => {
         {pageMode == 'Workout' && (
           <>
             {workoutMode == 'strength' && (
-              <Text>strength</Text>
+              <StrengthWorkout
+                navigation={navigation}
+                setPageMode={setPageMode}
+                workouts={selectedWorkouts}
+              ></StrengthWorkout>
             )}
             {workoutMode == 'cardio' && (
               <CardioWorkout
