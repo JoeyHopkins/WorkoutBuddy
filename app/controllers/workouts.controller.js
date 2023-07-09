@@ -160,7 +160,7 @@ exports.strength = {
   deleteWorkout: deleteStrengthWorkout,
 };
 
-exports.getWeeklyTotals = () => {
+exports.getWeeklyCardioTimeTotals = () => {
   return new Promise((resolve, reject) => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -204,6 +204,33 @@ GROUP BY
           reject(error);
         }
       );
+    });
+  });
+};
+
+exports.getWeeklyCardioDistanceTotals = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("SELECT SUM(distance) AS mileOverall FROM cardioWorkoutsL2", 
+      [], 
+      (txObj, { rows: { _array } }) => {
+
+        const mileOverall = _array[0].mileOverall;
+
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() - 7);
+        const lastWeekDate = currentDate.toISOString().slice(0, 10);
+
+        tx.executeSql("SELECT SUM(distance) AS mileWeek FROM cardioWorkoutsL2 WHERE date >= ?",
+          [lastWeekDate],
+          (txObj, { rows: { _array } }) => {
+            const mileWeek = _array[0].mileWeek;
+            resolve({ mileWeek, mileOverall });
+          },
+          (txObj, error) => { reject(error) },
+        );
+      },
+      (txObj, error) => { reject(error) });
     });
   });
 };

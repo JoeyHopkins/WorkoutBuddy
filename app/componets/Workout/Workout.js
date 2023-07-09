@@ -28,9 +28,10 @@ export const Workout = ({navigation}) => {
   const [routineList, setRoutineList] = useState([])
   const [workoutList, setWorkoutList] = useState([])
   const [selectedWorkouts, setSelectedWorkouts] = useState([])
-  const [cardioTotals, setCardioTotals] = useState([])
+  const [cardioTimeTotals, setCardioTimeTotals] = useState([])
   const [completed, setCompleted] = useState(false)
   const [showDistanceTotals, setShowDistanceTotals] = useState(false)
+  const [cardioDistanceTotals, setCardioDistanceTotals] = useState({})
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -105,10 +106,12 @@ export const Workout = ({navigation}) => {
       let routinesList = await homeSql.getAllRoutinesList()
       let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
       cardioWorkouts.current = await workoutSql.getAllCardioWorkouts()
-      weeklyTotals = await workoutSql.getWeeklyTotals()
+      weeklyCardioTimeTotals = await workoutSql.getWeeklyCardioTimeTotals()
+      weeklyCardioDistanceTotals = await workoutSql.getWeeklyCardioDistanceTotals()
 
-      setCardioTotals(weeklyTotals)
+      setCardioTimeTotals(weeklyCardioTimeTotals)
       setSelectedWorkouts([])
+      setCardioDistanceTotals(weeklyCardioDistanceTotals)
 
       for(let i in routinesList) {
         if(routinesList[i].workouts === undefined)
@@ -241,19 +244,19 @@ export const Workout = ({navigation}) => {
         <>
           <View style={styles.totalItem}>
             <Text>Weekly Distance</Text>
-            <Text>0 miles</Text>
+            <Text>{cardioDistanceTotals.mileWeek ? cardioDistanceTotals.mileWeek : 0 } miles</Text>
           </View>
           <View style={styles.totalItem}>
             <Text>Overall Distance</Text>
-            <Text>0 miles</Text>
+            <Text>{cardioDistanceTotals.mileOverall ? cardioDistanceTotals.mileOverall : 0 } miles</Text>
           </View>
         </>
       )
     else
       return (
         <>
-          {cardioTotals && cardioTotals.length > 0 ? (
-            cardioTotals.map(item => (
+          {cardioTimeTotals && cardioTimeTotals.length > 0 ? (
+            cardioTimeTotals.map(item => (
               <View style={styles.totalItem} key={item.intensity}>
                 <Text>
                   {item.intensity === 1 ? 'Low' : item.intensity === 2 ? 'Medium' : 'High'}
