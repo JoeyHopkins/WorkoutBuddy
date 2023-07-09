@@ -1,17 +1,25 @@
-import { useEffect, useState, useRef } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View, TouchableOpacity, Button, TextInput } from 'react-native';
-import * as Colors from '../../config/colors'
-import React from'react';
+import { useEffect, useState, useRef } from "react";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Button,
+  TextInput,
+} from "react-native";
+import * as Colors from "../../config/colors";
+import React from "react";
 import { showMessage } from "react-native-flash-message";
 
-import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MatIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import * as sqlCardio from '../../controllers/cardioWorkouts.controller';
+import * as sqlCardio from "../../controllers/cardioWorkouts.controller";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-export const CardioWorkout = ({navigation, setPageMode, workout}) => {
-
+export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -23,6 +31,11 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   const seconds = (elapsedTime / 1000) % 60;
   const minutes = (elapsedTime / (1000 * 60)) % 60;
   const hours = (elapsedTime / (1000 * 60 * 60)) % 24;
+  const [isToggled, setIsToggled] = useState(false);
+
+  const handleToggle = () => {
+    setIsToggled((prevIsToggled) => !prevIsToggled);
+  };
 
   useEffect(() => {
     let intervalId;
@@ -39,8 +52,40 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   }, [isRunning, startTime]);
 
   useEffect(() => {
-    navigation.setOptions({ headerTitle: 'Cardio - ' + workout.name });
-  }, [])
+    navigation.setOptions({ headerTitle: "Cardio - " + workout.name });
+  }, []);
+
+  const manuallyChangeTime = (isUp, type, durationMultiplier) => {
+  
+    let multiplier = isUp ? 1 : -1;
+    let value = 0;
+
+    switch (type) {
+      case "H":
+        value = multiplier * 3600000 * durationMultiplier; // 1 hour = 3600000 milliseconds
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + value);
+        break;
+      case "M":
+        value = multiplier * 60000 * durationMultiplier; // 1 minute = 60000 milliseconds
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + value);
+        break;
+      case "S":
+        value = multiplier * 1000 * durationMultiplier; // 1 second = 1000 milliseconds
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + value);
+        break;
+      case "ms":
+        value = multiplier * 10 * durationMultiplier; // 10 milliseconds
+        setElapsedTime((prevElapsedTime) => prevElapsedTime + value);
+        break;
+      default:
+        break;
+    }
+
+    if(elapsedTime + value > 0)
+      setDisableSubmit(false);
+    else
+      setDisableSubmit(true);
+  };
 
   const toggleStopwatch = () => {
     if (isRunning) {
@@ -62,16 +107,18 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
   };
 
   const changeIntensity = () => {
-    setIntensity(prevIntensity => (prevIntensity === 3 ? 1 : prevIntensity + 1));
+    setIntensity((prevIntensity) =>
+      prevIntensity === 3 ? 1 : prevIntensity + 1
+    );
   };
 
   function goBackToWorkouts() {
-    setPageMode('Main') 
-    navigation.setOptions({headerTitle: 'Workout'});
+    setPageMode("Main");
+    navigation.setOptions({ headerTitle: "Workout" });
   }
 
   const formatTime = (time) => {
-    const paddedTime = Math.floor(time).toString().padStart(2, '0');
+    const paddedTime = Math.floor(time).toString().padStart(2, "0");
     return paddedTime;
   };
 
@@ -85,7 +132,7 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     const offsetInMilliseconds = timezoneOffset * 60 * 1000;
     const localTime = date.getTime() - offsetInMilliseconds;
     const userDateTime = new Date(localTime);
-    return isoString = userDateTime.toISOString();
+    return (isoString = userDateTime.toISOString());
   };
 
   const submitCardioWorkout = async () => {
@@ -93,40 +140,49 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
     let now = getCurrentDateTimeInUserTimezone();
 
     try {
-      if(intensity === 0) {
+      if (intensity === 0) {
         showMessage({
-          message: 'Error',
-          description: 'Please select an intensity',
+          message: "Error",
+          description: "Please select an intensity",
           type: "danger",
         });
-        return
+        return;
       }
-      if(workout.trackDistance == true && distance === 0) {
+      if (workout.trackDistance == true && distance === 0) {
         showMessage({
-          message: 'Error',
-          description: 'Please enter a distance',
+          message: "Error",
+          description: "Please enter a distance",
           type: "danger",
         });
-        return
+        return;
       }
 
-      if(workout.trackDistance == false)
-        await sqlCardio.insertL1CardioWorkout(workout.id, duration, intensity, now);
+      if (workout.trackDistance == false)
+        await sqlCardio.insertL1CardioWorkout(
+          workout.id,
+          duration,
+          intensity,
+          now
+        );
       else
-        await sqlCardio.insertL2CardioWorkout(workout.id, duration, intensity, now, distance);
+        await sqlCardio.insertL2CardioWorkout(
+          workout.id,
+          duration,
+          intensity,
+          now,
+          distance
+        );
 
       showMessage({
-        message: 'Success',
-        description: 'Submitted successfully',
+        message: "Success",
+        description: "Submitted successfully",
         type: "success",
       });
-      goBackToWorkouts()
-
-    }
-    catch (error) {
+      goBackToWorkouts();
+    } catch (error) {
       showMessage({
-        message: 'Error',
-        description: 'There was an error',
+        message: "Error",
+        description: "There was an error",
         type: "danger",
       });
     }
@@ -134,13 +190,11 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
 
   return (
     <>
-      <View style={[styles.center, styles.fillSpace]}>
+      <View style={[styles.fillSpace, styles.center]}>
         <View style={styles.timerContainer}>
-
           {workout.trackDistance == true && (
             <View style={styles.row}>
               <View style={styles.inputContainer}>
-
                 <TextInput
                   style={styles.input}
                   placeholder="Distance"
@@ -154,15 +208,51 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
             </View>
           )}
 
-          <Text style={styles.timer}>
-            {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}:
-            {formatTime(Math.floor(milliseconds / 10))}
-          </Text>
+          <View style={styles.editableTimerContainer}>
 
-          <Pressable 
-            onPress={resetStopwatch}
-          >
-            <MatIcon name="clock-edit-outline" size={50} color={Colors.primary} />
+            <View style={[styles.row, styles.topTimerEditButtons]}>
+              <Pressable onPress={() => manuallyChangeTime(true, 'H', 1)} onLongPress={() => manuallyChangeTime(true, 'H', 5)}>
+                <MatIcon name="chevron-up" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(true, 'M', 1)} onLongPress={() => manuallyChangeTime(true, 'M', 10)}>
+                <MatIcon name="chevron-up" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(true, 'S', 1)} onLongPress={() => manuallyChangeTime(true, 'S', 10)}>
+                <MatIcon name="chevron-up" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(true, 'ms', 1)} onLongPress={() => manuallyChangeTime(true, 'ms', 10)}>
+                <MatIcon name="chevron-up" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+            </View>
+
+            <Text style={styles.timer}>
+              {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}:
+              {formatTime(Math.floor(milliseconds / 10))}
+            </Text>
+
+            <View style={[styles.row, styles.topTimerEditButtons]}>
+              <Pressable onPress={() => manuallyChangeTime(false,'H', 1)} onLongPress={() => manuallyChangeTime(false,'H', 5)}>
+                <MatIcon name="chevron-down" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(false,'M', 1)} onLongPress={() => manuallyChangeTime(false,'M', 10)}>
+                <MatIcon name="chevron-down" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(false,'S', 1)} onLongPress={() => manuallyChangeTime(false,'S', 10)}>
+                <MatIcon name="chevron-down" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+              <Pressable onPress={() => manuallyChangeTime(false,'ms', 1)} onLongPress={() => manuallyChangeTime(false,'ms', 10)}>
+                <MatIcon name="chevron-down" size={50} color={isToggled ? Colors.primary : Colors.background} />
+              </Pressable>
+            </View>
+
+          </View>
+
+          <Pressable onPress={handleToggle}>
+            <MatIcon
+              name="clock-edit-outline"
+              size={50}
+              color={isToggled ? Colors.primary : 'black'}
+            />
           </Pressable>
 
         </View>
@@ -179,18 +269,18 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
       >
         <Text>
           Intensity:
-          {intensity === 1 && ' Low'}
-          {intensity === 2 && ' Medium'}
-          {intensity === 3 && ' High'}
+          {intensity === 1 && " Low"}
+          {intensity === 2 && " Medium"}
+          {intensity === 3 && " High"}
         </Text>
       </Pressable>
 
       <View style={styles.row}>
-        <Pressable 
+        <Pressable
           style={[styles.smallButton, styles.marginLeft]}
           onPress={resetStopwatch}
-          >
-            <Text>Reset</Text>
+        >
+          <Text>Reset</Text>
         </Pressable>
 
         <Pressable
@@ -201,12 +291,12 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
           ]}
           onPress={toggleStopwatch}
         >
-          <Text>{isRunning ? 'Stop' : 'Start'}</Text>
+          <Text>{isRunning ? "Stop" : "Start"}</Text>
         </Pressable>
       </View>
 
-      <Pressable 
-        style={disableSubmit ? [styles.button, styles.disabled] : styles.button }
+      <Pressable
+        style={disableSubmit ? [styles.button, styles.disabled] : styles.button}
         disabled={disableSubmit}
         onPress={submitCardioWorkout}
       >
@@ -214,33 +304,38 @@ export const CardioWorkout = ({navigation, setPageMode, workout}) => {
       </Pressable>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  topTimerEditButtons: {
+    justifyContent: "space-between",
+    // borderWidth: 1,
+  },
+  timer: {
+    fontSize: 48,
+    textAlign: 'center',
+  },
   inputContainer: {
+    // borderWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#ccc',
-    marginLeft: 45,
-    marginRight: 10,
+    borderColor: "#ccc",
+    // marginLeft: 45,
+    // marginRight: 10,
   },
   input: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
   fillSpace: {
     flex: 1,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
-  },
-  timer: {
-    fontSize: 48,
-    marginBottom: 20,
-    marginTop: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   distanceText: {
     marginTop: 5,
+    marginLeft: 10,
   },
   buttonLow: {
     backgroundColor: Colors.green,
@@ -252,44 +347,45 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.red,
   },
   center: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignSelf: "center",
+    // borderWidth: 4,
   },
   timerContainer: {
-    height: 4 * width / 5,
-    width: 4 * width / 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 3,
-    borderRadius: 4 * width / 10,
+    borderRadius: width * 0.5,
     borderColor: Colors.primary,
-    backgroundColor: 'white',
-    margin: 40
+    backgroundColor: "white",
+    width: width * 0.9,
+    maxHeight: width * 0.9,
   },
   button: {
     paddingVertical: 10,
     marginBottom: 10,
     marginHorizontal: 20,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.primary,
   },
   smallButton: {
-    width: width * .42,
+    width: width * 0.42,
     paddingVertical: 10,
     marginBottom: 10,
     borderRadius: 20,
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: Colors.primary,
   },
   marginLeft: {
-    marginLeft: 20, 
+    marginLeft: 20,
   },
   marginRight: {
-    marginRight: 20, 
+    marginRight: 20,
   },
   disabled: {
     backgroundColor: Colors.backgroundGray,
-  }
+  },
 });
