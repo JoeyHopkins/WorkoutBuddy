@@ -122,11 +122,22 @@ exports.createTables =  () => {
       }
     )
     //Level 1 cardio -> stores timed only workouts
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkoutsL1 (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), duration VARCHAR(50), intensity INTEGER, date VARCHAR(24));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkoutsL1 (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), duration REAL, intensity INTEGER, date VARCHAR(24));`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)
           console.log("cardioWorkoutsL1 table created successfully");
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+      )
+    //Level 2 cardio -> stores distance + timed workouts
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS cardioWorkoutsL2 (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), duration REAL, intensity INTEGER, date VARCHAR(24), distance REAL);`,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("cardioWorkoutsL2 table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)
