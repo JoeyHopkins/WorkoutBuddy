@@ -170,7 +170,23 @@ exports.getWeeklyTotals = () => {
         "SELECT intensity, SUM(duration) AS totalDuration FROM cardioWorkoutsL1 WHERE date >= ? GROUP BY intensity",
         [oneWeekAgo.toISOString()],
         (txObj, { rows: { _array } }) => {
-          resolve(_array);
+        
+          const intensityMap = {};
+          const outputArray = [];
+        
+          _array.forEach(item => {
+            intensityMap[item.intensity] = item;
+          });
+        
+          for (let intensity = 1; intensity <= 3; intensity++) 
+            if (!intensityMap[intensity])
+              outputArray.push({ intensity, totalDuration: 0 });
+            else
+              outputArray.push(intensityMap[intensity]);
+
+          outputArray.sort((a, b) => a.intensity - b.intensity);
+        
+          resolve(outputArray);
         },
         (txObj, error) => {
           reject(error);
