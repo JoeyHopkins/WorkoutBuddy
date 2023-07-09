@@ -12,6 +12,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
           <Text style={styles.text}>Set 1</Text>
         </View>
 
+        <Pressable
+          style={styles.button}
+        >
+          <Text style={styles.text}>Add Set</Text>
+        </Pressable>
+
       </View>
     );
   };
