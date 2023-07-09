@@ -166,8 +166,20 @@ exports.getWeeklyTotals = () => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     db.transaction(tx => {
-      tx.executeSql(
-        "SELECT intensity, SUM(duration) AS totalDuration FROM cardioWorkoutsL1 WHERE date >= ? GROUP BY intensity",
+      tx.executeSql( 
+`SELECT 
+  intensity, 
+  SUM(duration) AS totalDuration,
+  date
+FROM (
+    SELECT intensity, duration, date FROM cardioWorkoutsL1
+    UNION ALL
+    SELECT intensity, duration, date FROM cardioWorkoutsL2
+) AS combinedWorkouts 
+WHERE 
+  date >= ? 
+GROUP BY 
+  intensity`,
         [oneWeekAgo.toISOString()],
         (txObj, { rows: { _array } }) => {
         
