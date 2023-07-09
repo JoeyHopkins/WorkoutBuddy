@@ -23,7 +23,7 @@ exports.insertL2CardioWorkout = (workoutId, duration, intensity, date, distance)
     db.transaction(tx => {
       tx.executeSql(
         "INSERT INTO cardioWorkoutsL2 (workoutId, duration, intensity, date, distance) VALUES (?, ?, ?, ?, ?)",
-        [workoutId, duration, intensity, date],
+        [workoutId, duration, intensity, date, distance],
         () => {
           resolve();
         },
