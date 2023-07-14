@@ -1,11 +1,49 @@
-import { Text, View, StyleSheet, Pressable } from "react-native"
+import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native"
 import * as Colors from '../../config/colors'
 import BottomSheet from 'react-native-simple-bottom-sheet';
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { showMessage } from "react-native-flash-message";
+import * as workoutSql from '../../controllers/workouts.controller'
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
+  const [loading, setLoading] = useState(false);
   const panelRef = useRef(null);
+  const [activityList, setActivityList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        await getData()
+        setLoading(false)
+      } catch (error) {
+        showMessage({
+          message: 'Error',
+          description: 'There was an error.',
+          type: "danger",
+        });
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  async function getData() {
+    try {
+      let activityList = await workoutSql.getAllStrengthWorkouts()
+      setActivityList(activityList)
+    } 
+    catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error.',
+        type: "danger",
+      });
+    }
+
+    return
+  }
 
   const Record = ({ item }) => {
     return (
@@ -26,6 +64,14 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
     );
   };
 
+  const ActivityRecord = ({ index, activity }) => {
+    return (
+      <>
+        <Text>{index + ': ' + activity.name}</Text>
+      </>
+    )
+  }
+
   const BottomDrawer = () => {
     return (
       <View>
@@ -34,9 +80,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
         >
           <Text style={styles.text}>Add New Activity</Text>
         </Pressable>
-        <Text>
-          List placeholder
-        </Text>
+
+        <ScrollView>
+          {activityList.map((activity, index) => (
+            <ActivityRecord index={index} activity={activity} />
+          ))}
+        </ScrollView>
       </View>
     )
   }
