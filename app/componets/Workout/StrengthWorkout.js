@@ -1,7 +1,11 @@
 import { Text, View, StyleSheet, Pressable } from "react-native"
 import * as Colors from '../../config/colors'
+import BottomSheet from 'react-native-simple-bottom-sheet';
+import { useRef } from "react";
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
+
+  const panelRef = useRef(null);
 
   const Record = ({ item }) => {
     return (
@@ -22,6 +26,21 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
     );
   };
 
+  const BottomDrawer = () => {
+    return (
+      <View>
+        <Pressable
+          style={styles.button}
+        >
+          <Text style={styles.text}>Add New Activity</Text>
+        </Pressable>
+        <Text>
+          List placeholder
+        </Text>
+      </View>
+    )
+  }
+
   return (
     <>
       <View style={styles.fillSpace}>
@@ -31,9 +50,19 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
         <Pressable
           style={styles.button}
         >
-          <Text style={styles.text}>Add Activity</Text>
+          <Text 
+            style={styles.text}
+            onPress={() => panelRef.current.togglePanel()}
+          >Add Activity</Text>
         </Pressable>
       </View>
+      <BottomSheet 
+        isOpen={false} 
+        ref={ref => panelRef.current = ref}
+        sliderMinHeight={0}
+      >
+        <BottomDrawer></BottomDrawer>  
+      </BottomSheet>
     </>
   );
 }
