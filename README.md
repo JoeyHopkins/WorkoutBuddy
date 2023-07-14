@@ -1,6 +1,30 @@
 # WorkoutBuddy
 
-Workout app built on React Native
+Node V20.0.0
+Workout app built on React Native/Node.js
+Storage is built on Sqlite and is stored locally on users device
+
+The main goal of this app is to replace using notes in the gym. To provide the user with complete flexibility with what goes in, while still providing a robust way to interact with the user for maximum gains.
+
+# Roadmap
+
+- strength workout section
+  -ability to see previous progress to give an idea of what user wants to aim for
+  -flexibility to add as many reps, sets, to the activity at the time of working out
+  -flexibility to add any number of workouts and have everything dynamically populate
+
+- Finish setting up routine functionality on home page and link it into the workouts to help keep track of daily workouts
+  -also want to let the user be able to change and do any desired day they would like
+
+- Hook up Cardio and Strength workouts to populate different color dots on the calander on home page.
+  - will also display these when day is selected
+
+At this point the plan is to create a build of the app at this stage so i can start generating real working data to help build the report section
+
+- Reports page
+  -up to this point, this page was used more as a proof of concept
+  -needs some ui cleanup and maybe some reworking
+  -dynamically creating and populating reports based on workouts
 
 ## Setup and Run
 
@@ -11,7 +35,7 @@ install Expo
 npm i -g expo-cli
 
 install dependancies
-npx expo install react-native-web@~0.18.10 react-dom@18.2.0 @expo/webpack-config@^18.0.1
+npm i
 
 To run your project, navigate to the directory and run one of the following npm commands.
 
@@ -50,3 +74,7 @@ Scan code presented when starting the front end
 Should pull up and be reactive on save
 
 Can also reload with hitting R in the console
+
+## Useful dev stuff
+
+App is linked appwide to config/colors page. Some adjustments may need to be changed but it is being developed with this is mind.
