@@ -82,13 +82,16 @@ const addCardioWorkout = (params) => {
 };
 
 const addStrengthWorkout = (params) => {
-  let routineId = params.routineId
-  let name = params.newWorkout
+  let routineId = params.routineId;
+  let name = params.newWorkout;
+  let everyday = params.useEveryday;
+  let totalsOnly = params.totalsOnly;
+
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        "INSERT INTO strengthWorkouts (name, routineId) VALUES (?, ?)",
-        [name, routineId],
+        "INSERT INTO strengthWorkouts (name, routineId, trackTotal, everyday) VALUES (?, ?, ?, ?)",
+        [name, routineId, totalsOnly, everyday],
         (txObj, { rows: { _array } }) => {
           resolve('Workout inserted successfully!');
         },

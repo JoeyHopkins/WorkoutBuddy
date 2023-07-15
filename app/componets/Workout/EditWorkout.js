@@ -25,6 +25,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const routineList = useRef([])
   const panelRef = useRef(null);
 
+  const [totalsOnly, setTotalsOnly] = useState(false);
+  const [useEveryday, setUseEveryday] = useState(false);
+
   const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
 
   useEffect(() => {
@@ -61,25 +64,6 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
       switch (submissionType) {
         case 'add':
-          if(newWorkout === '') {
-            showMessage({
-              message: 'Error',
-              description: 'Please enter a workout name.',
-              type: "danger",
-            });
-            setLoading(false)
-            return
-          }
-          if (!/^[a-zA-Z\s]+$/.test(newWorkout)) {
-            showMessage({
-              message: 'Error',
-              description: 'Workout name should only contain letters and spaces.',
-              type: 'danger',
-            });    
-            setLoading(false);
-            return;
-          }
-
           const lowerCaseWorkout = newWorkout.toLowerCase();
           const capitalizedWorkout = lowerCaseWorkout.charAt(0).toUpperCase() + lowerCaseWorkout.slice(1);
 
@@ -87,6 +71,8 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             newWorkout: capitalizedWorkout,
             routineId: id,
             distanceEnabled: distanceEnabled,
+            totalsOnly: totalsOnly,
+            useEveryday: useEveryday,
           }
 
           message = await sql.addWorkout(params)
@@ -237,12 +223,12 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
               <BouncyCheckbox
                 size={25}
-                isChecked
                 disableText={true}
                 fillColor={Colors.secondary}
                 unfillColor={Colors.background}
                 iconStyle={{ borderColor: Colors.secondary }}
                 innerIconStyle={{ borderWidth: 2 }}
+                onPress={() => setTotalsOnly(!totalsOnly)}
               />
               <Text style={styles.checkboxText}>Totals Only</Text>
             </View>
@@ -250,13 +236,12 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
               <BouncyCheckbox
                 size={25}
-                isChecked
                 disableText={true}
                 fillColor={Colors.secondary}
                 unfillColor={Colors.background}
                 iconStyle={{ borderColor: Colors.secondary }}
                 innerIconStyle={{ borderWidth: 2 }}
-                // onPress={() => setShowGoals(!showGoals)}        
+                onPress={() => setUseEveryday(!useEveryday)}
               />
               <Text style={styles.checkboxText}>Everyday</Text>
             </View>
@@ -266,6 +251,26 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             style={styles.circleButton}
             onPress={() => {
               Keyboard.dismiss();
+
+              if(newWorkout === '') {
+                showMessage({
+                  message: 'Error',
+                  description: 'Please enter a workout name.',
+                  type: "danger",
+                });
+                setLoading(false)
+                return
+              }
+              if (!/^[a-zA-Z\s]+$/.test(newWorkout)) {
+                showMessage({
+                  message: 'Error',
+                  description: 'Workout name should only contain letters and spaces.',
+                  type: 'danger',
+                });    
+                setLoading(false);
+                return;
+              }
+
               panelRef.current.togglePanel();
             }}
           >
