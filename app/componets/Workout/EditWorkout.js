@@ -3,7 +3,8 @@ import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
 import * as workoutSql from '../../controllers/workouts.controller'
-import { useEffect, useState } from 'react';
+import * as homeSql from '../../controllers/home.controller'
+import { useEffect, useState, useRef } from 'react';
 import { Wander } from 'react-native-animated-spinkit'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,6 +18,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const [workoutList, setWorkoutList] = useState([])
   const [newWorkout, setNewWorkout] = useState('')
   const [distanceEnabled, setDistanceEnabled] = useState(false)
+  const routineList = useRef([])
 
   const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
 
@@ -26,7 +28,10 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
       if(workoutMode === 'cardio')
         navigation.setOptions({ headerTitle: 'Edit Cardio Workouts' });
       else
+      {
         navigation.setOptions({ headerTitle: 'Edit Workouts' });
+        routineList.current = await homeSql.getAllRoutines()
+      }
 
       await workoutConnection()
       setLoading(false)
@@ -89,6 +94,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
       }
 
       let workoutList = await sql.getAllWorkouts()
+
       setWorkoutList(workoutList)
 
       if(submissionType != null)
@@ -110,24 +116,63 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
     setLoading(false)
   }
 
-  const CardioWorkoutRecord = ({workout}) => {
-    return (
-      <View style={styles.workoutRecordContainer}>
-        
-        <View>
-          <Text>{workout.name}</Text>
+  const WorkoutRecord = ({workout}) => {
+
+    if(workoutMode === 'cardio')
+      return (
+        <View style={styles.workoutRecordContainer}>
+          
+          <View>
+            <Text>{workout.name}</Text>
+          </View>
+    
+          {workout.trackDistance == 1 && (
+            <EntyoIcon name="ruler" size={20} color={Colors.secondary} />
+          )}
+          
+          <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
+            <Icon name="trash" size={20} color={Colors.highlight} />
+          </Pressable>
         </View>
-  
-        {workout.trackDistance == 1 && (
-          <EntyoIcon name="ruler" size={20} color={Colors.secondary} />
-        )}
-        
-        <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
-          <Icon name="trash" size={20} color={Colors.highlight} />
-        </Pressable>
-        
-      </View>
-    )
+      )
+    else
+    {
+      let matchingRoutine = {};
+
+      matchingRoutine = routineList.current.find(routine => {
+        if (routine.id === workout.routineId)
+          return true;
+        return false;
+      });
+
+      return (
+        <>
+        <View style={styles.workoutRecordContainer}>
+          
+          <View style={[styles.fillSpace]}>
+            <Text>{workout.name}</Text>
+          </View>
+
+          <View style={[styles.fillSpace]}>
+            <Text>{matchingRoutine.routine}</Text>
+          </View>
+
+          <View style={[styles.fillSpace]}>
+            {(!workout.trackTotal || workout.trackTotal == 0) && (
+              <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
+            )}
+          </View>
+
+          <View>
+            <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
+              <Icon name="trash" size={20} color={Colors.highlight} />
+            </Pressable>
+          </View>
+
+        </View>
+        </>
+      )
+    }  
   }
 
   return (
@@ -175,7 +220,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             <>
               <ScrollView>
                 {workoutList.map((workout, index) => (
-                  <CardioWorkoutRecord key={index} workout={workout} />
+                  <WorkoutRecord key={index} workout={workout} />
                 ))}
               </ScrollView>  
             </>
