@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button, Dimensions, Pressable, TextInput, Switch, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, Keyboard, Dimensions, Pressable, TextInput, Switch, ScrollView} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 
@@ -83,7 +83,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
           let params = {
             newWorkout: capitalizedWorkout,
-            routineId: routineSelected.current.id,
+            routineId: id,
             distanceEnabled: distanceEnabled,
           }
 
@@ -181,6 +181,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const BottomDrawer = () => {
     return (
       <View style={styles.drawerContainer}>
+        <View style={[styles.center, styles.marginBottom]}>
+          <Text>Selct the routine to add workout to:</Text>
+        </View>
         <ScrollView>
           {routineList.current.map((routine, index) => (
             <RoutineRecord key={index} routine={routine} />
@@ -191,11 +194,16 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   }
 
   const RoutineRecord = ({routine }) => {
-    // workoutConnection('add')
     return (
-      <View style={[styles.listItemContainer, styles.fillSpace, styles.center]}>
+      <Pressable
+        onPress={() => {
+          workoutConnection('add', routine.id)
+          panelRef.current.togglePanel()
+        }}
+        style={[styles.listItemContainer, styles.fillSpace, styles.center]}
+      >
         <Text>{routine.routine}</Text>
-      </View>
+      </Pressable>
     )
   }
 
@@ -211,7 +219,6 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             placeholder="New Workout Name"
           />
 
-
           {workoutMode === 'cardio' && (
             <View style={styles.switchContainer}>
               <Switch
@@ -224,13 +231,16 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             </View>
           )}
 
-            <Pressable
-              style={styles.circleButton}
-              onPress={() => panelRef.current.togglePanel()}
-            >
-              <MaterialIcon name='check-outline' size={20} color={Colors.black} />
-            </Pressable>
-          </View>
+          <Pressable
+            style={styles.circleButton}
+            onPress={() => {
+              Keyboard.dismiss();
+              panelRef.current.togglePanel();
+            }}
+          >
+            <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+          </Pressable>
+        </View>
 
         <View style={ (loading == false && workoutList.length > 0) ? styles.fillSpace : [styles.fillSpace, styles.center] }>
           {loading == true && (
@@ -331,7 +341,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary,
   },
-
+  marginBottom: {
+    marginBottom: 10,
+  },
   listItemContainer: {
     paddingVertical: 10,
     borderBottomWidth: 1,
