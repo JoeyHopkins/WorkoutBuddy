@@ -111,7 +111,7 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50), routineId INTEGER, trackTotal INTEGER);`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkouts (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50), routineId INTEGER, trackTotal INTEGER, everyday INTEGER);`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)
