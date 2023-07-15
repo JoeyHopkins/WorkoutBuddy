@@ -155,7 +155,7 @@ exports.cardio = {
 };
 
 exports.strength = {
-  getAllWorkouts: getAllStrengthWorkoutsByRoutine,
+  getAllWorkouts: getAllStrengthWorkouts,
   addWorkout: addStrengthWorkout,
   deleteWorkout: deleteStrengthWorkout,
 };

@@ -26,7 +26,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
       if(workoutMode === 'cardio')
         navigation.setOptions({ headerTitle: 'Edit Cardio Workouts' });
       else
-        navigation.setOptions({ headerTitle: 'Edit ' + routineSelected.current.routine + ' Workouts' });
+        navigation.setOptions({ headerTitle: 'Edit Workouts' });
 
       await workoutConnection()
       setLoading(false)
@@ -60,12 +60,12 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             setLoading(false)
             return
           }
-          if (!/^[a-zA-Z]+$/.test(newWorkout)) {
+          if (!/^[a-zA-Z\s]+$/.test(newWorkout)) {
             showMessage({
               message: 'Error',
-              description: 'Workout name should only contain letters.',
+              description: 'Workout name should only contain letters and spaces.',
               type: 'danger',
-            });
+            });    
             setLoading(false);
             return;
           }
@@ -88,7 +88,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           break;
       }
 
-      let workoutList = await sql.getAllWorkouts(routineSelected.current.id)
+      let workoutList = await sql.getAllWorkouts()
       setWorkoutList(workoutList)
 
       if(submissionType != null)
