@@ -10,6 +10,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showMessage } from "react-native-flash-message";
 
+import BottomSheet from 'react-native-simple-bottom-sheet';
+
 const width = Dimensions.get('window').width
 
 export function EditWorkout({workoutMode, setCompleted, routineSelected, navigation}) {
@@ -19,6 +21,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const [newWorkout, setNewWorkout] = useState('')
   const [distanceEnabled, setDistanceEnabled] = useState(false)
   const routineList = useRef([])
+  const panelRef = useRef(null);
 
   const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
 
@@ -147,32 +150,53 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
       return (
         <>
-        <View style={styles.workoutRecordContainer}>
-          
-          <View style={[styles.fillSpace]}>
-            <Text>{workout.name}</Text>
-          </View>
+          <View style={styles.workoutRecordContainer}>
+            
+            <View style={[styles.fillSpace]}>
+              <Text>{workout.name}</Text>
+            </View>
 
-          <View style={[styles.fillSpace]}>
-            <Text>{matchingRoutine.routine}</Text>
-          </View>
+            <View style={[styles.fillSpace]}>
+              <Text>{matchingRoutine.routine}</Text>
+            </View>
 
-          <View style={[styles.fillSpace]}>
-            {(!workout.trackTotal || workout.trackTotal == 0) && (
-              <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
-            )}
-          </View>
+            <View style={[styles.fillSpace]}>
+              {(!workout.trackTotal || workout.trackTotal == 0) && (
+                <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
+              )}
+            </View>
 
-          <View>
-            <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
-              <Icon name="trash" size={20} color={Colors.highlight} />
-            </Pressable>
-          </View>
+            <View>
+              <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
+                <Icon name="trash" size={20} color={Colors.highlight} />
+              </Pressable>
+            </View>
 
-        </View>
+          </View>
         </>
       )
     }  
+  }
+
+  const BottomDrawer = () => {
+    return (
+      <View style={styles.drawerContainer}>
+        <ScrollView>
+          {routineList.current.map((routine, index) => (
+            <RoutineRecord key={index} routine={routine} />
+          ))}
+        </ScrollView>
+      </View>
+    )
+  }
+
+  const RoutineRecord = ({routine }) => {
+    // workoutConnection('add')
+    return (
+      <View style={[styles.listItemContainer, styles.fillSpace, styles.center]}>
+        <Text>{routine.routine}</Text>
+      </View>
+    )
   }
 
   return (
@@ -202,7 +226,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
             <Pressable
               style={styles.circleButton}
-              onPress={() => { workoutConnection('add') }}
+              onPress={() => panelRef.current.togglePanel()}
             >
               <MaterialIcon name='check-outline' size={20} color={Colors.black} />
             </Pressable>
@@ -227,6 +251,15 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           )}
         </View>
       </View>
+
+      <BottomSheet 
+        isOpen={false} 
+        ref={ref => panelRef.current = ref}
+        sliderMinHeight={0}
+      >
+        <BottomDrawer></BottomDrawer>  
+      </BottomSheet>
+
     </>
   );
 }
@@ -297,5 +330,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary,
+  },
+
+  listItemContainer: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+  },
+  drawerContainer: {
+    marginHorizontal: -21,
   },
 });
