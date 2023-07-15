@@ -144,14 +144,28 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
               <Text>{workout.name}</Text>
             </View>
 
-            <View style={[styles.fillSpace]}>
+            <View style={[styles.marginHorizonal, styles.fillSpace]}>
               <Text>{matchingRoutine.routine}</Text>
             </View>
 
-            <View style={[styles.fillSpace]}>
-              {(!workout.trackTotal || workout.trackTotal == 0) && (
-                <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
-              )}
+
+            <View style={[styles.marginHorizonal, styles.fillSpace, styles.row]}>
+
+              <View style={[styles.fillSpace]}>
+                {(!workout.trackTotal || workout.trackTotal == 0) && (
+                  <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
+                )}
+                {(workout.trackTotal == 1) && (
+                  <MaterialIcon name="plus-minus-variant" size={20} color={Colors.secondary} />
+                )}
+              </View>
+
+              <View style={[styles.fillSpace]}>
+                {workout.everyday.toString() === '1' && (
+                  <MaterialIcon name="calendar-today" size={20} color={Colors.secondary} />
+                )}
+              </View>
+
             </View>
 
             <View>
@@ -250,7 +264,11 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           <Pressable
             style={styles.circleButton}
             onPress={() => {
-              Keyboard.dismiss();
+              if(Keyboard.isVisible())
+              {
+                Keyboard.dismiss();
+                return
+              }
 
               if(newWorkout === '') {
                 showMessage({
@@ -400,5 +418,8 @@ const styles = StyleSheet.create({
   },
   drawerContainer: {
     marginHorizontal: -21,
+  },
+  marginHorizonal: {
+    marginHorizontal: 10,
   },
 });
