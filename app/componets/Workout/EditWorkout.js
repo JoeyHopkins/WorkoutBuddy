@@ -12,6 +12,8 @@ import { showMessage } from "react-native-flash-message";
 
 import BottomSheet from 'react-native-simple-bottom-sheet';
 
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+
 const width = Dimensions.get('window').width
 
 export function EditWorkout({workoutMode, setCompleted, routineSelected, navigation}) {
@@ -216,7 +218,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             style={styles.input}
             onChangeText={setNewWorkout}
             value={newWorkout}
-            placeholder="New Workout Name"
+            placeholder="New Workout"
           />
 
           {workoutMode === 'cardio' && (
@@ -230,6 +232,35 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
               <Text style={styles.switchText}>{'Track\nDistance'}</Text>
             </View>
           )}
+
+          <View style={[styles.fillSpace, styles.row]}>
+            <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
+              <BouncyCheckbox
+                size={25}
+                isChecked
+                disableText={true}
+                fillColor={Colors.secondary}
+                unfillColor={Colors.background}
+                iconStyle={{ borderColor: Colors.secondary }}
+                innerIconStyle={{ borderWidth: 2 }}
+              />
+              <Text style={styles.checkboxText}>Totals Only</Text>
+            </View>
+
+            <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
+              <BouncyCheckbox
+                size={25}
+                isChecked
+                disableText={true}
+                fillColor={Colors.secondary}
+                unfillColor={Colors.background}
+                iconStyle={{ borderColor: Colors.secondary }}
+                innerIconStyle={{ borderWidth: 2 }}
+                // onPress={() => setShowGoals(!showGoals)}        
+              />
+              <Text style={styles.checkboxText}>Everyday</Text>
+            </View>
+          </View>
 
           <Pressable
             style={styles.circleButton}
@@ -315,7 +346,6 @@ const styles = StyleSheet.create({
   circleButton: {
     width: 40,
     height: 40,
-    marginLeft: 20,
     borderRadius: 30,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
@@ -327,6 +357,14 @@ const styles = StyleSheet.create({
   },
   fillSpace: {
     flex: 1,
+  },
+  checkboxWithText: {
+    marginBottom: -10,
+  },
+  checkboxText: {
+    textAlign: 'center',
+    fontSize: 10,
+    color: Colors.backgroundGray,
   },
   workoutRecordContainer: {
     paddingVertical: 10,
@@ -341,8 +379,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary,
   },
+  row: {
+    flexDirection: 'row',
+  },
   marginBottom: {
     marginBottom: 10,
+  },
+  marginLeft: {
+    marginLeft: 20,
   },
   listItemContainer: {
     paddingVertical: 10,
