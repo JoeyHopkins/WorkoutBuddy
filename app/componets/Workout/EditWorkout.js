@@ -48,7 +48,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
     let message = ''
     let sql = null
     setLoading(true)
-    
+
     if(workoutMode === 'cardio')
       sql = workoutSql.cardio
     else if(workoutMode === 'strength')
@@ -130,7 +130,6 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             setEditMode(true);
             setEditWorkout(workout)
             setNewWorkout(workout.name)
-            setUseEveryday(workout.everyday === 1)
           }}
           style={styles.workoutRecordContainer}
         >
@@ -242,6 +241,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   }
 
   const stopEditMode = () => {
+    setNewWorkout('')
     setTotalsOnly(false);
     setUseEveryday(false);
     setDistanceEnabled(false);
@@ -260,21 +260,43 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           />
 
           {workoutMode === "cardio" && (
-            <View style={[styles.center, styles.checkboxWithText, styles.marginHorizonal]}>
+            <View style={[
+              styles.center, 
+              editMode ? null : styles.checkboxWithText, 
+              styles.marginHorizonal
+            ]}>
+              { !editMode && (
+                <>  
+                  <BouncyCheckbox
+                    size={25}
+                    isChecked={distanceEnabled}
+                    disableText={true}
+                    fillColor={Colors.secondary}
+                    disableBuiltInState
+                    unfillColor={Colors.background}
+                    iconStyle={{ borderColor: Colors.secondary }}
+                    innerIconStyle={{ borderWidth: 2 }}
+                    onPress={() => setDistanceEnabled(previousState => !previousState)}
+                  />
+                  <Text style={styles.checkboxText}>{"Distance"}</Text>
+                </>
 
-              <BouncyCheckbox
-                size={25}
-                isChecked={distanceEnabled}
-                disableText={true}
-                fillColor={Colors.secondary}
-                disableBuiltInState
-                unfillColor={Colors.background}
-                iconStyle={{ borderColor: Colors.secondary }}
-                innerIconStyle={{ borderWidth: 2 }}
-                onPress={() => setDistanceEnabled(previousState => !previousState)}
-              />    
+              )}
 
-              <Text style={styles.checkboxText}>{"Distance"}</Text>
+              { editMode && (
+                <>
+                  <Pressable
+                    style={styles.circleButton}
+                    onPress={stopEditMode}
+                  >
+                    <MaterialIcon
+                      name="close-outline"
+                      size={22}
+                      color={Colors.black}
+                    />
+                  </Pressable>
+                </>
+              )}
             </View>
           )}
 
