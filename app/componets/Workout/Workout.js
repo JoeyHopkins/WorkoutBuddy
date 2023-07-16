@@ -12,6 +12,7 @@ import { CardioWorkout } from './CardioWorkout'
 import { StrengthWorkout } from './StrengthWorkout'
 import { useNavigation } from '@react-navigation/native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
+import styles from '../../config/styles';
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -288,12 +289,12 @@ export const Workout = ({navigation}) => {
   const Main = () => {
     return (
       <>
-        <View style={styles.homeContainer}>
+        <View style={[styles.homeContainer, styles.marginTop_S]}>
           <View style={styles.row}>
             <View style={styles.fillSpace}></View>
             <Text style={[styles.title]}>Weekly Total Summary</Text>
             
-            <View style={[styles.fillSpace, styles.switchContainer]}>
+            <View style={[styles.fillSpace, styles.removeMarginBottom12, styles.center]}>
               {workoutMode === 'cardio' && (
                 <Switch
                   trackColor={{false: Colors.altSecondary, true: Colors.altPrimary}}
@@ -337,7 +338,9 @@ export const Workout = ({navigation}) => {
               </Pressable>
             </View>
             {loading == true && (
-              <Wander size={48} color={Colors.primary} />
+              <View style={[styles.center, styles.fillSpace]}>
+                <Wander size={120} color={Colors.primary} />
+              </View>
             )}
             {loading == false && routineList && routineList.length > 0 && (
               <Carousel
@@ -362,7 +365,7 @@ export const Workout = ({navigation}) => {
         )}
 
         {workoutMode == 'cardio' && (
-          <View style={[styles.homeContainer, styles.fillSpace]}>
+          <View style={[styles.homeContainer, styles.marginTop_S , styles.fillSpace]}>
             <View style={styles.editButtonContainer}>
               <Pressable
                 style={styles.circleButton}
@@ -427,138 +430,3 @@ export const Workout = ({navigation}) => {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  selected: {
-    backgroundColor: Colors.primary,
-  },
-  switchContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: -12,
-  },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fillSpace: {
-    flex: 1,
-  },
-  row: {
-    flexDirection: 'row',
-    // borderWidth: 1,
-  },
-  homeContainer: {
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderRadius: 20,
-    marginTop: 10,
-    marginHorizontal: 20,
-    borderColor: Colors.primary,
-  },
-  workoutRecord: {
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.primary,
-    paddingVertical: 10,
-  },
-  workoutRecordItemContainerStrength: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  workoutRecordItemContainerCardio: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 40,
-  },
-  fillSpace: {
-    flex: 1,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  routineListContainer: {
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderRadius: 20,
-    marginTop: 10,
-    marginHorizontal: 20,
-    borderColor: Colors.primary,
-    overflow: 'hidden',
-    flex: 1,
-  },
-  background: {
-    backgroundColor: Colors.white,
-  },
-  totalItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 20,
-    paddingBottom: 5,
-  },
-  totalContainer: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  modeSwitchContainer: {
-    marginHorizontal: 20,
-    paddingTop: 10,
-  },
-  slide: {
-    flex: 1,
-    borderWidth: 3,
-    borderRadius: 20,
-    marginBottom: 20,
-    backgroundColor: Colors.white,
-    borderColor: Colors.primary,
-  },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    color: Colors.primary,
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingTop: 10,
-  },
-  strengthWorkoutListContainer: {
-    marginBottom: 20,
-    borderRadius: 20,
-    flex: 1,
-  },
-  startWorkoutButton: {
-    paddingVertical: 10,
-    marginVertical: 10,
-    marginHorizontal: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.primary,
-  },
-  circleButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 30,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  editButtonContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
-    marginBottom: 0,
-  },
-  headerButton: {
-    marginLeft: 10,
-    marginRight: -10,
-  },
-  disabled: {
-    backgroundColor: Colors.backgroundGray,
-  }
-})

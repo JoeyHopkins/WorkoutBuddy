@@ -4,17 +4,95 @@ import { Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
+
 const styles = StyleSheet.create({
-  homeContainer: {
+  workoutRecord: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+    paddingVertical: 10,
+  },
+  workoutRecordItemContainerStrength: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  workoutRecordItemContainerCardio: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 40,
+  },
+  routineListContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
     borderRadius: 20,
-    marginVertical: 20,
-    paddingTop: 20,
+    marginTop: 10,
     marginHorizontal: 20,
     borderColor: Colors.primary,
     overflow: 'hidden',
     flex: 1,
+  },
+  totalItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    paddingBottom: 5,
+  },
+  totalContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  modeSwitchContainer: {
+    marginHorizontal: 20,
+    paddingTop: 10,
+  },
+  slide: {
+    flex: 1,
+    borderWidth: 3,
+    borderRadius: 20,
+    marginBottom: 20,
+    backgroundColor: Colors.white,
+    borderColor: Colors.primary,
+  },
+  title: {
+    color: Colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingTop: 10,
+  },
+  strengthWorkoutListContainer: {
+    marginBottom: 20,
+    borderRadius: 20,
+    flex: 1,
+  },
+  startWorkoutButton: {
+    paddingVertical: 10,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+  },
+  editButtonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    marginBottom: 0,
+  },
+  headerButton: {
+    marginLeft: 10,
+    marginRight: -10,
+  },
+  homeContainer: {
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: Colors.primary,
+    marginHorizontal: 20,
+    paddingTop: 20,
   },
   addWorkoutContainer: {
     flexDirection: 'row',
@@ -28,11 +106,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: -10,
     color: Colors.primary,
-  },
-  switchContainer: {
-    marginBottom: -15,
-    borderColor: Colors.primary,
-    marginLeft: 20,
   },
   input: {
     height: 40,
@@ -78,7 +151,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary,
-    // borderWidth: 1,
   },
   row: {
     flexDirection: 'row',
@@ -97,11 +169,35 @@ const styles = StyleSheet.create({
   drawerContainer: {
     marginHorizontal: -21,
   },
-  marginHorizonal: {
+  marginHorizonal_S: {
     marginHorizontal: 10,
+  },
+  marginHorizonal_M: {
+    marginHorizontal: 10,
+  },
+  marginVertical_S: {
+    marginVertical: 10,
+  },
+  marginVertical_M: {
+    marginVertical: 20,
+  },
+  marginTop_S: {
+    marginTop: 10,
+  },
+  removeMarginBottom12: {
+    marginBottom: -12,
   },
   border: {
     borderWidth: 1,
+  },
+  background: {
+    backgroundColor: Colors.white,
+  },
+  disabled: {
+    backgroundColor: Colors.backgroundGray,
+  },
+  selected: {
+    backgroundColor: Colors.primary,
   },
 });
 

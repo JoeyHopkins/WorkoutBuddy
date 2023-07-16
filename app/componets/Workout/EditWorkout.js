@@ -250,7 +250,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
   return (
     <>
-      <View style={styles.homeContainer}>
+      <View style={[styles.homeContainer, styles.fillSpace, styles.marginVertical_S]}>
         <View style={[styles.addWorkoutContainer]}>
           <TextInput
             style={styles.input}
@@ -263,7 +263,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             <View style={[
               styles.center, 
               editMode ? null : styles.checkboxWithText, 
-              styles.marginHorizonal
+              styles.marginHorizonal_S
             ]}>
               { !editMode && (
                 <>  
