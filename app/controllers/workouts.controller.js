@@ -181,6 +181,29 @@ const updateStrengthWorkout = (params) => {
   });
 };
 
+const updateCardioWorkout = (params) => {
+  const { id, newName } = params;
+
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE cardioWorkouts SET name = ? WHERE id = ?",
+        [newName, id],
+        (txObj, { rowsAffected }) => {
+          if (rowsAffected > 0) {
+            resolve('Workout updated successfully!');
+          } else {
+            reject('Failed to update workout. Workout not found.');
+          }
+        },
+        (txObj, error) => {
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
 exports.getAllCardioWorkouts = getAllCardioWorkouts
 exports.addCardioWorkout = addCardioWorkout
 exports.getAllStrengthWorkouts = getAllStrengthWorkouts
@@ -193,6 +216,7 @@ exports.cardio = {
   getAllWorkouts: getAllCardioWorkouts,
   addWorkout: addCardioWorkout,
   deleteWorkout: deleteCardioWorkout,
+  updateWorkout: updateCardioWorkout,
 };
 
 exports.strength = {
