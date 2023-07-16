@@ -13,6 +13,7 @@ import { StrengthWorkout } from './StrengthWorkout'
 import { useNavigation } from '@react-navigation/native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import styles from '../../config/styles';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -181,19 +182,42 @@ export const Workout = ({navigation}) => {
         }
       >
 
-        <View style={(workoutMode == 'strength') ? styles.workoutRecordItemContainerStrength : styles.workoutRecordItemContainerCardio}>
-          <Text style={styles.workoutName}>{workout.name}</Text>
+        <View style={[
+            styles.row,
+            styles.marginHorizonal_L,
+          ]}>
 
-          {workout.trackDistance == true && (
-            <EntypoIcon name='ruler' size={20} color={Colors.secondary} />
-          )}
+          <View style={styles.fillSpace}>
+            <Text>{workout.name}</Text>
+          </View>
+
+          <View style={[styles.fillSpace, styles.row]}>
+            <View style={[styles.fillSpace, styles.row, styles.reverse]}>
+              {workout.everyday == true && (
+                <MaterialIcon name='calendar-today' size={20} color={Colors.secondary} />
+              )}
+            </View>
+            <View style={[styles.fillSpace, styles.row, styles.reverse]}>
+
+              {workout.trackDistance == true && (
+                <EntypoIcon name='ruler' size={20} color={Colors.secondary} />
+              )}
+
+              {workout.trackTotal == true && (
+                <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
+              )}
+              {workout.trackTotal == false && (
+                <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
+              )}
+            </View>
+          </View>
 
         </View>
       </Pressable>
     )
   }
 
-  renderItem = ({item}) => {
+  renderSlide = ({item}) => {
     return (
       <View style={styles.slide}>
         <Text style={styles.title}>{ item.routine }</Text>
@@ -348,7 +372,7 @@ export const Workout = ({navigation}) => {
                 firstItem={routineSelectedID.current}
                 activeSlideOffset={5}
                 lockScrollTimeoutDuration={2000}
-                renderItem={renderItem}
+                renderItem={renderSlide}
                 sliderWidth={width - 40}
                 itemWidth={slideWidth}
                 layout={'stack'} 

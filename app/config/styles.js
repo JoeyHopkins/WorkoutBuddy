@@ -11,15 +11,6 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.primary,
     paddingVertical: 10,
   },
-  workoutRecordItemContainerStrength: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  workoutRecordItemContainerCardio: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 40,
-  },
   routineListContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
@@ -173,7 +164,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   marginHorizonal_M: {
-    marginHorizontal: 10,
+    marginHorizontal: 20,
+  },
+  marginHorizonal_L: {
+    marginHorizontal: 40,
   },
   marginVertical_S: {
     marginVertical: 10,
@@ -199,6 +193,9 @@ const styles = StyleSheet.create({
   selected: {
     backgroundColor: Colors.primary,
   },
+  reverse: {
+    justifyContent: 'flex-end',
+  }
 });
 
 export default styles;
