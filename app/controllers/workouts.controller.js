@@ -127,11 +127,16 @@ const getAllStrengthWorkoutsOrderedByRoutineDayNum = () => {
   });
 };
 
-const getAllStrengthWorkoutsByRoutine = (routineId) => {
+const getAllStrengthWorkoutsByRoutine = (routineId, getEveryday) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
+      let sqlQuery = "SELECT * FROM strengthWorkouts WHERE routineId = ?";
+      if (getEveryday) {
+        sqlQuery += " OR everyday = 1";
+      }
+
       tx.executeSql(
-        "SELECT * FROM strengthWorkouts WHERE routineId = ?",
+        sqlQuery,
         [routineId],
         (txObj, { rows: { _array } }) => { resolve(_array); },
         (txObj, error) => { reject(error); },

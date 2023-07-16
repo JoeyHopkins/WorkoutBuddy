@@ -36,7 +36,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
   async function getData() {
     try {
-      let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID)
+      let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, true)
       routineList.current = await homeSql.getAllRoutines()
       setWorkoutList(workoutList)
     } 
