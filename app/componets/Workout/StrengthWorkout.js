@@ -9,7 +9,7 @@ import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
+export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }) => {
 
   const [loading, setLoading] = useState(false);
   const panelRef = useRef(null);
@@ -36,7 +36,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
   async function getData() {
     try {
-      let workoutList = await workoutSql.getAllStrengthWorkouts()
+      let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID)
       routineList.current = await homeSql.getAllRoutines()
       setWorkoutList(workoutList)
     } 

@@ -439,6 +439,7 @@ export const Workout = ({navigation}) => {
                 navigation={navigation}
                 setPageMode={setPageMode}
                 workouts={selectedWorkouts}
+                routineID={routineSelected.current.id}
               ></StrengthWorkout>
             )}
             {workoutMode == 'cardio' && (

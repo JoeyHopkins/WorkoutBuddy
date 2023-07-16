@@ -15,53 +15,6 @@ const getAllCardioWorkouts = () => {
   });
 };
 
-const getAllStrengthWorkouts = () => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql("SELECT * FROM strengthWorkouts",
-        null,
-        (txObj, { rows: { _array } }) => { 
-          resolve(_array)
-        },
-        (txObj, error) => { reject(error) },
-      );
-    });
-  });
-};
-
-const getAllStrengthWorkoutsOrderedByRoutineDayNum = () => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        "SELECT sw.* FROM strengthWorkouts sw JOIN routines r ON sw.routineId = r.id ORDER BY r.dayNum, sw.name",
-        null,
-        (txObj, { rows: { _array } }) => { 
-          resolve(_array);
-        },
-        (txObj, error) => { reject(error); }
-      );
-    });
-  });
-};
-
-const getAllStrengthWorkoutsByRoutine = (routineId) => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        "SELECT * FROM strengthWorkouts WHERE routineId = ?",
-        [routineId],
-        (txObj, { rows: { _array } }) => {
-          resolve(_array);
-        },
-        (txObj, error) => {
-          reject(error);
-        },
-      );
-    });
-  });
-};
-
-
 const addCardioWorkout = (params) => {
   let workout = params.newWorkout
   let distanceEnabled = params.distanceEnabled
@@ -81,19 +34,20 @@ const addCardioWorkout = (params) => {
   });
 };
 
-const addStrengthWorkout = (params) => {
-  let routineId = params.routineId;
-  let name = params.newWorkout;
-  let everyday = params.useEveryday;
-  let totalsOnly = params.totalsOnly;
+const updateCardioWorkout = (params) => {
+  const { id, newName } = params;
 
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        "INSERT INTO strengthWorkouts (name, routineId, trackTotal, everyday) VALUES (?, ?, ?, ?)",
-        [name, routineId, totalsOnly, everyday],
-        (txObj, { rows: { _array } }) => {
-          resolve('Workout inserted successfully!');
+        "UPDATE cardioWorkouts SET name = ? WHERE id = ?",
+        [newName, id],
+        (txObj, { rowsAffected }) => {
+          if (rowsAffected > 0) {
+            resolve('Workout updated successfully!');
+          } else {
+            reject('Failed to update workout. Workout not found.');
+          }
         },
         (txObj, error) => {
           reject(error);
@@ -144,15 +98,65 @@ const deleteCardioWorkout = (id) => {
   });
 };
 
-const deleteStrengthWorkout = (id) => {
+const getAllStrengthWorkouts = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("DELETE FROM strengthWorkouts WHERE id =?",
-        [id],
+      tx.executeSql("SELECT * FROM strengthWorkouts",
+        null,
         (txObj, { rows: { _array } }) => { 
-          resolve('Workout deleted successfully!!')
+          resolve(_array)
         },
         (txObj, error) => { reject(error) },
+      );
+    });
+  });
+};
+
+const getAllStrengthWorkoutsOrderedByRoutineDayNum = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT sw.* FROM strengthWorkouts sw JOIN routines r ON sw.routineId = r.id ORDER BY r.dayNum, sw.name",
+        null,
+        (txObj, { rows: { _array } }) => { 
+          resolve(_array);
+        },
+        (txObj, error) => { reject(error); }
+      );
+    });
+  });
+};
+
+const getAllStrengthWorkoutsByRoutine = (routineId) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "SELECT * FROM strengthWorkouts WHERE routineId = ?",
+        [routineId],
+        (txObj, { rows: { _array } }) => { resolve(_array); },
+        (txObj, error) => { reject(error); },
+      );
+    });
+  });
+};
+
+const addStrengthWorkout = (params) => {
+  let routineId = params.routineId;
+  let name = params.newWorkout;
+  let everyday = params.useEveryday;
+  let totalsOnly = params.totalsOnly;
+
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "INSERT INTO strengthWorkouts (name, routineId, trackTotal, everyday) VALUES (?, ?, ?, ?)",
+        [name, routineId, totalsOnly, everyday],
+        (txObj, { rows: { _array } }) => {
+          resolve('Workout inserted successfully!');
+        },
+        (txObj, error) => {
+          reject(error);
+        },
       );
     });
   });
@@ -181,24 +185,15 @@ const updateStrengthWorkout = (params) => {
   });
 };
 
-const updateCardioWorkout = (params) => {
-  const { id, newName } = params;
-
+const deleteStrengthWorkout = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(
-        "UPDATE cardioWorkouts SET name = ? WHERE id = ?",
-        [newName, id],
-        (txObj, { rowsAffected }) => {
-          if (rowsAffected > 0) {
-            resolve('Workout updated successfully!');
-          } else {
-            reject('Failed to update workout. Workout not found.');
-          }
+      tx.executeSql("DELETE FROM strengthWorkouts WHERE id =?",
+        [id],
+        (txObj, { rows: { _array } }) => { 
+          resolve('Workout deleted successfully!!')
         },
-        (txObj, error) => {
-          reject(error);
-        },
+        (txObj, error) => { reject(error) },
       );
     });
   });
