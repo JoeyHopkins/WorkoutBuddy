@@ -66,18 +66,30 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           const lowerCaseWorkout = newWorkout.toLowerCase();
           const capitalizedWorkout = lowerCaseWorkout.charAt(0).toUpperCase() + lowerCaseWorkout.slice(1);
 
-          let params = {
-            newWorkout: capitalizedWorkout,
-            routineId: id,
-            distanceEnabled: distanceEnabled,
-            totalsOnly: totalsOnly,
-            useEveryday: useEveryday,
-          }
-
-          if(editMode === false)
+          
+          if(editMode === false) {
+            
+            let params = {
+              newWorkout: capitalizedWorkout,
+              routineId: id,
+              distanceEnabled: distanceEnabled,
+              totalsOnly: totalsOnly,
+              useEveryday: useEveryday,
+            }
             message = await sql.addWorkout(params)
-          // else
-          //   message = await sql.updateWorkout(params)
+          }
+          else {
+            
+            let params = {
+              id: editWorkout.id,
+              newName: capitalizedWorkout,
+              routineId: id,
+              totalsOnly: editWorkout.trackTotal,
+              useEveryday: useEveryday,
+            }
+
+            message = await sql.updateWorkout(params)
+          }
 
           setNewWorkout('')
           break;
@@ -98,7 +110,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
         });
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       showMessage({
         message: 'Error',
         description: err,
@@ -209,6 +221,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
     return (
       <Pressable
         onPress={() => {
+          stopEditMode()
           workoutConnection('add', routine.id)
           panelRef.current.togglePanel()
         }}
@@ -218,6 +231,12 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
       </Pressable>
     )
   }
+
+  const stopEditMode = () => {
+    setTotalsOnly(false);
+    setUseEveryday(false);
+    setEditMode(false);
+  };
 
   return (
     <>
@@ -274,9 +293,11 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
                 <>
                   <BouncyCheckbox
                     size={25}
+                    isChecked={totalsOnly}
                     disableText={true}
                     fillColor={Colors.secondary}
                     unfillColor={Colors.background}
+                    disableBuiltInState
                     iconStyle={{ borderColor: Colors.secondary }}
                     innerIconStyle={{ borderWidth: 2 }}
                     onPress={() => setTotalsOnly(!totalsOnly)}
@@ -289,9 +310,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
                 <>
                   <Pressable
                     style={styles.circleButton}
-                    onPress={() => {
-                      setEditMode(false);
-                    }}
+                    onPress={stopEditMode}
                   >
                     <MaterialIcon
                       name="close-outline"

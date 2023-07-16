@@ -158,6 +158,29 @@ const deleteStrengthWorkout = (id) => {
   });
 };
 
+const updateStrengthWorkout = (params) => {
+  const { id, newName, routineId, totalsOnly, useEveryday } = params;
+
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE strengthWorkouts SET name = ?, routineId = ?, trackTotal = ?, everyday = ? WHERE id = ?",
+        [newName, routineId, totalsOnly ? 1 : 0, useEveryday ? 1 : 0, id],
+        (txObj, { rowsAffected }) => {
+          if (rowsAffected > 0) {
+            resolve('Workout updated successfully!');
+          } else {
+            reject('Failed to update workout. Workout not found.');
+          }
+        },
+        (txObj, error) => {
+          reject(error);
+        },
+      );
+    });
+  });
+};
+
 exports.getAllCardioWorkouts = getAllCardioWorkouts
 exports.addCardioWorkout = addCardioWorkout
 exports.getAllStrengthWorkouts = getAllStrengthWorkouts
@@ -176,6 +199,7 @@ exports.strength = {
   getAllWorkouts: getAllStrengthWorkoutsOrderedByRoutineDayNum,
   addWorkout: addStrengthWorkout,
   deleteWorkout: deleteStrengthWorkout,
+  updateWorkout: updateStrengthWorkout,
 };
 
 exports.getWeeklyCardioTimeTotals = () => {
