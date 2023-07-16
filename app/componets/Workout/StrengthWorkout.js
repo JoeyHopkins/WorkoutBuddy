@@ -48,10 +48,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
   const Record = ({ item }) => {
     return (
-      <View style={[styles.homeContainer, styles. marginTop_S]}>
-        <Text style={styles.title}>{item.name}</Text>
+      <View style={[styles.homeContainer, styles.marginTop_S]}>
+        <Text style={[styles.title, styles.marginVertical_S]}>{item.name}</Text>
 
-        <View style={[styles.center]}>
+        <View style={[styles.center, styles.marginBottom]}>
           <Text>Set 1</Text>
         </View>
 
@@ -98,7 +98,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
           <Record key={index} item={item} />
         ))}
         <Pressable
-          style={styles.button}
+          style={[styles.button, styles.marginTop_S]}
         >
           <Text 
             onPress={() => panelRef.current.togglePanel()}
