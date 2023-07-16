@@ -20,6 +20,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     const fetchData = async () => {
       try {
         setLoading(true)
+        routineList.current = await homeSql.getAllRoutines()
         await getData()
         setLoading(false)
       } catch (error) {
@@ -36,8 +37,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
   async function getData() {
     try {
-      let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, true)
-      routineList.current = await homeSql.getAllRoutines()
+      const ids = workouts.map(workout => workout.id);
+      const idList = ids.join(', ');
+      let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
       setWorkoutList(workoutList)
     } 
     catch (error) {

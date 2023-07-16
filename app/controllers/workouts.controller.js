@@ -127,12 +127,20 @@ const getAllStrengthWorkoutsOrderedByRoutineDayNum = () => {
   });
 };
 
-const getAllStrengthWorkoutsByRoutine = (routineId, getEveryday) => {
+const getAllStrengthWorkoutsByRoutine = (routineId, idList, getEveryday) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      let sqlQuery = "SELECT * FROM strengthWorkouts WHERE routineId = ?";
+      let sqlQuery = "SELECT * FROM strengthWorkouts WHERE ";
+
       if (getEveryday) {
-        sqlQuery += " OR everyday = 1";
+        sqlQuery += "(routineId = ? OR everyday = 1)";
+      } else {
+        sqlQuery += "routineId = ?";
+      }
+
+      if (idList && idList.length > 0) {
+        const excludedIds = idList.split(',').map(id => parseInt(id.trim()));
+        sqlQuery += ` AND id NOT IN (${excludedIds.join(',')})`;
       }
 
       tx.executeSql(
