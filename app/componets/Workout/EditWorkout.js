@@ -61,10 +61,12 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
       switch (submissionType) {
         case 'add':
-          const lowerCaseWorkout = newWorkout.toLowerCase();
-          const capitalizedWorkout = lowerCaseWorkout.charAt(0).toUpperCase() + lowerCaseWorkout.slice(1);
 
-          
+          const lowerCaseWorkout = newWorkout.toLowerCase();
+          const words = lowerCaseWorkout.split(' ');
+          const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+          const capitalizedWorkout = capitalizedWords.join(' ');
+
           if(editMode === false) {
             
             let params = {
