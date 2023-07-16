@@ -12,6 +12,7 @@ import {
 import * as Colors from "../../config/colors";
 import React from "react";
 import { showMessage } from "react-native-flash-message";
+import styles from '../../config/styles';
 
 import MatIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -196,7 +197,6 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
             <View style={styles.row}>
               <View style={styles.inputContainer}>
                 <TextInput
-                  style={styles.input}
                   placeholder="Distance"
                   placeholderTextColor="#888"
                   keyboardType="numeric"
@@ -210,7 +210,7 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
 
           <View style={styles.editableTimerContainer}>
 
-            <View style={[styles.row, styles.topTimerEditButtons]}>
+            <View style={[styles.row, styles.spread]}>
               <Pressable onPress={() => manuallyChangeTime(true, 'H', 1)} onLongPress={() => manuallyChangeTime(true, 'H', 5)}>
                 <MatIcon name="chevron-up" size={50} color={isToggled ? Colors.primary : Colors.background} />
               </Pressable>
@@ -230,7 +230,7 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
               {formatTime(Math.floor(milliseconds / 10))}
             </Text>
 
-            <View style={[styles.row, styles.topTimerEditButtons]}>
+            <View style={[styles.row, styles.spread]}>
               <Pressable onPress={() => manuallyChangeTime(false,'H', 1)} onLongPress={() => manuallyChangeTime(false,'H', 5)}>
                 <MatIcon name="chevron-down" size={50} color={isToggled ? Colors.primary : Colors.background} />
               </Pressable>
@@ -275,7 +275,7 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
         </Text>
       </Pressable>
 
-      <View style={styles.row}>
+      <View style={[styles.row, styles.spread]}>
         <Pressable
           style={[styles.smallButton, styles.marginLeft]}
           onPress={resetStopwatch}
@@ -305,82 +305,3 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  topTimerEditButtons: {
-    justifyContent: "space-between",
-  },
-  timer: {
-    fontSize: 48,
-    textAlign: 'center',
-  },
-  inputContainer: {
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-  },
-  input: {
-    fontSize: 14,
-    color: "#333",
-  },
-  fillSpace: {
-    flex: 1,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  distanceText: {
-    marginTop: 5,
-    marginLeft: 10,
-  },
-  buttonLow: {
-    backgroundColor: Colors.green,
-  },
-  buttonMedium: {
-    backgroundColor: Colors.yellow,
-  },
-  stopButton: {
-    backgroundColor: Colors.red,
-  },
-  center: {
-    justifyContent: "center",
-    alignSelf: "center",
-  },
-  timerContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 3,
-    borderRadius: width * 0.5,
-    borderColor: Colors.primary,
-    backgroundColor: "white",
-    width: width * 0.9,
-    maxHeight: width * 0.9,
-  },
-  button: {
-    paddingVertical: 10,
-    marginBottom: 10,
-    marginHorizontal: 20,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.primary,
-  },
-  smallButton: {
-    width: width * 0.42,
-    paddingVertical: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-    alignItems: "center",
-    backgroundColor: Colors.primary,
-  },
-  marginLeft: {
-    marginLeft: 20,
-  },
-  marginRight: {
-    marginRight: 20,
-  },
-  disabled: {
-    backgroundColor: Colors.backgroundGray,
-  },
-});
