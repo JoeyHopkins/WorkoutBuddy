@@ -251,7 +251,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   return (
     <>
       <View style={[styles.homeContainer, styles.fillSpace, styles.marginVertical_S]}>
-        <View style={[styles.addWorkoutContainer]}>
+        <View style={[styles.row, styles.marginHorizonal_M, styles.marginVertical_M]}>
           <TextInput
             style={styles.input}
             onChangeText={setNewWorkout}

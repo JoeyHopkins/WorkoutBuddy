@@ -83,15 +83,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: Colors.primary,
     marginHorizontal: 20,
-    paddingTop: 20,
   },
-  addWorkoutContainer: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginBottom: 30,
-  },
+
   switchText: {
     fontSize: 10,
     textAlign: 'center',
