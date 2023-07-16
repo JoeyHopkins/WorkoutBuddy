@@ -27,8 +27,6 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const [editMode, setEditMode] = useState(false);
   const [editWorkout, setEditWorkout] = useState({});
 
-  const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -125,20 +123,29 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
     if(workoutMode === 'cardio')
       return (
-        <View style={styles.workoutRecordContainer}>
-          
-          <View>
+        <Pressable
+          onLongPress={() => {
+            setEditMode(true);
+            setEditWorkout(workout)
+            setNewWorkout(workout.name)
+            setUseEveryday(workout.everyday === 1)
+          }}
+          style={styles.workoutRecordContainer}
+        >
+          <View style={styles.fillSpace}>
             <Text>{workout.name}</Text>
           </View>
     
-          {workout.trackDistance == 1 && (
-            <EntyoIcon name="ruler" size={20} color={Colors.secondary} />
-          )}
+          <View style={styles.fillSpace}>
+            {workout.trackDistance == 1 && (
+              <EntyoIcon name="ruler" size={20} color={Colors.secondary} />
+            )}
+          </View>
           
           <Pressable onPress={() => { workoutConnection('delete', workout.id) }}>
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
-        </View>
+        </Pressable>
       )
     else
     {
@@ -235,6 +242,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const stopEditMode = () => {
     setTotalsOnly(false);
     setUseEveryday(false);
+    setDistanceEnabled(false);
     setEditMode(false);
   };
 
@@ -250,78 +258,84 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
           />
 
           {workoutMode === "cardio" && (
-            <View style={styles.switchContainer}>
-              <Switch
-                trackColor={{
-                  false: Colors.backgroundGray,
-                  true: Colors.primary,
-                }}
-                thumbColor={distanceEnabled ? Colors.secondary : "#f4f3f4"}
-                onValueChange={toggleSwitch}
-                value={distanceEnabled}
-              />
-              <Text style={styles.switchText}>{"Track\nDistance"}</Text>
-            </View>
-          )}
+            <View style={[styles.center, styles.checkboxWithText, styles.marginHorizonal]}>
 
-          <View style={[styles.fillSpace, styles.row]}>
-            <View
-              style={[styles.fillSpace, styles.center, styles.checkboxWithText]}
-            >
               <BouncyCheckbox
                 size={25}
-                isChecked={useEveryday}
+                isChecked={distanceEnabled}
                 disableText={true}
                 fillColor={Colors.secondary}
                 disableBuiltInState
                 unfillColor={Colors.background}
                 iconStyle={{ borderColor: Colors.secondary }}
                 innerIconStyle={{ borderWidth: 2 }}
-                onPress={() => setUseEveryday(!useEveryday)}
-              />
-              <Text style={styles.checkboxText}>Everyday</Text>
+                onPress={() => setDistanceEnabled(previousState => !previousState)}
+              />    
+
+              <Text style={styles.checkboxText}>{"Distance"}</Text>
             </View>
+          )}
 
-            <View
-              style={[
-                styles.fillSpace,
-                styles.center,
-                editMode ? null : styles.checkboxWithText,
-              ]}
-            >
-              {workoutMode === "strength" && !editMode && (
-                <>
-                  <BouncyCheckbox
-                    size={25}
-                    isChecked={totalsOnly}
-                    disableText={true}
-                    fillColor={Colors.secondary}
-                    unfillColor={Colors.background}
-                    disableBuiltInState
-                    iconStyle={{ borderColor: Colors.secondary }}
-                    innerIconStyle={{ borderWidth: 2 }}
-                    onPress={() => setTotalsOnly(!totalsOnly)}
-                  />
-                  <Text style={styles.checkboxText}>Totals Only</Text>
-                </>
-              )}
+          {workoutMode === "strength" && (  
+            <View style={[styles.fillSpace, styles.row]}>
+              <View
+                style={[styles.fillSpace, styles.center, styles.checkboxWithText]}
+              >
+                <BouncyCheckbox
+                  size={25}
+                  isChecked={useEveryday}
+                  disableText={true}
+                  fillColor={Colors.secondary}
+                  disableBuiltInState
+                  unfillColor={Colors.background}
+                  iconStyle={{ borderColor: Colors.secondary }}
+                  innerIconStyle={{ borderWidth: 2 }}
+                  onPress={() => setUseEveryday(!useEveryday)}
+                />
+                <Text style={styles.checkboxText}>Everyday</Text>
+              </View>
 
-              {workoutMode === "strength" && editMode && (
-                <>
-                  <Pressable
-                    style={styles.circleButton}
-                    onPress={stopEditMode}
-                  >
-                    <MaterialIcon
-                      name="close-outline"
-                      size={22}
-                      color={Colors.black}
+              <View
+                style={[
+                  styles.fillSpace,
+                  styles.center,
+                  editMode ? null : styles.checkboxWithText,
+                ]}
+              >
+                { !editMode && (
+                  <>
+                    <BouncyCheckbox
+                      size={25}
+                      isChecked={totalsOnly}
+                      disableText={true}
+                      fillColor={Colors.secondary}
+                      unfillColor={Colors.background}
+                      disableBuiltInState
+                      iconStyle={{ borderColor: Colors.secondary }}
+                      innerIconStyle={{ borderWidth: 2 }}
+                      onPress={() => setTotalsOnly(!totalsOnly)}
                     />
-                  </Pressable>
-                </>
-              )}
+                    <Text style={styles.checkboxText}>Totals Only</Text>
+                  </>
+                )}
+
+                { editMode && (
+                  <>
+                    <Pressable
+                      style={styles.circleButton}
+                      onPress={stopEditMode}
+                    >
+                      <MaterialIcon
+                        name="close-outline"
+                        size={22}
+                        color={Colors.black}
+                      />
+                    </Pressable>
+                  </>
+                )}
+              </View>
             </View>
-          </View>
+          )}
 
           <Pressable
             style={styles.circleButton}
@@ -351,7 +365,15 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
                 return;
               }
 
-              panelRef.current.togglePanel();
+
+              if(workoutMode === 'strength')
+                panelRef.current.togglePanel();
+              else
+              {
+                stopEditMode()
+                workoutConnection('add')
+              }
+
             }}
           >
             <MaterialIcon name="check-outline" size={20} color={Colors.black} />

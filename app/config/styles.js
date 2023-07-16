@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
   },
   fillSpace: {
     flex: 1,
+    // borderWidth: 1,
   },
   checkboxWithText: {
     marginBottom: -10,
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderBottomWidth: 1,
     borderBottomColor: Colors.primary,
+    // borderWidth: 1,
   },
   row: {
     flexDirection: 'row',
