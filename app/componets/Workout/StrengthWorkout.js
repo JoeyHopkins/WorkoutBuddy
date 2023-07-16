@@ -3,14 +3,18 @@ import * as Colors from '../../config/colors'
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import { useEffect, useRef, useState } from "react";
 import { showMessage } from "react-native-flash-message";
+import * as homeSql from '../../controllers/home.controller'
 import * as workoutSql from '../../controllers/workouts.controller'
 import styles from '../../config/styles';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
   const [loading, setLoading] = useState(false);
   const panelRef = useRef(null);
-  const [activityList, setActivityList] = useState([]);
+  const [workoutList, setWorkoutList] = useState([]);
+  const routineList = useRef([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,8 +36,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
   async function getData() {
     try {
-      let activityList = await workoutSql.getAllStrengthWorkouts()
-      setActivityList(activityList)
+      let workoutList = await workoutSql.getAllStrengthWorkouts()
+      routineList.current = await homeSql.getAllRoutines()
+      setWorkoutList(workoutList)
     } 
     catch (error) {
       showMessage({
@@ -65,26 +70,68 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
     );
   };
 
-  const WorkoutsRecord = ({activity }) => {
+  const WorkoutsRecord = ({workout}) => {
+
+    let matchingRoutine = {};
+    
+    matchingRoutine = routineList.current.find(routine => {
+      if (routine.id === workout.routineId)
+        return true;
+      return false;
+    });
+
     return (
       <>
-        <Text>{activity.name}</Text>
+        <Pressable 
+          style={[styles.listItemContainer]}
+        >
+          <View style={[styles.marginHorizonal_L, styles.row]}>
+
+            <View style={[styles.fillSpace]}>
+              <Text>{workout.name}</Text>
+            </View>
+
+            <View style={[styles.fillSpace]}>
+              <Text>{matchingRoutine.routine}</Text>
+            </View>
+
+
+            <View style={[styles.fillSpace, styles.row]}>
+
+              <View style={[styles.fillSpace]}>
+                {(!workout.trackTotal || workout.trackTotal == 0) && (
+                  <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
+                )}
+                {(workout.trackTotal == 1) && (
+                  <MaterialIcon name="sigma" size={20} color={Colors.secondary} />
+                )}
+              </View>
+
+              <View style={[styles.fillSpace]}>
+                {workout.everyday.toString() === '1' && (
+                  <MaterialIcon name="calendar-today" size={20} color={Colors.secondary} />
+                )}
+              </View>
+
+            </View>
+          </View>
+        </Pressable>
       </>
     )
   }
 
   const BottomDrawer = () => {
     return (
-      <View>
+      <View style={styles.drawerContainer}>
         <Pressable
           style={styles.button}
         >
-          <Text>Add New Activity</Text>
+          <Text>Add New Workout</Text>
         </Pressable>
 
         <ScrollView>
-          {activityList.map((activity, index) => (
-            <WorkoutsRecord key={index} activity={activity} />
+          {workoutList.map((workout, index) => (
+            <WorkoutsRecord key={index} workout={workout} />
           ))}
         </ScrollView>
       </View>
@@ -102,7 +149,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
         >
           <Text 
             onPress={() => panelRef.current.togglePanel()}
-          >Add Activity</Text>
+          >Add Workout</Text>
         </Pressable>
       </View>
       <BottomSheet 
