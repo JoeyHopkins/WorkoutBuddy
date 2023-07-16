@@ -98,6 +98,9 @@ const styles = StyleSheet.create({
   marginHorizonal: {
     marginHorizontal: 10,
   },
+  border: {
+    borderWidth: 1,
+  },
 });
 
 export default styles;

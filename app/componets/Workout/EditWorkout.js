@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, Keyboard, Dimensions, Pressable, TextInput, Switch, ScrollView} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
-
 import * as workoutSql from '../../controllers/workouts.controller'
 import * as homeSql from '../../controllers/home.controller'
 import { useEffect, useState, useRef } from 'react';
@@ -9,14 +8,9 @@ import { Wander } from 'react-native-animated-spinkit'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { showMessage } from "react-native-flash-message";
-
 import BottomSheet from 'react-native-simple-bottom-sheet';
-
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
-import styles from '../../config/styles'; // Import the styles from GlobalStyles.js
-
-const width = Dimensions.get('window').width
+import styles from '../../config/styles';
 
 export function EditWorkout({workoutMode, setCompleted, routineSelected, navigation}) {
 
@@ -29,6 +23,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
   const [totalsOnly, setTotalsOnly] = useState(false);
   const [useEveryday, setUseEveryday] = useState(false);
+
+  const [editMode, setEditMode] = useState(false);
+  const [editWorkout, setEditWorkout] = useState({});
 
   const toggleSwitch = () => setDistanceEnabled(previousState => !previousState);
 
@@ -77,7 +74,10 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             useEveryday: useEveryday,
           }
 
-          message = await sql.addWorkout(params)
+          if(editMode === false)
+            message = await sql.addWorkout(params)
+          // else
+          //   message = await sql.updateWorkout(params)
 
           setNewWorkout('')
           break;
@@ -140,7 +140,15 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
 
       return (
         <>
-          <View style={styles.workoutRecordContainer}>
+          <Pressable 
+            onLongPress={() => {
+              setEditMode(true);
+              setEditWorkout(workout)
+              setNewWorkout(workout.name)
+              setUseEveryday(workout.everyday === 1)
+            }}
+            style={styles.workoutRecordContainer}
+          >
             
             <View style={[styles.fillSpace]}>
               <Text>{workout.name}</Text>
@@ -158,7 +166,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
                   <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />
                 )}
                 {(workout.trackTotal == 1) && (
-                  <MaterialIcon name="plus-minus-variant" size={20} color={Colors.secondary} />
+                  <MaterialIcon name="sigma" size={20} color={Colors.secondary} />
                 )}
               </View>
 
@@ -176,7 +184,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
               </Pressable>
             </View>
 
-          </View>
+          </Pressable>
         </>
       )
     }  
@@ -212,10 +220,9 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   }
 
   return (
-    <> 
+    <>
       <View style={styles.homeContainer}>
-
-        <View style={styles.addWorkoutContainer}>
+        <View style={[styles.addWorkoutContainer]}>
           <TextInput
             style={styles.input}
             onChangeText={setNewWorkout}
@@ -223,37 +230,31 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
             placeholder="New Workout"
           />
 
-          {workoutMode === 'cardio' && (
+          {workoutMode === "cardio" && (
             <View style={styles.switchContainer}>
               <Switch
-                trackColor={{false: Colors.backgroundGray, true: Colors.primary}}
-                thumbColor={distanceEnabled ? Colors.secondary : '#f4f3f4'}
+                trackColor={{
+                  false: Colors.backgroundGray,
+                  true: Colors.primary,
+                }}
+                thumbColor={distanceEnabled ? Colors.secondary : "#f4f3f4"}
                 onValueChange={toggleSwitch}
                 value={distanceEnabled}
               />
-              <Text style={styles.switchText}>{'Track\nDistance'}</Text>
+              <Text style={styles.switchText}>{"Track\nDistance"}</Text>
             </View>
           )}
 
           <View style={[styles.fillSpace, styles.row]}>
-            <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
+            <View
+              style={[styles.fillSpace, styles.center, styles.checkboxWithText]}
+            >
               <BouncyCheckbox
                 size={25}
+                isChecked={useEveryday}
                 disableText={true}
                 fillColor={Colors.secondary}
-                unfillColor={Colors.background}
-                iconStyle={{ borderColor: Colors.secondary }}
-                innerIconStyle={{ borderWidth: 2 }}
-                onPress={() => setTotalsOnly(!totalsOnly)}
-              />
-              <Text style={styles.checkboxText}>Totals Only</Text>
-            </View>
-
-            <View style={[styles.fillSpace, styles.center, styles.checkboxWithText]}>
-              <BouncyCheckbox
-                size={25}
-                disableText={true}
-                fillColor={Colors.secondary}
+                disableBuiltInState
                 unfillColor={Colors.background}
                 iconStyle={{ borderColor: Colors.secondary }}
                 innerIconStyle={{ borderWidth: 2 }}
@@ -261,32 +262,72 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
               />
               <Text style={styles.checkboxText}>Everyday</Text>
             </View>
+
+            <View
+              style={[
+                styles.fillSpace,
+                styles.center,
+                editMode ? null : styles.checkboxWithText,
+              ]}
+            >
+              {workoutMode === "strength" && !editMode && (
+                <>
+                  <BouncyCheckbox
+                    size={25}
+                    disableText={true}
+                    fillColor={Colors.secondary}
+                    unfillColor={Colors.background}
+                    iconStyle={{ borderColor: Colors.secondary }}
+                    innerIconStyle={{ borderWidth: 2 }}
+                    onPress={() => setTotalsOnly(!totalsOnly)}
+                  />
+                  <Text style={styles.checkboxText}>Totals Only</Text>
+                </>
+              )}
+
+              {workoutMode === "strength" && editMode && (
+                <>
+                  <Pressable
+                    style={styles.circleButton}
+                    onPress={() => {
+                      setEditMode(false);
+                    }}
+                  >
+                    <MaterialIcon
+                      name="close-outline"
+                      size={22}
+                      color={Colors.black}
+                    />
+                  </Pressable>
+                </>
+              )}
+            </View>
           </View>
 
           <Pressable
             style={styles.circleButton}
             onPress={() => {
-              if(Keyboard.isVisible())
-              {
+              if (Keyboard.isVisible()) {
                 Keyboard.dismiss();
-                return
+                return;
               }
 
-              if(newWorkout === '') {
+              if (newWorkout === "") {
                 showMessage({
-                  message: 'Error',
-                  description: 'Please enter a workout name.',
+                  message: "Error",
+                  description: "Please enter a workout name.",
                   type: "danger",
                 });
-                setLoading(false)
-                return
+                setLoading(false);
+                return;
               }
               if (!/^[a-zA-Z\s]+$/.test(newWorkout)) {
                 showMessage({
-                  message: 'Error',
-                  description: 'Workout name should only contain letters and spaces.',
-                  type: 'danger',
-                });    
+                  message: "Error",
+                  description:
+                    "Workout name should only contain letters and spaces.",
+                  type: "danger",
+                });
                 setLoading(false);
                 return;
               }
@@ -294,14 +335,18 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
               panelRef.current.togglePanel();
             }}
           >
-            <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+            <MaterialIcon name="check-outline" size={20} color={Colors.black} />
           </Pressable>
         </View>
 
-        <View style={ (loading == false && workoutList.length > 0) ? styles.fillSpace : [styles.fillSpace, styles.center] }>
-          {loading == true && (
-            <Wander size={150} color={Colors.primary} />
-          )}
+        <View
+          style={
+            loading == false && workoutList.length > 0
+              ? styles.fillSpace
+              : [styles.fillSpace, styles.center]
+          }
+        >
+          {loading == true && <Wander size={150} color={Colors.primary} />}
           {loading == false && workoutList.length == 0 && (
             <Text>No workouts exist...</Text>
           )}
@@ -312,20 +357,19 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
                 {workoutList.map((workout, index) => (
                   <WorkoutRecord key={index} workout={workout} />
                 ))}
-              </ScrollView>  
+              </ScrollView>
             </>
           )}
         </View>
       </View>
 
-      <BottomSheet 
-        isOpen={false} 
-        ref={ref => panelRef.current = ref}
+      <BottomSheet
+        isOpen={false}
+        ref={(ref) => (panelRef.current = ref)}
         sliderMinHeight={0}
       >
-        <BottomDrawer></BottomDrawer>  
+        <BottomDrawer></BottomDrawer>
       </BottomSheet>
-
     </>
   );
 }
