@@ -4,6 +4,7 @@ import BottomSheet from 'react-native-simple-bottom-sheet';
 import { useEffect, useRef, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 import * as workoutSql from '../../controllers/workouts.controller'
+import styles from '../../config/styles';
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
@@ -47,27 +48,27 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
 
   const Record = ({ item }) => {
     return (
-      <View style={[styles.homeContainer]}>
+      <View style={[styles.homeContainer, styles. marginTop_S]}>
         <Text style={styles.title}>{item.name}</Text>
 
         <View style={[styles.center]}>
-          <Text style={styles.text}>Set 1</Text>
+          <Text>Set 1</Text>
         </View>
 
         <Pressable
           style={styles.button}
         >
-          <Text style={styles.text}>Add Set</Text>
+          <Text>Add Set</Text>
         </Pressable>
 
       </View>
     );
   };
 
-  const ActivityRecord = ({ index, activity }) => {
+  const WorkoutsRecord = ({activity }) => {
     return (
       <>
-        <Text>{index + ': ' + activity.name}</Text>
+        <Text>{activity.name}</Text>
       </>
     )
   }
@@ -78,12 +79,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
         <Pressable
           style={styles.button}
         >
-          <Text style={styles.text}>Add New Activity</Text>
+          <Text>Add New Activity</Text>
         </Pressable>
 
         <ScrollView>
           {activityList.map((activity, index) => (
-            <ActivityRecord index={index} activity={activity} />
+            <WorkoutsRecord key={index} activity={activity} />
           ))}
         </ScrollView>
       </View>
@@ -100,7 +101,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
           style={styles.button}
         >
           <Text 
-            style={styles.text}
             onPress={() => panelRef.current.togglePanel()}
           >Add Activity</Text>
         </Pressable>
@@ -115,38 +115,3 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts }) => {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  center: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    textAlign: 'center',
-  },
-  fillSpace: {
-    flex: 1,
-  },
-  homeContainer: {
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderRadius: 20,
-    marginTop: 10,
-    marginHorizontal: 20,
-    borderColor: Colors.primary,
-  },
-  title: {
-    color: Colors.primary,
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingVertical: 10,
-  },
-  button: {
-    marginVertical: 10,
-    backgroundColor: Colors.primary,
-    paddingVertical: 10,
-    marginHorizontal: 20,
-    borderRadius: 20,
-  },
-})

@@ -220,7 +220,7 @@ export const Workout = ({navigation}) => {
   renderSlide = ({item}) => {
     return (
       <View style={styles.slide}>
-        <Text style={styles.title}>{ item.routine }</Text>
+        <Text style={[styles.title, styles.marginVertical_S]}>{ item.routine }</Text>
         {loading == false && item.workouts.length == 0 && (
           <View style={styles.center}>
             <Text>You have no workouts...</Text>
@@ -316,7 +316,7 @@ export const Workout = ({navigation}) => {
         <View style={[styles.homeContainer, styles.marginTop_S]}>
           <View style={styles.row}>
             <View style={styles.fillSpace}></View>
-            <Text style={[styles.title]}>Weekly Total Summary</Text>
+            <Text style={[styles.title, styles.marginVertical_S]}>Weekly Total Summary</Text>
             
             <View style={[styles.fillSpace, styles.removeMarginBottom12, styles.center]}>
               {workoutMode === 'cardio' && (
