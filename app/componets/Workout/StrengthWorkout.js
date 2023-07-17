@@ -178,18 +178,20 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
   return (
     <>
-      <View style={styles.fillSpace}>
-        {workouts.map((item, index) => (
-          <WorkoutItem key={index} item={item} />
-        ))}
-        <Pressable
-          style={[styles.button, styles.marginTop_S]}
-        >
-          <Text 
-            onPress={() => panelRef.current.togglePanel()}
-          >Add Workout</Text>
-        </Pressable>
-      </View>
+      <ScrollView>
+        <View style={styles.fillSpace}>
+          {workouts.map((item, index) => (
+            <WorkoutItem key={index} item={item} />
+          ))}
+          <Pressable
+            style={[styles.button, styles.marginTop_S]}
+          >
+            <Text 
+              onPress={() => panelRef.current.togglePanel()}
+            >Add Workout</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
       <BottomSheet 
         isOpen={false} 
         ref={ref => panelRef.current = ref}
