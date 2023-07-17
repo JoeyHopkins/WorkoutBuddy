@@ -179,13 +179,15 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
           {workouts.map((item, index) => (
             <WorkoutItem key={index} item={item} />
           ))}
-          <Pressable
-            style={[styles.button, styles.marginTop_S]}
-          >
-            <Text 
-              onPress={() => panelRef.current.togglePanel()}
-            >Add Workout</Text>
-          </Pressable>
+        </View>
+        <View style={styles.center}>
+          <MaterialIcon
+            onPress={() => panelRef.current.togglePanel()}
+            name="plus-circle-outline"
+            size={40}
+            color={Colors.primary}
+            style={styles.marginVertical_S}
+          />
         </View>
       </ScrollView>
       <BottomSheet 

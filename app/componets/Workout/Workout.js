@@ -72,7 +72,6 @@ export const Workout = ({navigation}) => {
     const navigation = useNavigation();
   
     const handleEditButton = () => {
-      //todo: if user goes back, warn user and clear workout on going back
       setPageMode('Edit') 
       navigation.setOptions({headerTitle: 'Workout'});
     };
@@ -88,7 +87,6 @@ export const Workout = ({navigation}) => {
     const navigation = useNavigation();
   
     const handleBackButton = () => {
-      // todo: if user goes back, warn user and clear workout on going back if approved
       Alert.alert(
         'Warning',
         'Are you sure you want to go back? Your current workout progress will be lost.',
@@ -98,7 +96,7 @@ export const Workout = ({navigation}) => {
             style: 'cancel',
           },
           {
-            text: 'OK',
+            text: 'Yes',
             onPress: () => {
               setPageMode('Main');
               navigation.setOptions({ headerTitle: 'Workout' });
