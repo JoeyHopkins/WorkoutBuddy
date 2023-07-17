@@ -14,6 +14,7 @@ import styles from '../../config/styles';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FoundationIcon from 'react-native-vector-icons/Foundation';
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -48,7 +49,7 @@ export const Workout = ({navigation}) => {
     if(pageMode === "Workout") {
       navigation.setOptions({
         headerLeft: () => <WorkoutPageHeader />,
-        headerRight: () => <GoToEditPageHeaderIcon/>
+        headerRight: () => workoutMode == 'strength' ? <GoToEditPageHeaderIcon/> : undefined
       });
       lastPageMode.current = "Workout"
     }
@@ -77,9 +78,24 @@ export const Workout = ({navigation}) => {
     };
 
     return (
-      <Pressable style={[styles.headerEditButton]} onPress={handleEditButton}>
-        <EntypoIcon name="edit" size={20} color={Colors.white} />
-      </Pressable>
+      <>
+        <View style={styles.row}>
+          {workoutMode === 'strength' && pageMode === 'Workout' && (
+            <Pressable 
+              style={[styles.headerEditButton]}
+              onPress={() => { 
+                console.log('hit submit')
+              }}
+            >
+              <FoundationIcon name="check" size={20} color={Colors.green} />
+            </Pressable>
+          )}
+
+          <Pressable style={[styles.headerEditButton, styles.leftBorder]} onPress={handleEditButton}>
+            <EntypoIcon name="edit" size={20} color={Colors.yellow} />
+          </Pressable>
+        </View>
+      </>
     );
   }
 
@@ -436,12 +452,14 @@ export const Workout = ({navigation}) => {
         )}
 
         {workoutMode == 'cardio' && (
-          <View style={[styles.homeContainer, styles.marginTop_S , styles.fillSpace]}>
+          <View style={[styles.homeContainer, styles.marginTop_S, styles.fillSpace]}>
+            <View style={[styles.marginTop_M]}>
             <ScrollView >
               {workoutList.map((workout, index) => (
                 <CardioWorkoutRecord key={index} workout={workout} />
               ))}
             </ScrollView>    
+            </View>
           </View>
         )}
 

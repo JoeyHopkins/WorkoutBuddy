@@ -29,6 +29,7 @@ export const black = '#000000';
 export const background = white;
 export const backgroundGray = '#b9b9b9';
 
+export const lightGreen = '#00c267';
 export const green = '#5eff94';
 export const yellow = '#ffea5d';
 export const red = '#ff675d';
