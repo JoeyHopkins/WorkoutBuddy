@@ -167,12 +167,16 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
           <Text>Add New Workout</Text>
         </Pressable>
 
-        <ScrollView>
-          {workoutList.map((workout, index) => (
-            <WorkoutsRecord key={index} workout={workout} />
-          ))}
-        </ScrollView>
+        <View style={styles.marginBottom_L}>
+          <ScrollView>
+            {workoutList.map((workout, index) => (
+              <WorkoutsRecord key={index} workout={workout} />
+            ))}
+          </ScrollView>
+        </View>
       </View>
+
+
     )
   }
 

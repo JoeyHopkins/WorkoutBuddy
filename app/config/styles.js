@@ -180,6 +180,9 @@ const styles = StyleSheet.create({
   marginBottom: {
     marginBottom: 10,
   },
+  marginBottom_L: {
+    marginBottom: 100,
+  },
   marginLeft: {
     marginLeft: 20,
   },
