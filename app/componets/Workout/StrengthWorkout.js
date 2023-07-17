@@ -53,9 +53,25 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     return
   }
 
-  const Record = ({ item }) => {
+  const WorkoutItem = ({ item }) => {
     return (
       <View style={[styles.homeContainer, styles.marginTop_S]}>
+
+        <View style={[styles.center, styles.marginTop_M]}>
+          <Pressable
+            // style={styles.circleButton}
+            onPress={() => {
+              alterWorkoutList('remove', item)
+            }}
+          >
+            <MaterialIcon
+              name="close-outline"
+              size={22}
+              color={Colors.black}
+            />
+          </Pressable>
+        </View>
+        
         <Text style={[styles.title, styles.marginVertical_S]}>{item.name}</Text>
 
         <View style={[styles.center, styles.marginBottom]}>
@@ -76,6 +92,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     switch (type) {
       case 'add':
         workouts.push(workout)
+        break;
+      case 'remove':
+        const index = workouts.findIndex(item => item.id === workout.id);
+        if (index !== -1) {
+          workouts.splice(index, 1);
+        }
         break;
     }
 
@@ -158,7 +180,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     <>
       <View style={styles.fillSpace}>
         {workouts.map((item, index) => (
-          <Record key={index} item={item} />
+          <WorkoutItem key={index} item={item} />
         ))}
         <Pressable
           style={[styles.button, styles.marginTop_S]}

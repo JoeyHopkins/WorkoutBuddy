@@ -215,6 +215,9 @@ const styles = StyleSheet.create({
   marginTop_S: {
     marginTop: 10,
   },
+  marginTop_M: {
+    marginTop: 20,
+  },
   removeMarginBottom12: {
     marginBottom: -12,
   },
