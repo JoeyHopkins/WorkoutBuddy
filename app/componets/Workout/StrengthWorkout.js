@@ -72,6 +72,16 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     );
   };
 
+  function alterWorkoutList (type, workout) {
+    switch (type) {
+      case 'add':
+        workouts.push(workout)
+        break;
+    }
+
+    getData()
+  }
+
   const WorkoutsRecord = ({workout}) => {
 
     let matchingRoutine = {};
@@ -86,6 +96,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       <>
         <Pressable 
           style={[styles.listItemContainer]}
+          onPress={() => {
+            alterWorkoutList('add', workout)
+            panelRef.current.togglePanel()
+          }}
         >
           <View style={[styles.marginHorizonal_L, styles.row]}>
 
