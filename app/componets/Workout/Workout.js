@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, Dimensions, Pressable, ScrollView, Switch} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect, useRef, memo} from 'react';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
 import * as Colors from '../../config/colors'
 import Carousel from 'react-native-snap-carousel';
 import * as workoutSql from '../../controllers/workouts.controller'
@@ -11,8 +10,9 @@ import { EditWorkout } from './EditWorkout'
 import { CardioWorkout } from './CardioWorkout'
 import { StrengthWorkout } from './StrengthWorkout'
 import { useNavigation } from '@react-navigation/native';
-import IonIcon from 'react-native-vector-icons/Ionicons';
 import styles from '../../config/styles';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const width = Dimensions.get('window').width;
@@ -47,18 +47,60 @@ export const Workout = ({navigation}) => {
 
   //handle header between the pages
   React.useLayoutEffect(() => {
-    if(pageMode === "Workout" || pageMode === "Edit")
+    if(pageMode === "Workout")
       navigation.setOptions({
-        headerLeft: () => <CustomHeader />,
+        headerLeft: () => <WorkoutPageHeader />,
+        headerRight: () => <GoToEditPageHeaderIcon/>
+      });
+    if(pageMode === "Edit")
+      navigation.setOptions({
+        headerLeft: () => <EditPageHeader />,
+        headerRight: undefined,
       });
     else if (pageMode === "Main") 
       navigation.setOptions({
         headerLeft: undefined,
+        headerRight: () => <GoToEditPageHeaderIcon/>
       });
     
   }, [pageMode]);
 
-  const CustomHeader = () => {
+  const GoToEditPageHeaderIcon = () => {
+
+    const navigation = useNavigation();
+  
+    const handleEditButton = () => {
+      //todo: if user goes back, warn user and clear workout on going back
+      refresh.current = false
+      setPageMode('Edit') 
+      navigation.setOptions({headerTitle: 'Workout'});
+    };
+
+    return (
+      <Pressable style={[styles.headerEditButton]} onPress={handleEditButton}>
+        <EntypoIcon name="edit" size={20} color={Colors.white} />
+      </Pressable>
+    );
+  }
+
+  const WorkoutPageHeader = () => {
+    const navigation = useNavigation();
+  
+    const handleBackButton = () => {
+      //todo: if user goes back, warn user and clear workout on going back
+      refresh.current = false
+      setPageMode('Main') 
+      navigation.setOptions({headerTitle: 'Workout'});
+    };
+  
+    return (
+      <Pressable style={styles.headerButton} onPress={handleBackButton}>
+        <IonIcon name="md-chevron-back" size={20} color={Colors.white} />
+      </Pressable>
+    );
+  }
+
+  const EditPageHeader = () => {
     const navigation = useNavigation();
   
     const handleBackButton = () => {
@@ -74,6 +116,8 @@ export const Workout = ({navigation}) => {
     );
   }
     
+
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
@@ -353,14 +397,6 @@ export const Workout = ({navigation}) => {
 
         {workoutMode == 'strength' && (
           <View style={styles.routineListContainer}>
-            <View style={styles.editButtonContainer}>
-              <Pressable
-                style={styles.circleButton}
-                onPress={() => { setPageMode('Edit') }}
-              >
-                <EntypoIcon name='edit' size={20} color={Colors.black} />
-              </Pressable>
-            </View>
             {loading == true && (
               <View style={[styles.center, styles.fillSpace]}>
                 <Wander size={120} color={Colors.primary} />
@@ -390,15 +426,7 @@ export const Workout = ({navigation}) => {
 
         {workoutMode == 'cardio' && (
           <View style={[styles.homeContainer, styles.marginTop_S , styles.fillSpace]}>
-            <View style={styles.editButtonContainer}>
-              <Pressable
-                style={styles.circleButton}
-                onPress={() => { setPageMode('Edit') }}
-              >
-                <EntypoIcon name='edit' size={20} color={Colors.black} />
-              </Pressable>
-            </View>
-            <ScrollView>
+            <ScrollView >
               {workoutList.map((workout, index) => (
                 <CardioWorkoutRecord key={index} workout={workout} />
               ))}

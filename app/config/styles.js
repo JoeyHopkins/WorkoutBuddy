@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     overflow: 'hidden',
     flex: 1,
+    paddingTop: 20,
   },
   totalContainer: {
     flexDirection: 'row',
@@ -123,6 +124,12 @@ const styles = StyleSheet.create({
   headerButton: {
     marginLeft: 10,
     marginRight: -10,
+  },
+  headerEditButton: {
+    borderLeftColor: Colors.white,
+    borderLeftWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10
   },
   homeContainer: {
     backgroundColor: Colors.background,

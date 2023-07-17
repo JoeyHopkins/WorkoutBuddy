@@ -161,11 +161,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
   const BottomDrawer = () => {
     return (
       <View style={styles.drawerContainer}>
-        <Pressable
-          style={styles.button}
-        >
-          <Text>Add New Workout</Text>
-        </Pressable>
 
         <View style={styles.marginBottom_L}>
           <ScrollView>
@@ -175,8 +170,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
           </ScrollView>
         </View>
       </View>
-
-
     )
   }
 

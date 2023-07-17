@@ -19,7 +19,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
   const [newWorkout, setNewWorkout] = useState('')
   const [distanceEnabled, setDistanceEnabled] = useState(false)
   const routineList = useRef([])
-  const panelRef = useRef(null);
+  const panelRef = useRef(false);
 
   const [totalsOnly, setTotalsOnly] = useState(false);
   const [useEveryday, setUseEveryday] = useState(false);
@@ -407,7 +407,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
         <View
           style={
             loading == false && workoutList.length > 0
-              ? styles.fillSpace
+              ? [styles.fillSpace, styles.marginVertical_M]
               : [styles.fillSpace, styles.center]
           }
         >
