@@ -59,7 +59,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
         <View style={[styles.center, styles.marginTop_M]}>
           <Pressable
-            // style={styles.circleButton}
             onPress={() => {
               alterWorkoutList('remove', item)
             }}
@@ -162,7 +161,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     return (
       <View style={styles.drawerContainer}>
 
-        <View style={styles.marginBottom_L}>
+        <View>
           <ScrollView>
             {workoutList.map((workout, index) => (
               <WorkoutsRecord key={index} workout={workout} />

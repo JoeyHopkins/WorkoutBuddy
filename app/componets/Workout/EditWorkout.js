@@ -12,7 +12,7 @@ import BottomSheet from 'react-native-simple-bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import styles from '../../config/styles';
 
-export function EditWorkout({workoutMode, setCompleted, routineSelected, navigation}) {
+export function EditWorkout({workoutMode, navigation}) {
 
   const [loading, setLoading] = useState(false)
   const [workoutList, setWorkoutList] = useState([])
@@ -54,11 +54,7 @@ export function EditWorkout({workoutMode, setCompleted, routineSelected, navigat
     else if(workoutMode === 'strength')
       sql = workoutSql.strength
 
-    if(submissionType !== null)
-      setCompleted(true)
-
     try {
-
       switch (submissionType) {
         case 'add':
 

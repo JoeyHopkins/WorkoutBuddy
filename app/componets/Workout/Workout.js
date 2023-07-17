@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, Pressable, ScrollView, Switch} from 'react-native';
+import { Alert, Text, View, Dimensions, Pressable, ScrollView, Switch} from 'react-native';
 import SwitchSelector from "react-native-switch-selector";
 import React, {useState, useEffect, useRef, memo} from 'react';
 import * as Colors from '../../config/colors'
@@ -32,14 +32,12 @@ export const Workout = ({navigation}) => {
   const [workoutList, setWorkoutList] = useState([])
   const [selectedWorkouts, setSelectedWorkouts] = useState([])
   const [cardioTimeTotals, setCardioTimeTotals] = useState([])
-  const [completed, setCompleted] = useState(false)
   const [showDistanceTotals, setShowDistanceTotals] = useState(false)
   const [cardioDistanceTotals, setCardioDistanceTotals] = useState({})
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
   let cardioWorkouts = useRef([])
-  let refresh = useRef(true)
   let lastPageMode = useRef('')
 
   const toggleCardioTotalSwitch = () => setShowDistanceTotals(previousState => !previousState);
@@ -75,7 +73,6 @@ export const Workout = ({navigation}) => {
   
     const handleEditButton = () => {
       //todo: if user goes back, warn user and clear workout on going back
-      refresh.current = false
       setPageMode('Edit') 
       navigation.setOptions({headerTitle: 'Workout'});
     };
@@ -91,10 +88,25 @@ export const Workout = ({navigation}) => {
     const navigation = useNavigation();
   
     const handleBackButton = () => {
-      //todo: if user goes back, warn user and clear workout on going back
-      refresh.current = false
-      setPageMode('Main') 
-      navigation.setOptions({headerTitle: 'Workout'});
+      // todo: if user goes back, warn user and clear workout on going back if approved
+      Alert.alert(
+        'Warning',
+        'Are you sure you want to go back? Your current workout progress will be lost.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              setPageMode('Main');
+              navigation.setOptions({ headerTitle: 'Workout' });
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     };
   
     return (
@@ -108,7 +120,6 @@ export const Workout = ({navigation}) => {
     const navigation = useNavigation();
     
     const handleBackButton = () => {
-      refresh.current = false
       setPageMode(lastPageMode.current) 
       navigation.setOptions({headerTitle: 'Workout'});
     };
@@ -129,28 +140,10 @@ export const Workout = ({navigation}) => {
       setLoading(false)
     }
 
-    if(pageMode === "Main" && (refresh.current || completed)) 
+    if(pageMode === "Main") 
       fetchData()
 
-    refresh.current = true
-    setCompleted(false)
   }, [pageMode])
-
-  function changeWorkoutMode(value) {
-    setWorkoutMode(value)
-    setSelectedWorkouts([])
-
-    if(value === "strength")
-    {
-      setWorkoutList(routineSelected.current.workouts)
-      styles.workoutRecord.marginLeft = -90;
-    }
-    else if(value === "cardio") 
-    {
-      setWorkoutList(cardioWorkouts.current)
-      styles.workoutRecord.marginLeft = -40;
-    }
-  }
 
   async function getData() {
     try {
@@ -185,6 +178,22 @@ export const Workout = ({navigation}) => {
 
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  function changeWorkoutMode(value) {
+    setWorkoutMode(value)
+    setSelectedWorkouts([])
+
+    if(value === "strength")
+    {
+      setWorkoutList(routineSelected.current.workouts)
+      styles.workoutRecord.marginLeft = -90;
+    }
+    else if(value === "cardio") 
+    {
+      setWorkoutList(cardioWorkouts.current)
+      styles.workoutRecord.marginLeft = -40;
     }
   }
 
@@ -458,9 +467,6 @@ export const Workout = ({navigation}) => {
         {pageMode == 'Edit' && (
           <EditWorkout 
             workoutMode={workoutMode} 
-            setPageMode={setPageMode}
-            setCompleted={setCompleted}
-            routineSelected={routineSelected}
             navigation={navigation}
           ></EditWorkout>
         )}
