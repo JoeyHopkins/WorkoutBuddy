@@ -38,30 +38,34 @@ export const Workout = ({navigation}) => {
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
-
   let cardioWorkouts = useRef([])
-  
   let refresh = useRef(true)
+  let lastPageMode = useRef('')
 
   const toggleCardioTotalSwitch = () => setShowDistanceTotals(previousState => !previousState);
 
   //handle header between the pages
   React.useLayoutEffect(() => {
-    if(pageMode === "Workout")
+
+    if(pageMode === "Workout") {
       navigation.setOptions({
         headerLeft: () => <WorkoutPageHeader />,
         headerRight: () => <GoToEditPageHeaderIcon/>
       });
+      lastPageMode.current = "Workout"
+    }
     if(pageMode === "Edit")
       navigation.setOptions({
         headerLeft: () => <EditPageHeader />,
         headerRight: undefined,
       });
-    else if (pageMode === "Main") 
+    else if (pageMode === "Main") {
       navigation.setOptions({
         headerLeft: undefined,
         headerRight: () => <GoToEditPageHeaderIcon/>
       });
+      lastPageMode.current = "Main"
+    }
     
   }, [pageMode]);
 
@@ -102,10 +106,10 @@ export const Workout = ({navigation}) => {
 
   const EditPageHeader = () => {
     const navigation = useNavigation();
-  
+    
     const handleBackButton = () => {
       refresh.current = false
-      setPageMode('Main') 
+      setPageMode(lastPageMode.current) 
       navigation.setOptions({headerTitle: 'Workout'});
     };
   
