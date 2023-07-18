@@ -41,6 +41,11 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       const idList = ids.join(', ');
       let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
       setWorkoutList(workoutList)
+
+      for(let i in workouts)
+        if(!workouts[i].sets)
+          workouts[i].sets = []
+
     } 
     catch (error) {
       showMessage({
@@ -54,6 +59,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
   }
 
   const WorkoutItem = ({ item }) => {
+    if(item.sets.length == 0)
+      item.sets.push({
+        rep: 0,
+        weight: 0,
+      })
+
     return (
       <View style={[styles.homeContainer, styles.marginTop_S]}>
 
@@ -74,8 +85,11 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <Text style={[styles.title, styles.marginVertical_S]}>{item.name}</Text>
 
         <View style={[styles.center, styles.marginBottom]}>
-          <Text>Set 1</Text>
+          {item.sets && item.sets.map((set, index) => (
+            <Text>{'set: ' + (index + 1)}</Text>
+          ))}
         </View>
+
 
         <Pressable
           style={styles.button}
