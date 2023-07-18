@@ -42,10 +42,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
       setWorkoutList(workoutList)
 
-      for(let i in workouts)
-        if(!workouts[i].sets)
-          workouts[i].sets = []
-
     } 
     catch (error) {
       showMessage({
@@ -59,6 +55,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
   }
 
   const WorkoutItem = ({ item }) => {
+    if(!item.sets)
+      item.sets = []
+
     if(item.sets.length == 0)
       item.sets.push({
         rep: 0,
@@ -85,14 +84,22 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <Text style={[styles.title, styles.marginVertical_S]}>{item.name}</Text>
 
         <View style={[styles.center, styles.marginBottom]}>
-          {item.sets && item.sets.map((set, index) => (
-            <Text>{'set: ' + (index + 1)}</Text>
-          ))}
-        </View>
 
+          {item.sets && item.sets.map((set, index) => (
+            <SetsRecord key={index} set={set} />
+          ))}
+
+        </View>
 
         <Pressable
           style={styles.button}
+          onPress={() => {
+            item.sets.push({
+              rep: 0,
+              weight: 0,
+            })
+            getData()
+          }}
         >
           <Text>Add Set</Text>
         </Pressable>
@@ -100,6 +107,16 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       </View>
     );
   };
+
+  const SetsRecord = ({set}) => {
+    return (
+      <>
+        <Text>{JSON.stringify(set)}</Text>
+      </>
+    )
+  }
+
+
 
   function alterWorkoutList (type, workout) {
     switch (type) {
