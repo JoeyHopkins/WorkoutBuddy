@@ -26,6 +26,9 @@ At this point the plan is to create a build of the app at this stage so i can st
   -needs some ui cleanup and maybe some reworking
   -dynamically creating and populating reports based on workouts
 
+each report will have its own dynamic report generated
+based on sets and dates to show difference between them (multi line)
+
 ## Setup and Run
 
 install node (nvm then node)
