@@ -21,18 +21,6 @@ const styles = StyleSheet.create({
     fontSize: 48,
     textAlign: 'center',
   },
-  inputContainer: {
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-  },
-  input: {
-    height: 40,
-    flex: 1,
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    borderRadius: 10,
-    padding: 10,
-  },
   distanceText: {
     marginTop: 5,
     marginLeft: 10,
@@ -133,6 +121,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10
   },
+  inputContainer: {
+    borderBottomWidth: 1,
+    borderColor: "#ccc",
+  },
+  input: {
+    height: 40,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: 10,
+    padding: 10,
+  },
   homeContainer: {
     backgroundColor: Colors.background,
     borderWidth: 1,
@@ -140,6 +140,24 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     marginHorizontal: 20,
   },
+  // homeContainer: {
+  //   marginTop: 20,
+  //   paddingVertical: 30,
+  //   alignItems: 'center',
+  //   overflow: 'hidden',
+  // },
+  // homeContainerTitle: {
+  //   alignItems: 'center',
+  //   paddingBottom: 30,
+  // },
+  // button: {
+  //   width: 150,
+  //   height: 30,
+  //   borderRadius: 10,
+  //   backgroundColor: Colors.primary,
+  //   justifyContent: 'center',
+  //   alignItems: 'center', 
+  // },
   switchText: {
     fontSize: 10,
     textAlign: 'center',

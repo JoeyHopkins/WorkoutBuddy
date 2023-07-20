@@ -7,7 +7,7 @@ import { ActivityTracker } from "./ActivityTracker"
 
 import homeSql from '../../controllers/home.controller'
 
-import {Calendar, CalendarUtils} from 'react-native-calendars';
+import styles from '../../config/styles'
 
 const INITIAL_DATE = new Date().toISOString();
 
@@ -41,7 +41,7 @@ export const Home = ({navigation}) => {
           </View>
         )}
 
-        <View style={styles.homeContainer}>
+        <View style={[styles.homeContainer]}>
           <ActivityTracker></ActivityTracker>
         </View>
 
@@ -52,32 +52,3 @@ export const Home = ({navigation}) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  homeContainer: {
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderRadius: 20,
-    marginTop: 20,
-    paddingVertical: 30,
-    marginHorizontal: 20,
-    alignItems: 'center',
-    borderColor: Colors.primary,
-    overflow: 'hidden',
-  },
-  homeContainerTitle: {
-    alignItems: 'center',
-    paddingBottom: 30,
-  },
-  background: {
-    backgroundColor: Colors.background,
-  },
-  button: {
-    width: 150,
-    height: 30,
-    borderRadius: 10,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center', 
-  },
-});
