@@ -89,6 +89,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  smallTitle: {
+    color: Colors.primary,
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   strengthWorkoutListContainer: {
     marginBottom: 20,
     borderRadius: 20,
@@ -178,7 +184,6 @@ const styles = StyleSheet.create({
   },
   fillSpace: {
     flex: 1,
-    // borderWidth: 1,
   },
   checkboxWithText: {
     marginBottom: -10,
@@ -248,8 +253,17 @@ const styles = StyleSheet.create({
   marginTop_M: {
     marginTop: 20,
   },
+  marginBottom_S: {
+    marginBottom: 10,
+  },
+  marginBottom_M: {
+    marginBottom: 20,
+  },
   removeMarginBottom12: {
     marginBottom: -12,
+  },
+  paddingVertical_S: {
+    paddingVertical: 10,
   },
   border: {
     borderWidth: 1,
@@ -277,7 +291,17 @@ const styles = StyleSheet.create({
   },
   spread: {
     justifyContent: "space-between",
-  }
+  },
+	spinner: {
+    width: 100,
+    height: 30,
+    borderWidth: 1,
+    overflow: 'hidden',
+    borderColor: Colors.primary,
+	},
+  inputSpinnerButtonContainer: {
+    width: 30,
+  },
 });
 
 export default styles;

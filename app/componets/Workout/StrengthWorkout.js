@@ -8,10 +8,11 @@ import * as workoutSql from '../../controllers/workouts.controller'
 import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import InputSpinner from "react-native-input-spinner";
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }) => {
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const panelRef = useRef(null);
   const [workoutList, setWorkoutList] = useState([]);
   const routineList = useRef([])
@@ -54,23 +55,22 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     return
   }
 
-  const WorkoutItem = ({ item }) => {
-    if(!item.sets)
-      item.sets = []
+  const WorkoutItem = ({ workout }) => {
+    if(!workout.sets)
+      workout.sets = []
 
-    if(item.sets.length == 0)
-      item.sets.push({
+    if(workout.sets.length == 0)
+      workout.sets.push({
         rep: 0,
         weight: 0,
       })
-
     return (
       <View style={[styles.homeContainer, styles.marginTop_S]}>
 
         <View style={[styles.center, styles.marginTop_M]}>
           <Pressable
             onPress={() => {
-              alterWorkoutList('remove', item)
+              alterWorkoutList('remove', workout)
             }}
           >
             <MaterialIcon
@@ -81,12 +81,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
           </Pressable>
         </View>
         
-        <Text style={[styles.title, styles.marginVertical_S]}>{item.name}</Text>
+        <Text style={[styles.title, styles.marginVertical_S]}>{workout.name}</Text>
 
-        <View style={[styles.center, styles.marginBottom]}>
+        <View style={[styles.marginBottom, styles.homeContainer]}>
 
-          {item.sets && item.sets.map((set, index) => (
-            <SetsRecord key={index} set={set} />
+          {workout.sets && workout.sets.map((set, index) => (
+            <SetsRecord key={index} set={set} index={index} workoutSetLength={workout.sets.length}/>
           ))}
 
         </View>
@@ -94,7 +94,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <Pressable
           style={styles.button}
           onPress={() => {
-            item.sets.push({
+            workout.sets.push({
               rep: 0,
               weight: 0,
             })
@@ -108,15 +108,55 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     );
   };
 
-  const SetsRecord = ({set}) => {
+  const SetsRecord = ({set, index, workoutSetLength}) => {
     return (
       <>
-        <Text>{JSON.stringify(set)}</Text>
+        <View style={[styles.fillSpace, 
+          index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S
+        ]}>
+
+          <View style={[styles.title]}>
+            <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+          </View>
+
+          <View style={[styles.row]}>
+            <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+              <Text>{'Reps'}</Text>
+              <InputSpinner
+                value={set.rep}
+                onChange={(num) => {
+                  set.rep = num;
+                }}
+                style={[styles.spinner]}
+                buttonStyle={styles.inputSpinnerButtonContainer}
+                skin="default"
+                max={9999}
+                colorMax={"#f04048"}
+                colorMin={"#82cc62"}
+              />
+            </View>
+
+            <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+              <Text>{'Weight'}</Text>
+              <InputSpinner
+                value={set.rep}
+                onChange={(num) => {
+                  set.rep = num;
+                }}
+                style={[styles.spinner]}
+                buttonStyle={styles.inputSpinnerButtonContainer}
+                skin="default"
+                max={9999}
+                colorMax={"#f04048"}
+                colorMin={"#82cc62"}
+              />
+            </View>
+          </View>
+
+        </View>
       </>
     )
   }
-
-
 
   function alterWorkoutList (type, workout) {
     switch (type) {
@@ -207,8 +247,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     <>
       <ScrollView>
         <View style={styles.fillSpace}>
-          {workouts.map((item, index) => (
-            <WorkoutItem key={index} item={item} />
+          {workouts.map((workout, index) => (
+            <WorkoutItem key={index} workout={workout} />
           ))}
         </View>
         <View style={styles.center}>
