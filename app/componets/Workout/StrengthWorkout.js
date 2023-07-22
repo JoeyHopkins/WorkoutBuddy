@@ -65,7 +65,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         })
         break; 
       case 'addNew':
-        sets[sets.length - 1].edit = false;
+        sets.forEach((set, idx) => {
+          set.edit = false;
+        });
 
         sets.push({
           rep: sets[sets.length - 1].rep,
@@ -159,15 +161,17 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
         </View>
 
-        <Pressable
-          style={styles.button}
-          onPress={() => {
-            alterSets('addNew', workout.sets)
-          }}
-        >
-          <Text>Add Set</Text>
-        </Pressable>
-
+        <View style={styles.center}>
+          <MaterialIcon
+            onPress={() => {
+              alterSets('addNew', workout.sets)
+            }}
+            name="plus-circle-outline"
+            size={40}
+            color={Colors.primary}
+            style={styles.marginVertical_S}
+          />
+        </View>
       </View>
     );
   };
