@@ -55,6 +55,42 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     return
   }
 
+  function alterSets(type, sets, index = null) {
+    switch (type) {
+      case 'addNew':
+        sets.push({
+          rep: 0,
+          weight: 0,
+        });
+        break;
+      case 'remove':
+        if (index !== null && index >= 0 && index < sets.length) {
+          sets.splice(index, 1);
+        }
+        break;
+      default:
+        break;
+    }
+
+    getData()
+  }
+
+  function alterWorkoutList (type, workout) {
+    switch (type) {
+      case 'add':
+        workouts.push(workout)
+        break;
+      case 'remove':
+        const index = workouts.findIndex(item => item.id === workout.id);
+        if (index !== -1) {
+          workouts.splice(index, 1);
+        }
+        break;
+    }
+
+    getData()
+  }
+
   const WorkoutItem = ({ workout }) => {
     if(!workout.sets)
       workout.sets = []
@@ -86,7 +122,13 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <View style={[styles.marginBottom, styles.homeContainer]}>
 
           {workout.sets && workout.sets.map((set, index) => (
-            <SetsRecord key={index} set={set} index={index} workoutSetLength={workout.sets.length}/>
+            <SetsRecord 
+              key={index}
+              set={set}
+              index={index}
+              workoutSetLength={workout.sets.length}
+              workoutID={workout.id}
+            />
           ))}
 
         </View>
@@ -94,11 +136,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <Pressable
           style={styles.button}
           onPress={() => {
-            workout.sets.push({
-              rep: 0,
-              weight: 0,
-            })
-            getData()
+            alterSets('addNew', workout.sets)
           }}
         >
           <Text>Add Set</Text>
@@ -108,12 +146,31 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     );
   };
 
-  const SetsRecord = ({set, index, workoutSetLength}) => {
+  const SetsRecord = ({set, index, workoutSetLength, workoutID}) => {
     return (
       <>
         <View style={[styles.fillSpace, 
           index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S
         ]}>
+
+          <View style={[styles.center, styles.marginVertical_S]}>
+            <Pressable
+              onPress={() => {
+                for(let workout of workouts)
+                  if(workoutID == workout.id) {
+                    alterSets('remove', workout.sets, index)
+                    break
+                  }  
+              }}
+            >
+              <MaterialIcon
+                name="close-outline"
+                size={22}
+                color={Colors.black}
+              />
+            </Pressable>
+          </View>
+
 
           <View style={[styles.title]}>
             <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
@@ -156,22 +213,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         </View>
       </>
     )
-  }
-
-  function alterWorkoutList (type, workout) {
-    switch (type) {
-      case 'add':
-        workouts.push(workout)
-        break;
-      case 'remove':
-        const index = workouts.findIndex(item => item.id === workout.id);
-        if (index !== -1) {
-          workouts.splice(index, 1);
-        }
-        break;
-    }
-
-    getData()
   }
 
   const WorkoutsRecord = ({workout}) => {
