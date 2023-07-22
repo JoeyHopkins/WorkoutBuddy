@@ -42,7 +42,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       const idList = ids.join(', ');
       let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
       setWorkoutList(workoutList)
-
     } 
     catch (error) {
       showMessage({
@@ -99,7 +98,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       workout.sets.push({
         rep: 0,
         weight: 0,
+        edit: true,
       })
+
     return (
       <View style={[styles.homeContainer, styles.marginTop_S]}>
 
@@ -158,72 +159,92 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
   };
 
   const SetsRecord = ({set, index, workoutSetLength, workoutID, totalOnly}) => {
-    return (
-      <>
-        <View style={[styles.fillSpace, 
-          index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S
-        ]}>
 
-          <View style={[styles.center, styles.marginVertical_S]}>
-            <Pressable
-              onPress={() => {
-                for(let workout of workouts)
-                  if(workoutID == workout.id) {
-                    alterSets('remove', workout.sets, index)
-                    break
-                  }  
-              }}
-            >
-              <MaterialIcon
-                name="close-outline"
-                size={22}
-                color={Colors.black}
-              />
-            </Pressable>
+    //Read
+    if(set.edit)
+      return (
+        <>
+          <View style={[styles.fillSpace, 
+            index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S,
+            styles.center,
+          ]}>
+            <Text>{JSON.stringify(set)}</Text>
           </View>
 
-          <View style={[styles.title]}>
-            <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
-          </View>
+        </>
+      )
+    else
+      //Write
+      return (
+        <>
+          <View style={[styles.fillSpace, 
+            index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S
+          ]}>
 
-          <View style={[styles.row]}>
-            <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
-              <Text>{'Reps'}</Text>
-              <InputSpinner
-                value={set.rep}
-                onChange={(num) => {
-                  set.rep = num;
+            <View style={[styles.center, styles.marginVertical_S]}>
+              <Pressable
+                onPress={() => {
+                  for(let workout of workouts)
+                    if(workoutID == workout.id) {
+                      alterSets('remove', workout.sets, index)
+                      break
+                    }  
                 }}
-                style={[styles.spinner]}
-                buttonStyle={styles.inputSpinnerButtonContainer}
-                skin="default"
-                max={9999}
-                colorMax={"#f04048"}
-                colorMin={"#82cc62"}
-              />
+              >
+                <MaterialIcon
+                  name="close-outline"
+                  size={22}
+                  color={Colors.black}
+                />
+              </Pressable>
             </View>
 
-            {totalOnly == 0 && (
+            <View style={[styles.title]}>
+              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+            </View>
+
+            <View style={[styles.row]}>
               <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
-                <Text>{'Weight'}</Text>
+                <Text>{'Reps'}</Text>
                 <InputSpinner
-                  value={set.weight}
+                  value={set.rep}
                   onChange={(num) => {
-                    set.weight = num;
+                    set.rep = num;
                   }}
                   style={[styles.spinner]}
                   buttonStyle={styles.inputSpinnerButtonContainer}
                   skin="default"
                   max={9999}
-                  colorMax={"#f04048"}
-                  colorMin={"#82cc62"}
+                  colorMax={Colors.primary}
+                  colorMin={Colors.primary}
+                  color={Colors.secondary}
                 />
               </View>
-            )}
+
+              {totalOnly == 0 && (
+                <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+                  <Text>{'Weight'}</Text>
+                  <InputSpinner
+                    value={set.weight}
+                    onChange={(num) => {
+                      set.weight = num;
+                    }}
+                    style={[styles.spinner]}
+                    buttonStyle={styles.inputSpinnerButtonContainer}
+                    skin="default"
+                    max={9999}
+                    type={"real"}
+                    step={5}
+                    colorMax={Colors.primary}
+                    colorMin={Colors.primary}
+                    color={Colors.secondary}
+                  />
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      </>
-    )
+        </>
+      )
   }
 
   const WorkoutsRecord = ({workout}) => {
