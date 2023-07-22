@@ -59,8 +59,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     switch (type) {
       case 'addNew':
         sets.push({
-          rep: 0,
-          weight: 0,
+          rep: sets[sets.length - 1].rep,
+          weight: sets[sets.length - 1].weight,
         });
         break;
       case 'remove':
@@ -170,7 +170,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
               />
             </Pressable>
           </View>
-
 
           <View style={[styles.title]}>
             <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
