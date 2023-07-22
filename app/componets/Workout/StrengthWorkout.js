@@ -56,10 +56,20 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
 
   function alterSets(type, sets, index = null) {
     switch (type) {
+      case 'init':
+        sets.push({
+          rep: 0,
+          weight: 0,
+          edit: true,
+        })
+        break; 
       case 'addNew':
+        sets[sets.length - 1].edit = false;
+
         sets.push({
           rep: sets[sets.length - 1].rep,
           weight: sets[sets.length - 1].weight,
+          edit: true,
         });
         break;
       case 'remove':
@@ -71,7 +81,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         break;
     }
 
-    getData()
+    if(type != 'init')
+      getData()
   }
 
   function alterWorkoutList (type, workout) {
@@ -95,11 +106,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       workout.sets = []
 
     if(workout.sets.length == 0)
-      workout.sets.push({
-        rep: 0,
-        weight: 0,
-        edit: true,
-      })
+      alterSets('init', workout.sets)
 
     return (
       <View style={[styles.homeContainer, styles.marginTop_S]}>
@@ -161,7 +168,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
   const SetsRecord = ({set, index, workoutSetLength, workoutID, totalOnly}) => {
 
     //Read
-    if(set.edit)
+    if(!set.edit)
       return (
         <>
           <View style={[styles.fillSpace, 
