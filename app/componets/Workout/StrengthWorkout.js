@@ -139,9 +139,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
             <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
               <Text>{'Weight'}</Text>
               <InputSpinner
-                value={set.rep}
+                value={set.weight}
                 onChange={(num) => {
-                  set.rep = num;
+                  set.weight = num;
                 }}
                 style={[styles.spinner]}
                 buttonStyle={styles.inputSpinnerButtonContainer}
