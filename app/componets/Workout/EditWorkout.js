@@ -32,8 +32,7 @@ export function EditWorkout({workoutMode, navigation}) {
       setLoading(true)
       if(workoutMode === 'cardio')
         navigation.setOptions({ headerTitle: 'Edit Cardio Workouts' });
-      else
-      {
+      else {
         navigation.setOptions({ headerTitle: 'Edit Workouts' });
         routineList.current = await homeSql.getAllRoutines()
       }

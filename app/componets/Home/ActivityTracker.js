@@ -9,6 +9,7 @@ import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as Utils from '../../utils'
 import { showMessage } from "react-native-flash-message";
+import styles from '../../config/styles'
 
 const INITIAL_DATE = new Date().toISOString();
 const width = Dimensions.get('window').width;
@@ -160,9 +161,9 @@ export const ActivityTracker = ({navigation}) => {
   }
 
   async function addCustomActivity() {
-    if (newActivity.trim() === '') {
+    if (newActivity.trim() === '')
       return;
-    }
+
     try {
       setLoadingList(true)
       await activitiesSQL.addActivity(newActivity, selectedDay.dateString, 'custom')
@@ -223,17 +224,22 @@ export const ActivityTracker = ({navigation}) => {
     const textColor = getColorByType(type);
 
     return (
-      <View style={styles.activityRecordContainer}>
-        <View style={{flex: 1}}>
-          <Text style={{ color: textColor }}>{ Utils.formatISOtoDisplayDate(new Date(date)) }</Text>
-        </View>
-        <View style={{flex: 1}}>
-          <Text style={{ color: textColor }}>{activity}</Text>
-        </View>
-        <View style={styles.iconsContainer}>
-          <Pressable onPress={() => { deleteActivity(id) }}>
-            <Icon name="trash" size={20} color={Colors.highlight} />
-          </Pressable>
+      <View style={[styles.listItemContainer]}>
+        <View style={[styles.row, styles.marginHorizonal_M]}>
+          <View style={[styles.fillSpace]}>
+            <Text style={{ color: textColor }}>{ Utils.formatISOtoDisplayDate(new Date(date)) }</Text>
+          </View>
+          <View style={[ styles.fillSpace]}>
+            <Text style={{ color: textColor }}>{activity}</Text>
+          </View>
+          <View>
+            <Pressable 
+              onPress={() => {deleteActivity(id)}}
+              style={[styles.fillSpace, styles.paddingHorizontal_M]}
+            >
+              <Icon name="trash" size={20} color={Colors.highlight} />
+            </Pressable>
+          </View>
         </View>
       </View>
     )
@@ -246,7 +252,6 @@ export const ActivityTracker = ({navigation}) => {
           displayLoadingIndicator={loading}
           enableSwipeMonths
           current={INITIAL_DATE}
-          style={styles.calendar}
           onDayPress={day => {
             calanderDayPressed(day)
           }}
@@ -266,12 +271,12 @@ export const ActivityTracker = ({navigation}) => {
       {selectedDay && (
         <>
           <View>
-            <Text style={styles.title}>{ formatString(selectedDay) } </Text>
+            <Text style={[styles.title, styles.marginVertical_M]}>{ formatString(selectedDay) } </Text>
           </View>
 
-          <View style={styles.addRoutineContainer}>
+          <View style={[styles.row, styles.marginVertical_M, styles.marginHorizonal_M]}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, styles.marginRight]}
               onChangeText={setNewActivity}
               placeholder="New Custom Activity"
               value={newActivity}
@@ -285,19 +290,26 @@ export const ActivityTracker = ({navigation}) => {
           </View>
 
           {loadingList === true && (
-            <Wander size={48} color={Colors.primary} />
+            <View style={styles.center}>
+              <Wander size={64} color={Colors.primary} />
+            </View>
           )}
 
           {loadingList === false && activities.length == 0 && (
-            <View>
-              <Text style={styles.noActivitiesContainer}>No activities logged...</Text>
+            <View style={styles.center}>
+              <Text>No activities logged...</Text>
             </View>
           )}
 
           {loadingList == false && activities && activities.length > 0 && (
             <>
               {activities.map((activity, index) => (
-                <ActivityRecord key={index} id={activity.id} date={activity.date} activity={activity.activity} type={activity.type}/>
+                <ActivityRecord key={index}
+                  id={activity.id}
+                  date={activity.date}
+                  activity={activity.activity}
+                  type={activity.type}
+                />
               ))}
             </>
           )}
@@ -308,58 +320,3 @@ export const ActivityTracker = ({navigation}) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  calendar: {
-    width: width * .85,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    paddingVertical: 30,
-    color: Colors.primary
-  },
-  noActivitiesContainer: {
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  addRoutineContainer: {
-    flexDirection: 'row',
-    justifyContent:'space-between',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  circleButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 30,
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  input: {
-    height: 40,
-    width: width - 150,
-    marginRight: 20,
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    borderRadius: 10,
-    padding: 10,
-  },
-  iconsContainer: {
-
-  },
-  activityRecordContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    marginTop: 1,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.primary,
-  },
-});

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
+import { ScrollView, View, Text, Dimensions, Pressable, TextInput} from 'react-native';
 import * as Colors from '../../config/colors'
 
 import { RoutineChange, RoutineMain } from "./Routines"
@@ -14,7 +14,6 @@ const INITIAL_DATE = new Date().toISOString();
 export const Home = ({navigation}) => {
 
   const [showRoutinesMain, setShowRoutinesMain] = useState(false)
-  // const [routineList, setRoutineList] = useState([])
   const [loading, setLoading] = useState(true)
   let routineList = []
 
@@ -29,7 +28,7 @@ export const Home = ({navigation}) => {
         else
           setShowRoutinesMain(false)
         
-          setLoading(false)
+        setLoading(false)
       } catch (error) {
         console.log(error)
       }
@@ -51,7 +50,7 @@ export const Home = ({navigation}) => {
           <ActivityTracker></ActivityTracker>
         </View>
 
-        <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
+        <View style={[styles.homeContainer, styles.marginVertical_S, styles.paddingVertical_M]}>
           <RoutineChange></RoutineChange>
         </View>
       </ScrollView>

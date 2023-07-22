@@ -256,6 +256,15 @@ const styles = StyleSheet.create({
   paddingVertical_L: {
     paddingVertical: 30,
   },
+  paddingHorizontal_S: {
+    paddingHorizontal: 10,
+  },
+  paddingHorizontal_M: {
+    paddingHorizontal: 20,
+  },
+  paddingHorizontal_L: {
+    paddingHorizontal: 30,
+  },
   border: {
     borderWidth: 1,
   },
