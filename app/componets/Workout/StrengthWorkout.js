@@ -116,8 +116,18 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
             />
           </Pressable>
         </View>
-        
-        <Text style={[styles.title, styles.marginVertical_S]}>{workout.name}</Text>
+
+        <View style={[styles.marginVertical_S, styles.center]}>
+          <Text style={[styles.title]}>{workout.name}</Text>
+
+          {workout.trackTotal == true && (
+            <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
+          )}
+          {workout.trackTotal == false && (
+            <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
+          )}
+
+        </View>
 
         <View style={[styles.marginBottom, styles.homeContainer]}>
 
@@ -128,6 +138,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
               index={index}
               workoutSetLength={workout.sets.length}
               workoutID={workout.id}
+              totalOnly={workout.trackTotal}
             />
           ))}
 
@@ -146,7 +157,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     );
   };
 
-  const SetsRecord = ({set, index, workoutSetLength, workoutID}) => {
+  const SetsRecord = ({set, index, workoutSetLength, workoutID, totalOnly}) => {
     return (
       <>
         <View style={[styles.fillSpace, 
@@ -192,23 +203,24 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
               />
             </View>
 
-            <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
-              <Text>{'Weight'}</Text>
-              <InputSpinner
-                value={set.weight}
-                onChange={(num) => {
-                  set.weight = num;
-                }}
-                style={[styles.spinner]}
-                buttonStyle={styles.inputSpinnerButtonContainer}
-                skin="default"
-                max={9999}
-                colorMax={"#f04048"}
-                colorMin={"#82cc62"}
-              />
-            </View>
+            {totalOnly == 0 && (
+              <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+                <Text>{'Weight'}</Text>
+                <InputSpinner
+                  value={set.weight}
+                  onChange={(num) => {
+                    set.weight = num;
+                  }}
+                  style={[styles.spinner]}
+                  buttonStyle={styles.inputSpinnerButtonContainer}
+                  skin="default"
+                  max={9999}
+                  colorMax={"#f04048"}
+                  colorMin={"#82cc62"}
+                />
+              </View>
+            )}
           </View>
-
         </View>
       </>
     )
