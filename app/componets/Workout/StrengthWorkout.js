@@ -78,6 +78,13 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
           sets.splice(index, 1);
         }
         break;
+      case 'editMode':
+        if (index !== null && index >= 0 && index < sets.length) {
+          sets.forEach((set, idx) => {
+            set.edit = idx === index;
+          });
+        }
+        break;
       default:
         break;
     }
@@ -93,9 +100,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         break;
       case 'remove':
         const index = workouts.findIndex(item => item.id === workout.id);
-        if (index !== -1) {
+        if (index !== -1)
           workouts.splice(index, 1);
-        }
         break;
     }
 
@@ -194,7 +200,16 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
             </View>
 
             <View>
-              <Pressable style={[styles.headerEditButton, styles.leftBorder]}>
+              <Pressable 
+                style={[styles.headerEditButton, styles.leftBorder]}
+                onPress={() => {
+                  for(let workout of workouts)
+                    if(workoutID == workout.id) {
+                      alterSets('editMode', workout.sets, index)
+                      break
+                    }  
+                }}
+              >
                 <EntypoIcon name="edit" size={20} color={Colors.yellow} />
               </Pressable>
             </View>
