@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native"
+import { Text, View, StyleSheet, Pressable, ScrollView, Alert } from "react-native"
 import * as Colors from '../../config/colors'
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import { useEffect, useRef, useState } from "react";
@@ -110,70 +110,118 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     getData()
   }
 
-  const WorkoutItem = ({ workout }) => {
+  const WorkoutItem = ({ workout, index }) => {
     if(!workout.sets)
       workout.sets = []
 
     if(workout.sets.length == 0)
       alterSets('init', workout.sets)
 
-    return (
-      <View style={[styles.homeContainer, styles.marginTop_S]}>
+    if(!workout.edit)
+      workout.edit = false
 
-        <View style={[styles.center, styles.marginTop_M]}>
-          <Pressable
+    if(!workout.edit)
+      return (
+        <>
+          <Pressable 
+            style={[
+              styles.marginVertical_S,
+              styles.paddingVertical_S,
+              styles.center,
+              styles.homeContainer,
+              styles.row
+            ]}
             onPress={() => {
-              alterWorkoutList('remove', workout)
+              workouts.forEach((workout, idx) => {
+                workout.edit = idx === index;
+              });
+              getData();
             }}
           >
-            <MaterialIcon
-              name="close-outline"
-              size={22}
-              color={Colors.black}
-            />
+            <Text style={[styles.title, styles.marginHorizonal_S]}>{workout.name}</Text>
+            <View>
+              {workout.trackTotal == true && (
+                <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
+              )}
+              {workout.trackTotal == false && (
+                <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
+              )}
+            </View>
           </Pressable>
-        </View>
+        </>
+      )
+    else
+      return (
+        <View style={[styles.homeContainer, styles.marginTop_S]}>
 
-        <View style={[styles.marginVertical_S, styles.center]}>
-          <Text style={[styles.title]}>{workout.name}</Text>
+          <View style={[styles.center, styles.marginTop_M]}>
+            <Pressable
+              onPress={() => {
+                Alert.alert(
+                  'Warning',
+                  'Are you sure you want to remove workout? Any workout progress will be lost',
+                  [
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Yes',
+                      onPress: () => { alterWorkoutList('remove', workout) },
+                    },
+                  ],
+                  { cancelable: false }
+                );
+              }}
+            >
+              <MaterialIcon
+                name="close-outline"
+                size={22}
+                color={Colors.black}
+              />
+            </Pressable>
+          </View>
 
-          {workout.trackTotal == true && (
-            <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
-          )}
-          {workout.trackTotal == false && (
-            <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
-          )}
+          <View style={[styles.marginVertical_S, styles.center]}>
+            <Text style={[styles.title]}>{workout.name}</Text>
 
-        </View>
+            {workout.trackTotal == true && (
+              <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
+            )}
+            {workout.trackTotal == false && (
+              <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
+            )}
 
-        <View style={[styles.marginBottom, styles.homeContainer]}>
+          </View>
 
-          {workout.sets && workout.sets.map((set, index) => (
-            <SetsRecord 
-              key={index}
-              set={set}
-              index={index}
-              workoutSetLength={workout.sets.length}
-              workoutID={workout.id}
-              totalOnly={workout.trackTotal}
+          <View style={[styles.marginBottom, styles.homeContainer]}>
+
+            {workout.sets && workout.sets.map((set, index) => (
+              <SetsRecord 
+                key={index}
+                set={set}
+                index={index}
+                workoutSetLength={workout.sets.length}
+                workoutID={workout.id}
+                totalOnly={workout.trackTotal}
+              />
+            ))}
+
+          </View>
+
+          <View style={styles.center}>
+            <MaterialIcon
+              onPress={() => {
+                alterSets('addNew', workout.sets)
+              }}
+              name="plus-circle-outline"
+              size={40}
+              color={Colors.primary}
+              style={styles.marginVertical_S}
             />
-          ))}
-
+          </View>
         </View>
-
-        <View style={styles.center}>
-          <MaterialIcon
-            onPress={() => {
-              alterSets('addNew', workout.sets)
-            }}
-            name="plus-circle-outline"
-            size={40}
-            color={Colors.primary}
-            style={styles.marginVertical_S}
-          />
-        </View>
-      </View>
-    );
+      );
   };
 
   const SetsRecord = ({set, index, workoutSetLength, workoutID, totalOnly}) => {
@@ -182,10 +230,20 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     if(!set.edit)
       return (
         <>
-          <View style={[styles.fillSpace, 
-            index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S,
-            styles.row,
-          ]}>
+          <Pressable 
+            style={[
+              styles.fillSpace, 
+              index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S,
+              styles.row,
+            ]}
+            onPress={() => {
+              for(let workout of workouts)
+                if(workoutID == workout.id) {
+                  alterSets('editMode', workout.sets, index)
+                  break
+                }  
+            }}
+          >
             <View style={[styles.center, styles.marginLeft]}>
               <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
             </View>
@@ -203,21 +261,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
               )}
             </View>
 
-            <View>
-              <Pressable 
-                style={[styles.headerEditButton, styles.leftBorder]}
-                onPress={() => {
-                  for(let workout of workouts)
-                    if(workoutID == workout.id) {
-                      alterSets('editMode', workout.sets, index)
-                      break
-                    }  
-                }}
-              >
-                <EntypoIcon name="edit" size={20} color={Colors.yellow} />
-              </Pressable>
-            </View>
-          </View>
+          </Pressable>
         </>
       )
     else
@@ -368,7 +412,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
       <ScrollView>
         <View style={styles.fillSpace}>
           {workouts.map((workout, index) => (
-            <WorkoutItem key={index} workout={workout} />
+            <WorkoutItem key={index} workout={workout} index={index} />
           ))}
         </View>
         <View style={styles.center}>
