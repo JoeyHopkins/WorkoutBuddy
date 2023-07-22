@@ -14,16 +14,22 @@ const INITIAL_DATE = new Date().toISOString();
 export const Home = ({navigation}) => {
 
   const [showRoutinesMain, setShowRoutinesMain] = useState(false)
-  const [routineList, setRoutineList] = useState([])
+  // const [routineList, setRoutineList] = useState([])
+  const [loading, setLoading] = useState(true)
+  let routineList = []
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let message = await homeSql.getAllRoutines(setRoutineList)
-        if(parseInt(message) > 0)
+        setLoading(true)
+        routineList = await homeSql.getAllRoutines()
+        
+        if(routineList.length > 0)
           setShowRoutinesMain(true)
         else
           setShowRoutinesMain(false)
+        
+          setLoading(false)
       } catch (error) {
         console.log(error)
       }
@@ -36,16 +42,16 @@ export const Home = ({navigation}) => {
     <>
       <ScrollView style={styles.background}>
         {showRoutinesMain && (
-          <View style={styles.homeContainer}>
+          <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
             <RoutineMain></RoutineMain>
           </View>
         )}
 
-        <View style={[styles.homeContainer]}>
+        <View style={[[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]]}>
           <ActivityTracker></ActivityTracker>
         </View>
 
-        <View style={styles.homeContainer}>
+        <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
           <RoutineChange></RoutineChange>
         </View>
       </ScrollView>

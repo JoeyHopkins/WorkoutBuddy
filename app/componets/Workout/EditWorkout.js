@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Keyboard, Dimensions, Pressable, TextInput, Switch, ScrollView} from 'react-native';
+import { Text, View, Keyboard, Pressable, TextInput, ScrollView} from 'react-native';
 import * as Colors from '../../config/colors'
 import EntyoIcon from 'react-native-vector-icons/Entypo';
 import * as workoutSql from '../../controllers/workouts.controller'

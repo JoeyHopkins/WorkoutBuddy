@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Pressable, ScrollView, Alert } from "react-native"
+import { Text, View, Pressable, ScrollView, Alert } from "react-native"
 import * as Colors from '../../config/colors'
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import { useEffect, useRef, useState } from "react";
@@ -7,9 +7,7 @@ import * as homeSql from '../../controllers/home.controller'
 import * as workoutSql from '../../controllers/workouts.controller'
 import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import InputSpinner from "react-native-input-spinner";
-import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }) => {
 

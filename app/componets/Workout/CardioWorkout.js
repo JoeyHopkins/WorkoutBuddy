@@ -1,12 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
-  Dimensions,
   Pressable,
-  StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Button,
   TextInput,
 } from "react-native";
 import * as Colors from "../../config/colors";
@@ -17,8 +13,6 @@ import styles from '../../config/styles';
 import MatIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import * as sqlCardio from "../../controllers/cardioWorkouts.controller";
-
-const { width, height } = Dimensions.get("window");
 
 export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
   const [startTime, setStartTime] = useState(0);

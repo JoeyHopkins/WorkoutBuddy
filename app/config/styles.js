@@ -149,24 +149,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     marginHorizontal: 20,
   },
-  // homeContainer: {
-  //   marginTop: 20,
-  //   paddingVertical: 30,
-  //   alignItems: 'center',
-  //   overflow: 'hidden',
-  // },
-  // homeContainerTitle: {
-  //   alignItems: 'center',
-  //   paddingBottom: 30,
-  // },
-  // button: {
-  //   width: 150,
-  //   height: 30,
-  //   borderRadius: 10,
-  //   backgroundColor: Colors.primary,
-  //   justifyContent: 'center',
-  //   alignItems: 'center', 
-  // },
   switchText: {
     fontSize: 10,
     textAlign: 'center',
@@ -268,6 +250,12 @@ const styles = StyleSheet.create({
   paddingVertical_S: {
     paddingVertical: 10,
   },
+  paddingVertical_M: {
+    paddingVertical: 20,
+  },
+  paddingVertical_L: {
+    paddingVertical: 30,
+  },
   border: {
     borderWidth: 1,
   },
@@ -304,6 +292,38 @@ const styles = StyleSheet.create({
 	},
   inputSpinnerButtonContainer: {
     width: 30,
+  },
+  addRoutineContainer: {
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  routineContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  routineRecordContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    marginTop: 1,
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.primary,
+  },
+  iconsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
   },
 });
 
