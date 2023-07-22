@@ -95,6 +95,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  centerText: {
+    textAlign: 'center',
+  },
   strengthWorkoutListContainer: {
     marginBottom: 20,
     borderRadius: 20,

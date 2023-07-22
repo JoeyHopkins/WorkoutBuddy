@@ -9,6 +9,7 @@ import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import InputSpinner from "react-native-input-spinner";
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }) => {
 
@@ -173,11 +174,31 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
         <>
           <View style={[styles.fillSpace, 
             index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S,
-            styles.center,
+            styles.row,
           ]}>
-            <Text>{JSON.stringify(set)}</Text>
-          </View>
+            <View style={[styles.center, styles.marginLeft]}>
+              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+            </View>
 
+            <View style={[
+              styles.fillSpace, 
+              styles.row, 
+              styles.center, 
+              styles.spread,
+            ]}>
+              <Text style={[styles.centerText, styles.fillSpace]}>{'Reps: ' + set.rep}</Text>
+              
+              {totalOnly == 0 && (
+                <Text style={[styles.centerText, styles.fillSpace]}>{'Weight: ' + set.weight}</Text>            
+              )}
+            </View>
+
+            <View>
+              <Pressable style={[styles.headerEditButton, styles.leftBorder]}>
+                <EntypoIcon name="edit" size={20} color={Colors.yellow} />
+              </Pressable>
+            </View>
+          </View>
         </>
       )
     else
