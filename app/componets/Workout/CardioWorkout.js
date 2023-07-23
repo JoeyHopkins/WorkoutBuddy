@@ -15,6 +15,8 @@ import MatIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as sqlCardio from "../../controllers/cardioWorkouts.controller";
 import * as activitiesSQL from '../../controllers/activities.controller'
 
+import * as Utils from "../../utils";
+
 export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
   const [startTime, setStartTime] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -169,7 +171,7 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
           distance
         );
 
-      await activitiesSQL.addActivity(workout.name, new Date().toISOString().substring(0, 10), 'cardio')
+      await activitiesSQL.addActivity(workout.name, Utils.getCurrentLocalISOStringDate(), 'cardio')
 
       showMessage({
         message: "Success",

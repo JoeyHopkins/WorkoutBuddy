@@ -24,3 +24,11 @@ exports.formatISOtoDisplayDate = (dateObject) => {
   
   return `${month}/${day}/${year}`;
 }
+
+exports.getCurrentLocalISOStringDate = () => {
+  const currentDate = new Date();
+  const timezoneOffsetInMinutes = currentDate.getTimezoneOffset();
+  const timezoneOffsetInMilliseconds = timezoneOffsetInMinutes * 60 * 1000;
+  const localDate = new Date(currentDate.getTime() - timezoneOffsetInMilliseconds);
+  return localISOString = localDate.toISOString().substring(0, 10);
+}

@@ -197,7 +197,7 @@ export const ActivityTracker = ({navigation}) => {
       setLoadingList(false)
       showMessage({
         message: 'Success',
-        description: 'Custom activity was deleted.',
+        description: 'Activity was deleted.',
         type: "success",
       });
     } catch (error) {
