@@ -46,6 +46,24 @@ exports.addRoutine = async (routine) => {
   });
 };
 
+exports.editRoutine = async (id, newName) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        "UPDATE routines SET routine = ? WHERE id = ?",
+        [newName, id],
+        (txObj, resultSet) => {
+          resolve('Routine updated successfully!');
+        },
+        (txObj, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
+
 // Helper function to find the closest number to 0 that has not already been filled
 const findClosestDayNum = () => {
   const table = 'routines';
@@ -61,7 +79,7 @@ const findClosestDayNum = () => {
             resolve(1);
           else {
             const existingDayNums = resultSet.rows._array.map((row) => row.dayNum);
-            let lowestNonTakenNum = 1; // Start from 1
+            let lowestNonTakenNum = 1;
             
             while (existingDayNums.includes(lowestNonTakenNum)) 
               lowestNonTakenNum++;
@@ -131,12 +149,10 @@ exports.moveRoutineUp = (id) => {
 function exchangeRoutineDayNum(id, currentDayNum, priorID, priorDayNum) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      // Update the current routine's dayNum with priorDayNum
       tx.executeSql(
         "UPDATE routines SET dayNum = ? WHERE id = ?",
         [priorDayNum, id],
         (txObj, resultSet) => {
-          // Update the prior routine's dayNum with currentDayNum
           tx.executeSql(
             "UPDATE routines SET dayNum = ? WHERE id = ?",
             [currentDayNum, priorID],

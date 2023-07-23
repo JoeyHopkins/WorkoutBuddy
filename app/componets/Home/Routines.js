@@ -19,8 +19,10 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
 
   const [newRoutine, setNewRoutine] = useState('');
   const [loading, setLoading] = useState(true);
+  const [routineMode, setRoutineMode] = useState('Main');
 
-  let routineList = useRef([]) 
+  let routineList = useRef([])
+  let editRoutineID = useRef(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +50,7 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
     try {
 
       switch (submissionType) {
+        case 'edit':
         case 'add':
           if(newRoutine === '') {
             showMessage({
@@ -59,8 +62,15 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
             return
           }
 
-          let newString = Utils.formatStringForDisplay(newRoutine) 
-          message = await homeSql.addRoutine(newString)
+          let newString = Utils.formatStringForDisplay(newRoutine)
+
+          if(routineMode == 'Main')
+            message = await homeSql.addRoutine(newString)
+          else {
+            message = await homeSql.editRoutine(editRoutineID.current, newString)
+            setRoutineMode('Main')
+          } 
+          
           setNewRoutine('')
           break;
         case 'delete':
@@ -76,8 +86,11 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
       if(
         routineList.current.length === 0 || 
         routineList.current.length === 1 ||
-        (submissionType == 'delete' && id == todaysRoutine.id))
+        (submissionType == 'delete' && id == todaysRoutine.id) ||
+        (submissionType == 'add' && editRoutineID.current == todaysRoutine.id))
         setRefreshComponet(true)
+
+      editRoutineID.current = null;
 
       showMessage({
         message: 'Success!',
@@ -98,8 +111,15 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
 
   const RoutineRecord = ({routine}) => { 
     return (
-      <View style={styles.routineRecordContainer}>
-        
+
+      <Pressable 
+        style={styles.routineRecordContainer}
+        onLongPress={() => { 
+          setRoutineMode('Edit')
+          setNewRoutine(routine.routine)
+          editRoutineID.current = routine.id
+        }}
+      >
         <View style={{flex: 1}}>
           <Text>Day {routine.dayNum + ':  ' + routine.routine}</Text>
         </View>
@@ -113,26 +133,48 @@ export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
             <Icon name="trash" size={20} color={Colors.highlight} />
           </Pressable>
         </View>
-        
-      </View>
+      </Pressable>
     )
   }
+
+  const stopEditMode = () => {
+    setNewRoutine('')
+    setRoutineMode('Main');
+  };
 
   return (
     <>
       <View style={[styles.row, styles.marginHorizonal_M, styles.marginBottom_S]}>
+
         <TextInput
           style={[styles.input, styles.marginRight]}
           onChangeText={setNewRoutine}
           value={newRoutine}
           placeholder="New Strength Routine"
         />
+
+        { routineMode == 'Edit' && (
+          <>
+            <Pressable
+              style={[styles.circleButton, styles.marginRight]}
+              onPress={stopEditMode}
+            >
+              <MaterialIcon
+                name="close-outline"
+                size={22}
+                color={Colors.black}
+              />
+            </Pressable>
+          </>
+        )}
+
         <Pressable
           style={styles.circleButton}
           onPress={() => { sendRoutineFuntion('add') }}
         >
           <MaterialIcon name='check-outline' size={20} color={Colors.black} />
         </Pressable>
+
       </View>
 
       {loading == true && (
