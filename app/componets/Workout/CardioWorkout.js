@@ -182,7 +182,7 @@ export const CardioWorkout = ({ navigation, setPageMode, workout }) => {
     } catch (error) {
       showMessage({
         message: "Error",
-        description: "There was an error",
+        description: "There was an error - " +  error.message,
         type: "danger",
       });
     }

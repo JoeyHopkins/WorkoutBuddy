@@ -72,7 +72,7 @@ export const Workout = ({navigation, route}) => {
       lastPageMode.current = "Main"
     }
     
-  }, [routineList, pageMode]);
+  }, [routineList, workoutMode, pageMode]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -97,15 +97,14 @@ export const Workout = ({navigation, route}) => {
     const navigation = useNavigation();
   
     const handleEditButton = () => {
-      console.log(routineList)
-      if(routineList.length > 0) {
+      if(routineList.length > 0 || workoutMode === 'cardio') {
         setPageMode('Edit') 
         navigation.setOptions({headerTitle: 'Workout'});
       }
       else
         showMessage({
           message: 'Error!',
-          description: 'Please create a new routine before creating a workout.',
+          description: 'Please create a new routine before creating a strength workout.',
           type: "danger",
         });
     };
@@ -317,7 +316,7 @@ export const Workout = ({navigation, route}) => {
       <View style={styles.slide}>
         <Text style={[styles.title, styles.marginVertical_S]}>{ item.routine }</Text>
         {loading == false && item.workouts.length == 0 && (
-          <View style={styles.center}>
+          <View style={[styles.center]}>
             <Text>You have no workouts...</Text>
           </View>
         )}
@@ -478,11 +477,26 @@ export const Workout = ({navigation, route}) => {
         {workoutMode == 'cardio' && (
           <View style={[styles.homeContainer, styles.marginTop_S, styles.fillSpace]}>
             <View style={[styles.marginTop_M]}>
-            <ScrollView >
-              {workoutList.map((workout, index) => (
-                <CardioWorkoutRecord key={index} workout={workout} />
-              ))}
-            </ScrollView>    
+
+            {loading == true && (
+              <View style={[styles.center, styles.marginTop_M]}>
+                <Wander size={120} color={Colors.primary} />
+              </View>
+            )}
+
+            {workoutList.length == 0 && loading == false && (
+              <View style={styles.center}>
+                <Text>You have no cardio workouts...</Text>
+              </View>
+            )}
+            {workoutList.length != 0 && loading == false && (
+              <ScrollView >
+                {workoutList.map((workout, index) => (
+                  <CardioWorkoutRecord key={index} workout={workout} />
+                ))}
+              </ScrollView>   
+            )}
+
             </View>
           </View>
         )}

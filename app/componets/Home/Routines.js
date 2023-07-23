@@ -198,29 +198,29 @@ export const RoutineMain = ({ todaysRoutine, setTodaysRoutine, refreshComponet, 
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
+  const fetchData = async () => {
+    try {
+      setLoading(true)
 
-        let routineID = await getRoutineIDFromSettings('todaysRoutine')
-        
-        if(routineID != null) {
-          let returnedRoutine = await homeSql.getRoutineByID(routineID)
-          setTodaysRoutine(returnedRoutine)
-        }
-        else {
-          let returnedRoutine = await homeSql.getEarliestRoutine()
-          setTodaysRoutine(returnedRoutine)
-        }
-
-        setLoading(false)
-        setRefreshComponet(false)
-      } catch (error) {
-        console.log(error)
+      let routineID = await getRoutineIDFromSettings('todaysRoutine')
+      
+      if(routineID != null) {
+        let returnedRoutine = await homeSql.getRoutineByID(routineID)
+        setTodaysRoutine(returnedRoutine)
       }
-    }
+      else {
+        let returnedRoutine = await homeSql.getEarliestRoutine()
+        setTodaysRoutine(returnedRoutine)
+      }
 
+      setLoading(false)
+      setRefreshComponet(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [refreshComponet])
 
@@ -239,7 +239,7 @@ export const RoutineMain = ({ todaysRoutine, setTodaysRoutine, refreshComponet, 
         return settingValue[0].config;
   
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

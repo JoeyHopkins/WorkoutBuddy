@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import * as Utils from '../../utils'
 import { showMessage } from "react-native-flash-message";
 import styles from '../../config/styles'
+import { useFocusEffect } from '@react-navigation/native';
 
 const INITIAL_DATE = new Date().toISOString();
 const width = Dimensions.get('window').width;
@@ -36,23 +37,30 @@ export const ActivityTracker = ({navigation}) => {
   const cardio = {key: 'cardio', color: Colors.cardioActivityColor, selectedDotColor: Colors.cardioActivitySelectedColor};
   const noType = {key: 'noType', color: Colors.defaultActivityColor, selectedDotColor: Colors.defaultActivitySelectedColor};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        await getData()
-        setLoading(false)
-      } catch (error) {
-        showMessage({
-          message: 'Error',
-          description: 'There was an error.',
-          type: "danger",
-        });
-        console.error(error)
-      }
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      await getData()
+      setLoading(false)
+    } catch (error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error.',
+        type: "danger",
+      });
+      console.error(error)
     }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   async function getData(startDate = globalStartDate, endDate = globalEndDate, repopulate = false) {
     try {

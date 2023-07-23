@@ -81,7 +81,7 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20), type INTEGER);`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS routines (id INTEGER PRIMARY KEY AUTOINCREMENT, dayNum INTEGER, routine VARCHAR(20));`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)
@@ -91,7 +91,7 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )   
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS activities (id INTEGER PRIMARY KEY AUTOINCREMENT, date VARCHAR(24), activity VARCHAR(30));`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS activities (id INTEGER PRIMARY KEY AUTOINCREMENT, date VARCHAR(24), activity VARCHAR(30), type VARCHAR(15));`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)

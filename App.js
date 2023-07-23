@@ -24,7 +24,7 @@ export default function App() {
         await appSql.createTables();
         await appSql.getTablesFromDB();
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     };
 
