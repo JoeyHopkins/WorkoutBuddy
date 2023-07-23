@@ -36,6 +36,7 @@ export const Workout = ({navigation, route}) => {
   const [cardioTimeTotals, setCardioTimeTotals] = useState([])
   const [showDistanceTotals, setShowDistanceTotals] = useState(false)
   const [cardioDistanceTotals, setCardioDistanceTotals] = useState({})
+  const [submitTrigger, setSubmitTrigger] = useState(false);
 
   let routineSelected = useRef({})
   let routineSelectedID = useRef(-1)
@@ -115,9 +116,7 @@ export const Workout = ({navigation, route}) => {
           {workoutMode === 'strength' && pageMode === 'Workout' && (
             <Pressable 
               style={[styles.headerEditButton]}
-              onPress={() => { 
-                console.log('hit submit')
-              }}
+              onPress={() => { setSubmitTrigger(true) }}
             >
               <FoundationIcon name="check" size={20} color={Colors.green} />
             </Pressable>
@@ -477,26 +476,23 @@ export const Workout = ({navigation, route}) => {
         {workoutMode == 'cardio' && (
           <View style={[styles.homeContainer, styles.marginTop_S, styles.fillSpace]}>
             <View style={[styles.marginTop_M]}>
-
-            {loading == true && (
-              <View style={[styles.center, styles.marginTop_M]}>
-                <Wander size={120} color={Colors.primary} />
-              </View>
-            )}
-
-            {workoutList.length == 0 && loading == false && (
-              <View style={styles.center}>
-                <Text>You have no cardio workouts...</Text>
-              </View>
-            )}
-            {workoutList.length != 0 && loading == false && (
-              <ScrollView >
-                {workoutList.map((workout, index) => (
-                  <CardioWorkoutRecord key={index} workout={workout} />
-                ))}
-              </ScrollView>   
-            )}
-
+              {loading == true && (
+                <View style={[styles.center, styles.marginTop_M]}>
+                  <Wander size={120} color={Colors.primary} />
+                </View>
+              )}
+              {workoutList.length == 0 && loading == false && (
+                <View style={styles.center}>
+                  <Text>You have no cardio workouts...</Text>
+                </View>
+              )}
+              {workoutList.length != 0 && loading == false && (
+                <ScrollView >
+                  {workoutList.map((workout, index) => (
+                    <CardioWorkoutRecord key={index} workout={workout} />
+                  ))}
+                </ScrollView>   
+              )}
             </View>
           </View>
         )}
@@ -532,6 +528,8 @@ export const Workout = ({navigation, route}) => {
                 setPageMode={setPageMode}
                 workouts={selectedWorkouts}
                 routineID={routineSelected.current.id}
+                submitTrigger={submitTrigger}
+                setSubmitTrigger={setSubmitTrigger}
               ></StrengthWorkout>
             )}
             {workoutMode == 'cardio' && (

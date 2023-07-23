@@ -9,7 +9,7 @@ import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
 
-export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }) => {
+export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, submitTrigger, setSubmitTrigger }) => {
 
   const [loading, setLoading] = useState(true);
   const panelRef = useRef(null);
@@ -34,6 +34,49 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID }
     }
     fetchData()
   }, [])
+
+
+  useEffect(() => {
+    if(submitTrigger == true)
+      submitWorkout();
+      
+  }, [submitTrigger])
+
+  function submitWorkout() {
+
+    for(let workout of workouts) {
+
+      let { trackTotal, sets, id} = workout
+      
+      // //REps and weight
+      // if(trackTotal == 0) {
+        // }
+        // //Totals Only
+        // else 
+        if(trackTotal == 1) {
+
+          let total = 0
+          let reps = ''
+          let now = new Date()
+
+          for(let set of sets) {
+            total += set.rep
+            reps += set.rep + ','
+          }
+
+          reps = reps.substring(0, reps.length - 1)
+
+          // personal best (overall based on total)
+
+          // set best (highest rep record for that set all time)
+          
+          //strength workout totals db
+          //id identity, workoutID, date, reps (10,10,10,10), total (40)
+      }
+    }
+
+    setSubmitTrigger('false')
+  }
 
   async function getData() {
     try {
