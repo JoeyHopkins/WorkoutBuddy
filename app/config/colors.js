@@ -44,5 +44,7 @@ export const linegraphColors = [
 //Calendar Colors
 export const customActivityColor = '#fc8542';
 export const customActivitySelectedColor = '#fc8542';
+export const cardioActivityColor = '#038a45';
+export const cardioActivitySelectedColor = '#038a45';
 export const defaultActivityColor = '#b1b6af';
 export const defaultActivitySelectedColor = '#b1b6af';

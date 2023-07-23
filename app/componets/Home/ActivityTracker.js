@@ -33,6 +33,7 @@ export const ActivityTracker = ({navigation}) => {
   const [markedDates, setMarkedDates] = useState({});
 
   const custom = {key: 'custom', color: Colors.customActivityColor, selectedDotColor: Colors.customActivitySelectedColor};
+  const cardio = {key: 'cardio', color: Colors.cardioActivityColor, selectedDotColor: Colors.cardioActivitySelectedColor};
   const noType = {key: 'noType', color: Colors.defaultActivityColor, selectedDotColor: Colors.defaultActivitySelectedColor};
 
   useEffect(() => {
@@ -87,6 +88,9 @@ export const ActivityTracker = ({navigation}) => {
       switch (activity.type) {
         case 'custom':
           activityType = custom;
+          break;
+        case 'cardio':
+          activityType = cardio;
           break;
         default:
           activityType = noType;
@@ -216,6 +220,8 @@ export const ActivityTracker = ({navigation}) => {
       switch (type) {
         case 'custom':
           return Colors.customActivityColor;
+        case 'cardio':
+          return Colors.cardioActivityColor;
         default:
           return Colors.defaultActivityColor;
       }
