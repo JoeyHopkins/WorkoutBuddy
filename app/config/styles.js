@@ -89,6 +89,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  textWhite: {
+    color: Colors.white,
+  },
   smallTitle: {
     color: Colors.primary,
     fontSize: 15,
