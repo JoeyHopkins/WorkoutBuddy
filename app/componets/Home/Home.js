@@ -8,7 +8,7 @@ import { ActivityTracker } from "./ActivityTracker"
 import homeSql from '../../controllers/home.controller'
 
 import styles from '../../config/styles'
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
 import { Settings } from './Settings'
 import IonIcon from 'react-native-vector-icons/Ionicons';
@@ -18,27 +18,13 @@ const INITIAL_DATE = new Date().toISOString();
 export const Home = ({navigation}) => {
 
   const [pageMode, setPageMode] = useState("Main");
-  const [loading, setLoading] = useState(true)
-  let routineList = []
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        routineList = await homeSql.getAllRoutines()
-        setLoading(false)
-      } catch (error) {
-        console.log(error)
-      }
-    };
+  const [refreshComponet, setRefreshComponet] = useState(false)
 
-    fetchData();
-  }, []);
-
+  const [todaysRoutine, setTodaysRoutine] = useState(null);
 
   //handle header between the pages
   React.useLayoutEffect(() => {
-
     if(pageMode === "Settings") {
       navigation.setOptions({
         headerLeft: () => <SettingsPageHeader/>,
@@ -51,10 +37,8 @@ export const Home = ({navigation}) => {
         headerRight: () => <GoToSettingsIcon/>
       });
     }
-    
   }, [pageMode]);
 
-  
   const SettingsPageHeader = () => {
     const navigation = useNavigation();
     
@@ -73,7 +57,6 @@ export const Home = ({navigation}) => {
       </>
     );
   }
-
 
   const GoToSettingsIcon = () => {
 
@@ -95,17 +78,18 @@ export const Home = ({navigation}) => {
     );
   }
 
-
-
-
-
   return (
     <>
-
       {pageMode == 'Main' && (
         <ScrollView style={styles.background}>
           <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
-            <RoutineMain navigation={navigation}></RoutineMain>
+            <RoutineMain 
+              setRefreshComponet={setRefreshComponet} 
+              refreshComponet={refreshComponet} 
+              navigation={navigation}
+              todaysRoutine={todaysRoutine}
+              setTodaysRoutine={setTodaysRoutine}
+            ></RoutineMain>
           </View>
 
           <View style={[[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]]}>
@@ -113,7 +97,7 @@ export const Home = ({navigation}) => {
           </View>
 
           <View style={[styles.homeContainer, styles.marginVertical_S, styles.paddingVertical_M]}>
-            <RoutineChange></RoutineChange>
+            <RoutineChange todaysRoutine={todaysRoutine} setRefreshComponet={setRefreshComponet}></RoutineChange>
           </View>
         </ScrollView>
       )}

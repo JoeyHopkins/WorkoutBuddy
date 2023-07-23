@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, useRef} from 'react';
-import { View, Text, Dimensions, Pressable, TextInput} from 'react-native';
+import { View, Text, Pressable, TextInput} from 'react-native';
 
 import { Wander } from 'react-native-animated-spinkit'
 
@@ -13,8 +13,9 @@ import * as Colors from '../../config/colors'
 import homeSql from '../../controllers/home.controller'
 import settingSql from '../../controllers/settings.controller'
 import styles from '../../config/styles'
+import * as Utils from '../../utils'
 
-export const RoutineChange = () => {
+export const RoutineChange = ({ todaysRoutine, setRefreshComponet }) => {
 
   const [newRoutine, setNewRoutine] = useState('');
   const [loading, setLoading] = useState(true);
@@ -48,17 +49,18 @@ export const RoutineChange = () => {
 
       switch (submissionType) {
         case 'add':
-          if(newRoutine === '') 
-            {
-              showMessage({
-                message: 'Error',
-                description: 'Please enter a routine',
-                type: "danger",
-              });
-              setLoading(false)
-              return
-            }
-          message = await homeSql.addRoutine(newRoutine)
+          if(newRoutine === '') {
+            showMessage({
+              message: 'Error',
+              description: 'Please enter a routine',
+              type: "danger",
+            });
+            setLoading(false)
+            return
+          }
+
+          let newString = Utils.formatStringForDisplay(newRoutine) 
+          message = await homeSql.addRoutine(newString)
           setNewRoutine('')
           break;
         case 'delete':
@@ -70,6 +72,12 @@ export const RoutineChange = () => {
       }
 
       routineList.current = await homeSql.getAllRoutines()
+
+      if(
+        routineList.current.length === 0 || 
+        routineList.current.length === 1 ||
+        (submissionType == 'delete' && id == todaysRoutine.id))
+        setRefreshComponet(true)
 
       showMessage({
         message: 'Success!',
@@ -144,10 +152,9 @@ export const RoutineChange = () => {
   )
 }
 
-export const RoutineMain = ({ navigation }) => {
+export const RoutineMain = ({ todaysRoutine, setTodaysRoutine, refreshComponet, setRefreshComponet, navigation }) => {
 
   const [loading, setLoading] = useState(false);
-  const [todaysRoutine, setTodaysRoutine] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -166,12 +173,14 @@ export const RoutineMain = ({ navigation }) => {
         }
 
         setLoading(false)
+        setRefreshComponet(false)
       } catch (error) {
         console.log(error)
       }
     }
+
     fetchData()
-  }, [])
+  }, [refreshComponet])
 
   const getRoutineIDFromSettings = async (settingName) => {
     try {
