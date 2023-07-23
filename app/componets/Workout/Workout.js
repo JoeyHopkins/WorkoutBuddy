@@ -9,12 +9,13 @@ import { Wander } from 'react-native-animated-spinkit'
 import { EditWorkout } from './EditWorkout'
 import { CardioWorkout } from './CardioWorkout'
 import { StrengthWorkout } from './StrengthWorkout'
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import styles from '../../config/styles';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FoundationIcon from 'react-native-vector-icons/Foundation';
+import { showMessage } from "react-native-flash-message";
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -71,15 +72,42 @@ export const Workout = ({navigation, route}) => {
       lastPageMode.current = "Main"
     }
     
-  }, [pageMode]);
+  }, [routineList, pageMode]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      routineSelectedID.current == -1
+      fetchData();
+    }, [])
+  );
+
+  const fetchData = async () => {
+    setLoading(true)
+    await getData()
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    if(pageMode === "Main") 
+      fetchData()
+  }, [pageMode, route])
 
   const GoToEditPageHeaderIcon = () => {
 
     const navigation = useNavigation();
   
     const handleEditButton = () => {
-      setPageMode('Edit') 
-      navigation.setOptions({headerTitle: 'Workout'});
+      console.log(routineList)
+      if(routineList.length > 0) {
+        setPageMode('Edit') 
+        navigation.setOptions({headerTitle: 'Workout'});
+      }
+      else
+        showMessage({
+          message: 'Error!',
+          description: 'Please create a new routine before creating a workout.',
+          type: "danger",
+        });
     };
 
     return (
@@ -96,8 +124,12 @@ export const Workout = ({navigation, route}) => {
             </Pressable>
           )}
 
-          <Pressable style={[styles.headerEditButton, styles.leftBorder]} onPress={handleEditButton}>
-            <EntypoIcon name="edit" size={20} color={Colors.yellow} />
+          <Pressable 
+            style={[styles.headerEditButton, styles.leftBorder]} 
+            onPress={handleEditButton}
+          >
+            <EntypoIcon name="edit" size={20} color={Colors.yellow} 
+          />
           </Pressable>
         </View>
       </>
@@ -150,27 +182,13 @@ export const Workout = ({navigation, route}) => {
     );
   }
     
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true)
-      await getData()
-      setLoading(false)
-    }
-
-    if(pageMode === "Main") 
-      fetchData()
-
-  }, [pageMode])
-
   async function getData() {
     try {
       let routinesList = await homeSql.getAllRoutinesList()
       let strengthWorkoutList = await workoutSql.getAllStrengthWorkouts()
       cardioWorkouts.current = await workoutSql.getAllCardioWorkouts()
-      weeklyCardioTimeTotals = await workoutSql.getWeeklyCardioTimeTotals()
-      weeklyCardioDistanceTotals = await workoutSql.getWeeklyCardioDistanceTotals()
+      let weeklyCardioTimeTotals = await workoutSql.getWeeklyCardioTimeTotals()
+      let weeklyCardioDistanceTotals = await workoutSql.getWeeklyCardioDistanceTotals()
 
       setCardioTimeTotals(weeklyCardioTimeTotals)
       setSelectedWorkouts([])
@@ -206,7 +224,8 @@ export const Workout = ({navigation, route}) => {
 
     if(value === "strength")
     {
-      setWorkoutList(routineSelected.current.workouts)
+      if(routineSelected.current != undefined)
+        setWorkoutList(routineSelected.current.workouts)
       styles.workoutRecord.marginLeft = -90;
     }
     else if(value === "cardio") 

@@ -32,3 +32,10 @@ exports.getCurrentLocalISOStringDate = () => {
   const localDate = new Date(currentDate.getTime() - timezoneOffsetInMilliseconds);
   return localISOString = localDate.toISOString().substring(0, 10);
 }
+
+exports.formatStringForDisplay = (string) => {
+  const lowerCase = string.toLowerCase();
+  const words = lowerCase.split(' ');
+  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+  return capitalizedWords.join(' ');
+}

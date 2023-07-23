@@ -11,6 +11,7 @@ import { showMessage } from "react-native-flash-message";
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import styles from '../../config/styles';
+import * as Utils from '../../utils'
 
 export function EditWorkout({workoutMode, navigation}) {
 
@@ -57,10 +58,7 @@ export function EditWorkout({workoutMode, navigation}) {
       switch (submissionType) {
         case 'add':
 
-          const lowerCaseWorkout = newWorkout.toLowerCase();
-          const words = lowerCaseWorkout.split(' ');
-          const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
-          const capitalizedWorkout = capitalizedWords.join(' ');
+          capitalizedWorkout = Utils.formatStringForDisplay(newWorkout) 
 
           if(editMode === false) {
             
