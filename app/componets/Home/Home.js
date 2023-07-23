@@ -13,7 +13,6 @@ const INITIAL_DATE = new Date().toISOString();
 
 export const Home = ({navigation}) => {
 
-  const [showRoutinesMain, setShowRoutinesMain] = useState(false)
   const [loading, setLoading] = useState(true)
   let routineList = []
 
@@ -22,11 +21,6 @@ export const Home = ({navigation}) => {
       try {
         setLoading(true)
         routineList = await homeSql.getAllRoutines()
-        
-        if(routineList.length > 0)
-          setShowRoutinesMain(true)
-        else
-          setShowRoutinesMain(false)
         
         setLoading(false)
       } catch (error) {
@@ -40,11 +34,9 @@ export const Home = ({navigation}) => {
   return (
     <>
       <ScrollView style={styles.background}>
-        {showRoutinesMain && (
-          <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
-            <RoutineMain></RoutineMain>
-          </View>
-        )}
+        <View style={[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]}>
+          <RoutineMain navigation={navigation}></RoutineMain>
+        </View>
 
         <View style={[[styles.homeContainer, styles.marginTop_S, styles.paddingVertical_M]]}>
           <ActivityTracker></ActivityTracker>

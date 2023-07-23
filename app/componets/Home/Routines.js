@@ -14,15 +14,12 @@ import homeSql from '../../controllers/home.controller'
 import settingSql from '../../controllers/settings.controller'
 import styles from '../../config/styles'
 
-const width = Dimensions.get('window').width
-
-export const RoutineChange = (props) => {
+export const RoutineChange = () => {
 
   const [newRoutine, setNewRoutine] = useState('');
   const [loading, setLoading] = useState(true);
 
   let routineList = useRef([]) 
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,7 +144,7 @@ export const RoutineChange = (props) => {
   )
 }
 
-export const RoutineMain = (props) => {
+export const RoutineMain = ({ navigation }) => {
 
   const [loading, setLoading] = useState(false);
   const [todaysRoutine, setTodaysRoutine] = useState(null);
@@ -198,11 +195,28 @@ export const RoutineMain = (props) => {
   return (
     <>
       {loading == true && (
-        <Wander size={48} color={Colors.primary} />
+        <View style={styles.center}>
+          <Wander size={48} color={Colors.primary} />
+        </View>
       )}
       {loading == false && todaysRoutine && (
+        <View style={[styles.row, styles.fillSpace]}>
+          <View style={[styles.fillSpace]}/>
+          <Text style={[styles.fillSpace, styles.centerText]}>{todaysRoutine.routine + ' Day'}</Text>
+          <Pressable
+            onPress={() => { 
+              const params = { routine: todaysRoutine };
+              navigation.navigate('Workout', params);
+            }}
+            style={[styles.fillSpace]}
+          >
+            <MaterialIcon name='arrow-right' size={20} color={Colors.primary} />
+          </Pressable>
+        </View>
+      )}
+      {loading == false && !todaysRoutine && (
         <View style={styles.center}>
-          <Text>{todaysRoutine.routine + ' Day'}</Text>
+          <Text>{'No routines available...'}</Text>
         </View>
       )}
     </>

@@ -24,7 +24,7 @@ const options = [
   { label: "Cardio", value: "cardio" },
 ];
 
-export const Workout = ({navigation}) => {
+export const Workout = ({navigation, route}) => {
   
   const [workoutMode, setWorkoutMode] = useState("strength");
   const [pageMode, setPageMode] = useState("Main");
@@ -40,6 +40,11 @@ export const Workout = ({navigation}) => {
   let routineSelectedID = useRef(-1)
   let cardioWorkouts = useRef([])
   let lastPageMode = useRef('')
+
+  if(route.params)
+    for(let routine in routineList)
+      if(routineList[routine].id === route.params.routine.id)
+        handleSnapToItem(parseInt(routine))
 
   const toggleCardioTotalSwitch = () => setShowDistanceTotals(previousState => !previousState);
 
