@@ -21,8 +21,11 @@ export default function App() {
       try {
         // await appSql.dropTable('cardioWorkouts')
         // await appSql.dropAllTables();
+        // await appSql.getTablesFromDB();
+
         await appSql.createTables();
-        await appSql.getTablesFromDB();
+        // await appSql.checkTable('strengthTotals')
+
       } catch (error) {
         console.error(error)
       }

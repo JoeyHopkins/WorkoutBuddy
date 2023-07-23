@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { showMessage } from "react-native-flash-message";
 import * as homeSql from '../../controllers/home.controller'
 import * as workoutSql from '../../controllers/workouts.controller'
+import * as strengthSql from '../../controllers/strengthWorkouts.controller'
 import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
@@ -39,39 +40,50 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
   useEffect(() => {
     if(submitTrigger == true)
       submitWorkout();
-      
   }, [submitTrigger])
 
-  function submitWorkout() {
+  async function submitWorkout() {
 
     for(let workout of workouts) {
 
       let { trackTotal, sets, id} = workout
       
-      // //REps and weight
+      //REps and weight
       // if(trackTotal == 0) {
-        // }
-        // //Totals Only
-        // else 
-        if(trackTotal == 1) {
+      //   }
+      //Totals Only
+      //   else 
 
-          let total = 0
-          let reps = ''
-          let now = new Date()
+      if(trackTotal == 1) {
 
-          for(let set of sets) {
-            total += set.rep
-            reps += set.rep + ','
-          }
+        let total = 0
+        let reps = ''
+        let now = new Date().toISOString();
 
-          reps = reps.substring(0, reps.length - 1)
+        for(let set of sets) {
+          total += set.rep
+          reps += set.rep + ','
+        }
 
-          // personal best (overall based on total)
+        reps = reps.substring(0, reps.length - 1)
 
-          // set best (highest rep record for that set all time)
-          
-          //strength workout totals db
-          //id identity, workoutID, date, reps (10,10,10,10), total (40)
+        // personal best (overall based on total)
+        // set best (highest rep record for that set all time)
+        
+        try {
+          let result = await strengthSql.insertStrengthTotals(id, now, reps, total)
+        }
+        catch (err) {
+          showMessage({
+            message: 'Error',
+            description: 'There was an error. ' + err.message,
+            type: "danger",
+          });
+        }
+
+
+        //strength workout totals db
+        //id identity, workoutID, date, reps (10,10,10,10), total (40)
       }
     }
 

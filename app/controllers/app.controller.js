@@ -13,6 +13,22 @@ exports.getTablesFromDB = () => {
   })
 };
 
+
+
+exports.checkTable = (tableName) => {
+  console.log(`checking ${tableName}`)
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM ${tableName}`,
+        [],
+        (txObj, { rows: { _array } }) => console.log(_array),
+        (txObj, error) => console.log('Error ', error)
+      );
+    });
+  });
+};
+
 // db.transaction(tx => {
 //   tx.executeSql(
 //     "ALTER TABLE routines ADD COLUMN type INTEGER DEFAULT 0",
