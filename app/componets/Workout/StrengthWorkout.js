@@ -59,6 +59,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         let total = 0
         let reps = ''
         let now = new Date().toISOString();
+        let weight = null
 
         for(let set of sets) {
           total += set.rep
@@ -71,7 +72,21 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         // set best (highest rep record for that set all time)
         
         try {
+
+          let params = {
+            date: now, 
+            reps: reps, 
+            total: total,
+            weight: weight,
+          }
+
           let result = await strengthSql.insertStrengthTotals(id, now, reps, total)
+          let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
+          showMessage({
+            message: 'Success!!',
+            description: 'you do good job',
+            type: "success",
+          })
         }
         catch (err) {
           showMessage({

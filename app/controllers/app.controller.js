@@ -170,6 +170,17 @@ exports.createTables =  () => {
         console.log("error creating table " + error.message)
       }
     )
+    //tabele for strength workout bests
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthBestRecords (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11),  record TEXT);`,
+      [],
+      (sqlTxn, res) => {
+        if (res.rowsAffected !== 0)
+          console.log("strengthBestRecords table created successfully");
+      },
+      error => {
+        console.log("error creating table " + error.message)
+      }
+    )
   });
 };
 

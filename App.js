@@ -24,7 +24,7 @@ export default function App() {
         // await appSql.getTablesFromDB();
 
         await appSql.createTables();
-        // await appSql.checkTable('strengthTotals')
+        await appSql.checkTable('strengthBestRecords')
 
       } catch (error) {
         console.error(error)
