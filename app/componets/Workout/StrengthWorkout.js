@@ -67,9 +67,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         }
 
         reps = reps.substring(0, reps.length - 1)
-
-        // personal best (overall based on total)
-        // set best (highest rep record for that set all time)
         
         try {
 
@@ -84,7 +81,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
           showMessage({
             message: 'Success!!',
-            description: 'you do good job',
+            description: 'Workout submitted successfully',
             type: "success",
           })
         }
@@ -95,10 +92,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             type: "danger",
           });
         }
-
-
-        //strength workout totals db
-        //id identity, workoutID, date, reps (10,10,10,10), total (40)
       }
     }
 
@@ -110,12 +103,27 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       const ids = workouts.map(workout => workout.id);
       const idList = ids.join(', ');
       let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
+      let personalBests = await strengthSql.getPersonalBestsByWorkoutID(idList)
+
+      personalBests.forEach((pbItem) => {
+        const workoutId = pbItem.workoutId;
+        const workout = workouts.find((workout) => workout.id === workoutId);
+        const record = JSON.parse(pbItem.record);
+
+        repsBySet = record.bySet.reps.split(',');
+        repsByTotal = record.byTotal.reps.split(',');
+
+        workout.repsBySet = repsBySet
+        workout.repsByTotal = repsByTotal
+
+      });
+
       setWorkoutList(workoutList)
     } 
     catch (error) {
       showMessage({
         message: 'Error',
-        description: 'There was an error.',
+        description: 'There was an error. ' + error,
         type: "danger",
       });
     }
@@ -269,9 +277,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 key={index}
                 set={set}
                 index={index}
-                workoutSetLength={workout.sets.length}
-                workoutID={workout.id}
-                totalOnly={workout.trackTotal}
+                workout={workout}
               />
             ))}
 
@@ -292,7 +298,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       );
   };
 
-  const SetsRecord = ({set, index, workoutSetLength, workoutID, totalOnly}) => {
+  const SetsRecord = ({set, index, workout}) => {
 
     //Read
     if(!set.edit)
@@ -301,12 +307,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           <Pressable 
             style={[
               styles.fillSpace, 
-              index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S,
+              index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S,
               styles.row,
             ]}
             onPress={() => {
               for(let workout of workouts)
-                if(workoutID == workout.id) {
+                if(workout.id == workout.id) {
                   alterSets('editMode', workout.sets, index)
                   break
                 }  
@@ -324,7 +330,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             ]}>
               <Text style={[styles.centerText, styles.fillSpace]}>{'Reps: ' + set.rep}</Text>
               
-              {totalOnly == 0 && (
+              {workout.trackTotal == 0 && (
                 <Text style={[styles.centerText, styles.fillSpace]}>{'Weight: ' + set.weight}</Text>            
               )}
             </View>
@@ -337,14 +343,14 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       return (
         <>
           <View style={[styles.fillSpace, 
-            index + 1 != workoutSetLength ? styles.listItemContainer : styles.paddingVertical_S
+            index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S
           ]}>
 
             <View style={[styles.center, styles.marginVertical_S]}>
               <Pressable
                 onPress={() => {
                   for(let workout of workouts)
-                    if(workoutID == workout.id) {
+                    if(workout.id == workout.id) {
                       alterSets('remove', workout.sets, index)
                       break
                     }  
@@ -357,10 +363,46 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 />
               </Pressable>
             </View>
+            
+            <View style={[styles.homeContainer]}>
+              <View style={[styles.title]}>
+                <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+              </View>
 
-            <View style={[styles.title]}>
-              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+              <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
+
+                <View>
+                  <Text>Last time:</Text>
+                  <Text>Reps:</Text>
+                  {workout.trackTotal == 0 && (
+                    <Text>Weight:</Text>
+                  )}
+                </View>
+
+                <View>
+                  <Text>Workout best:</Text>
+                  <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
+
+                  {workout.trackTotal == 0 && (
+                    <Text>Weight:</Text>
+                  )}
+                </View>
+
+                <View>
+                  <Text>Set Best:</Text>
+                  <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
+
+                  {workout.trackTotal == 0 && (
+                    <Text>Weight:</Text>
+                  )}
+                </View>
+
+
+
+              </View>
+
             </View>
+
 
             <View style={[styles.row]}>
               <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
@@ -380,7 +422,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 />
               </View>
 
-              {totalOnly == 0 && (
+              {workout.trackTotal == 0 && (
                 <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
                   <Text>{'Weight'}</Text>
                   <InputSpinner

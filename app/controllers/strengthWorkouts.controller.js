@@ -14,7 +14,23 @@ exports.insertStrengthTotals = (id, date, reps, total) => {
   });
 };
 
+exports.getPersonalBestsByWorkoutID = (idList) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      idList = idList.split(',')
+      const placeholders = idList.map(() => '?').join(',');
 
+      // SQL query with the IN operator to filter by workoutId in idList
+      let sqlQuery = `SELECT * FROM strengthBestRecords WHERE workoutId IN (${placeholders})`;
+      tx.executeSql(
+        sqlQuery,
+        idList, // Pass the idList as the second parameter to replace the placeholders
+        (txObj, { rows: { _array } }) => { resolve(_array); },
+        (txObj, error) => { reject(error); },
+      );
+    });
+  });
+};
 
 exports.runAgainstOverallBest = (id, params) => {
   return new Promise((resolve, reject) => {
@@ -57,11 +73,7 @@ function insertNewBestRecord(id, params) {
     db.transaction(tx => {
       tx.executeSql("INSERT INTO strengthBestRecords (workoutId, record) VALUES (?, ?)",
         [id, record],
-        (txObj, ResultSet) => { 
-          console.log('ResultSet')
-          console.log(ResultSet)
-          resolve(ResultSet); 
-        },
+        (txObj, ResultSet) => { resolve(ResultSet); },
         (txObj, error) => { reject(error); },
       );
     });
