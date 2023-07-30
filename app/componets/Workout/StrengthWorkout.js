@@ -303,6 +303,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
   const SetsRecord = ({set, index, workout}) => {
 
+    if(!workout.repsPrev)
+      workout.repsPrev = []
     if(!workout.repsByTotal)
       workout.repsByTotal = []
     if(!workout.repsBySet)
@@ -319,9 +321,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
               styles.row,
             ]}
             onPress={() => {
-              for(let workout of workouts)
-                if(workout.id == workout.id) {
-                  alterSets('editMode', workout.sets, index)
+              for(let activity of workouts)
+                if(activity.id == workout.id) {
+                  alterSets('editMode', activity.sets, index)
                   break
                 }  
             }}
