@@ -77,7 +77,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             weight: weight,
           }
 
-          let result = await strengthSql.insertStrengthTotals(id, now, reps, total)
+          let result = await strengthSql.insertStrengthWorkoutSummary(id, now, reps, total)
           let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
           showMessage({
             message: 'Success!!',
@@ -104,18 +104,21 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       const idList = ids.join(', ');
       let workoutList = await workoutSql.getAllStrengthWorkoutsByRoutine(routineID, idList, true)
       let personalBests = await strengthSql.getPersonalBestsByWorkoutID(idList)
+      let lastWorkouts = await strengthSql.getLastWorkoutSummaryByWorkoutID(ids)
 
       personalBests.forEach((pbItem) => {
         const workoutId = pbItem.workoutId;
         const workout = workouts.find((workout) => workout.id === workoutId);
         const record = JSON.parse(pbItem.record);
+        const prev = lastWorkouts.find((workout) => workout.workoutId === workoutId);
 
         repsBySet = record.bySet.reps.split(',');
         repsByTotal = record.byTotal.reps.split(',');
+        repsPrev = prev.reps.split(',');
 
         workout.repsBySet = repsBySet
         workout.repsByTotal = repsByTotal
-
+        workout.repsPrev = repsPrev
       });
 
       setWorkoutList(workoutList)
@@ -300,6 +303,11 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
   const SetsRecord = ({set, index, workout}) => {
 
+    if(!workout.repsByTotal)
+      workout.repsByTotal = []
+    if(!workout.repsBySet)
+      workout.repsBySet = []
+  
     //Read
     if(!set.edit)
       return (
@@ -373,7 +381,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
                 <View>
                   <Text>Last time:</Text>
-                  <Text>Reps:</Text>
+                  <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
                   {workout.trackTotal == 0 && (
                     <Text>Weight:</Text>
                   )}
@@ -396,13 +404,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                     <Text>Weight:</Text>
                   )}
                 </View>
-
-
-
               </View>
-
             </View>
-
 
             <View style={[styles.row]}>
               <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
@@ -477,9 +480,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
               <Text>{matchingRoutine.routine}</Text>
             </View>
 
-
             <View style={[styles.fillSpace, styles.row]}>
-
               <View style={[styles.fillSpace]}>
                 {(!workout.trackTotal || workout.trackTotal == 0) && (
                   <MaterialIcon name="arm-flex-outline" size={20} color={Colors.secondary} />

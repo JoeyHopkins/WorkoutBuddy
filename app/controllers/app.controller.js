@@ -160,11 +160,11 @@ exports.createTables =  () => {
       }
     )
     //strength workouts | Totals
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthTotals (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), date VARCHAR(24), reps TEXT, total INTEGER);`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkoutSummary (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), date VARCHAR(24), reps TEXT, total INTEGER);`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)
-          console.log("strengthTotals table created successfully");
+          console.log("strengthWorkoutSummary table created successfully");
       },
       error => {
         console.log("error creating table " + error.message)

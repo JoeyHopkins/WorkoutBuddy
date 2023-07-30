@@ -1,11 +1,11 @@
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('workouBuddy.db');
 
-exports.insertStrengthTotals = (id, date, reps, total) => {
+exports.insertStrengthWorkoutSummary = (id, date, reps, total) => {
 
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO strengthTotals (workoutId, date, reps, total) VALUES (?, ?, ?, ?)",
+      tx.executeSql("INSERT INTO strengthWorkoutSummary (workoutId, date, reps, total) VALUES (?, ?, ?, ?)",
         [id, date, reps, total],
         (txObj, ResultSet) => { resolve(ResultSet); },
         (txObj, error) => { reject(error); },
@@ -131,3 +131,44 @@ function combineReps(obj1, obj2) {
 
   return finalReps;
 }
+
+
+exports.getLastWorkoutSummaryByWorkoutID = (idList) => {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        const promises = idList.map((idItem) => {
+          return new Promise((resolveItem, rejectItem) => {
+            tx.executeSql(
+              "SELECT * FROM strengthWorkoutSummary WHERE workoutId = ? ORDER BY id DESC LIMIT 1",
+              [idItem],
+              (txObj, { rows: { _array } }) => {
+                if (_array.length === 0) {
+                  resolveItem(null); // Resolve with null if no records found for the ID
+                } else {
+                  resolveItem(_array[0]); // Resolve with the last record for the ID
+                }
+              },
+              (txObj, error) => {
+                rejectItem(error);
+              }
+            );
+          });
+        });
+
+        // Wait for all the promises to be resolved
+        Promise.all(promises)
+          .then((results) => {
+            resolve(results); // Resolve the main promise with the array of results
+          })
+          .catch((error) => {
+            reject(error); // Reject the main promise if any error occurs during the SQL queries
+          });
+      },
+      (error) => {
+        reject(error); // Reject the main promise if the transaction cannot be initiated
+      }
+    );
+  });
+};
