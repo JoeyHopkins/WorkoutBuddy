@@ -160,7 +160,7 @@ exports.createTables =  () => {
       }
     )
     //strength workouts | Totals
-    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkoutSummary (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), date VARCHAR(24), reps TEXT, total INTEGER);`,
+    txn.executeSql(`CREATE TABLE IF NOT EXISTS strengthWorkoutSummary (id INTEGER PRIMARY KEY AUTOINCREMENT, workoutId INTEGER(11), date VARCHAR(24), reps TEXT, total INTEGER, weight TEXT, weightTotal REAL);`,
       [],
       (sqlTxn, res) => {
         if (res.rowsAffected !== 0)

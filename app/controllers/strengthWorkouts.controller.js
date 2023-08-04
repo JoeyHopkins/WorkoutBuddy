@@ -1,12 +1,13 @@
 import * as SQLite from 'expo-sqlite'
 const db = SQLite.openDatabase('workouBuddy.db');
 
-exports.insertStrengthWorkoutSummary = (id, date, reps, total) => {
+exports.insertStrengthWorkoutSummary = (id, params) => {
+  const { date, reps, total, weight, weightTotal} = params
 
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql("INSERT INTO strengthWorkoutSummary (workoutId, date, reps, total) VALUES (?, ?, ?, ?)",
-        [id, date, reps, total],
+      tx.executeSql("INSERT INTO strengthWorkoutSummary (workoutId, date, reps, total, weight, weightTotal) VALUES (?, ?, ?, ?, ?, ?)",
+        [id, date, reps, total, weight, weightTotal],
         (txObj, ResultSet) => { resolve(ResultSet); },
         (txObj, error) => { reject(error); },
       );
@@ -54,14 +55,18 @@ exports.runAgainstOverallBest = (id, params) => {
 };
 
 function insertNewBestRecord(id, params) {
-  let {date, reps, total, weight} = params
+  let {date, reps, total, weight, weightTotal} = params
+  
+  if(reps == "0" || reps =='' || reps == null)
+    return
 
   let record = JSON.stringify({
     byTotal: {
       date: date,
       reps: reps,
+      total: total,
       weight: weight,
-      total: total
+      weightTotal: weightTotal
     },
     bySet: {
       reps: reps,
@@ -86,10 +91,15 @@ function checkForUpdates(result, id, params) {
   let bySet = parserdRecord.bySet
   let byTotal = parserdRecord.byTotal
 
-  if(params.total >= byTotal.total) 
+  if(!byTotal.weight && params.total >= byTotal.total) 
     byTotal = params
+  else if(byTotal.weight && params.weightTotal >= byTotal.weightTotal)
+    if(params.total >= byTotal.total)
+      byTotal = params
 
-  bySet.reps = combineReps(bySet, params)
+  let { finalReps, finalWeight } = combineReps(bySet, params)
+  bySet.reps = finalReps
+  bySet.weight = finalWeight
 
   let returnObject = JSON.stringify({
     bySet: bySet,
@@ -112,24 +122,73 @@ function checkForUpdates(result, id, params) {
   });
 }
 
-function combineReps(obj1, obj2) {
+function combineReps(object, newObject) {
   // Step 1: Convert reps strings into arrays of integers
-  const reps1 = obj1.reps.split(",").map(Number).filter((num) => !isNaN(num));
-  const reps2 = obj2.reps.split(",").map(Number).filter((num) => !isNaN(num));
+  const reps1 = object.reps.split(",").map(Number).filter((num) => !isNaN(num));
+  const reps2 = newObject.reps.split(",").map(Number).filter((num) => !isNaN(num));
+  let weight1 = null
+  let weight2 = null
+  let finalReps = null
+  let finalWeight = null
+
+  if(object.weight)
+    weight1 = object.weight.split(",").map(Number).filter((num) => !isNaN(num));
+  if(newObject.weight)
+    weight2 = newObject.weight.split(",").map(Number).filter((num) => !isNaN(num));
 
   // Step 2: Compare and keep the bigger value for each position
-  const combinedReps = reps1.map((val, index) => Math.max(val, reps2[index]));
-  
-  // Handle any remaining elements in the longer array
-  if (reps1.length > reps2.length) {
-    combinedReps.push(...reps1.slice(reps2.length));
-  } else if (reps2.length > reps1.length) {
-    combinedReps.push(...reps2.slice(reps1.length));
+  if(!object.weight)
+  {
+    const combinedReps = reps1.map((val, index) => Math.max(val, reps2[index]));
+
+    // Handle any remaining elements in the longer array
+    if (reps1.length > reps2.length)
+      combinedReps.push(...reps1.slice(reps2.length));
+    else if (reps2.length > reps1.length)
+      combinedReps.push(...reps2.slice(reps1.length));
+    
+    finalReps = combinedReps.filter((num) => !isNaN(num)).join(",");
+    finalWeight = null
+  }
+  else {
+    if(reps1.length >= reps2.length)
+    {
+      let { reps, weight } = combineWorkoutSets(reps1, weight1, reps2, weight2)
+      finalReps = reps
+      finalWeight = weight
+    }
+    else {
+      let { reps, weight } = combineWorkoutSets(reps2, weight2, reps1, weight1)
+      finalReps = reps
+      finalWeight = weight
+    }
   }
 
-  const finalReps = combinedReps.filter((num) => !isNaN(num)).join(",");
+  return { finalReps: finalReps, finalWeight: finalWeight }
+}
 
-  return finalReps;
+function combineWorkoutSets(reps1, weight1, reps2, weight2) {
+  let finalReps = [];
+  let finalWeight = [];
+
+  for(let set in reps1) {
+    if(weight1[set] > weight2[set] || 
+      (weight1[set] == weight2[set] && reps1[set] >= reps2[set]) || 
+      reps2[set] == undefined
+    ) {
+      finalReps[set] = reps1[set]
+      finalWeight[set] = weight1[set]
+    }
+    else if (
+      weight2[set] > weight1[set] ||
+      (weight1[set] == weight2[set] && reps2[set] > reps1[set])
+    ) {
+      finalReps[set] = reps2[set]
+      finalWeight[set] = weight2[set]
+    }
+  }
+
+  return { reps: finalReps, weight: finalWeight }
 }
 
 
@@ -145,7 +204,7 @@ exports.getLastWorkoutSummaryByWorkoutID = (idList) => {
               [idItem],
               (txObj, { rows: { _array } }) => {
                 if (_array.length === 0) {
-                  resolveItem(null); // Resolve with null if no records found for the ID
+                  resolveItem(); // Resolve with null if no records found for the ID
                 } else {
                   resolveItem(_array[0]); // Resolve with the last record for the ID
                 }

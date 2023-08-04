@@ -47,51 +47,45 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
     for(let workout of workouts) {
 
       let { trackTotal, sets, id} = workout
-      
-      //REps and weight
-      // if(trackTotal == 0) {
-      //   }
-      //Totals Only
-      //   else 
+      let total = 0, weightTotal = 0
+      let reps = '', weight = ''
+      let now = new Date().toISOString();
 
-      if(trackTotal == 1) {
+      for(let set of sets) {
+        total += set.rep
+        reps += set.rep + ','
+        if(trackTotal == 0){
+          weightTotal += set.weight
+          weight += set.weight + ','
+        }
+      }
 
-        let total = 0
-        let reps = ''
-        let now = new Date().toISOString();
-        let weight = null
+      reps = reps.substring(0, reps.length - 1)
+      weight = weight.substring(0, weight.length - 1)
 
-        for(let set of sets) {
-          total += set.rep
-          reps += set.rep + ','
+      try {
+        let params = {
+          date: now, 
+          reps: reps, 
+          total: total,
+          weight: weight == '' ? null : weight,
+          weightTotal: weightTotal == 0 ? null : weightTotal,
         }
 
-        reps = reps.substring(0, reps.length - 1)
-        
-        try {
-
-          let params = {
-            date: now, 
-            reps: reps, 
-            total: total,
-            weight: weight,
-          }
-
-          let result = await strengthSql.insertStrengthWorkoutSummary(id, now, reps, total)
-          let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
-          showMessage({
-            message: 'Success!!',
-            description: 'Workout submitted successfully',
-            type: "success",
-          })
-        }
-        catch (err) {
-          showMessage({
-            message: 'Error',
-            description: 'There was an error. ' + err.message,
-            type: "danger",
-          });
-        }
+        let result = await strengthSql.insertStrengthWorkoutSummary(id, params)
+        let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
+        showMessage({
+          message: 'Success!!',
+          description: 'Workout submitted successfully',
+          type: "success",
+        })
+      }
+      catch (err) {
+        showMessage({
+          message: 'Error',
+          description: 'There was an error. ' + err.message,
+          type: "danger",
+        });
       }
     }
 
@@ -110,11 +104,15 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         const workoutId = pbItem.workoutId;
         const workout = workouts.find((workout) => workout.id === workoutId);
         const record = JSON.parse(pbItem.record);
-        const prev = lastWorkouts.find((workout) => workout.workoutId === workoutId);
 
-        repsBySet = record.bySet.reps.split(',');
-        repsByTotal = record.byTotal.reps.split(',');
-        repsPrev = prev.reps.split(',');
+        let prev = {}
+
+        if(lastWorkouts[0] != undefined)
+          prev = lastWorkouts.find((workout) => workout.workoutId === workoutId);
+
+        let repsBySet = record.bySet.reps.split(',');
+        let repsByTotal = record.byTotal.reps.split(',');
+        let repsPrev = prev.reps.split(',');
 
         workout.repsBySet = repsBySet
         workout.repsByTotal = repsByTotal
