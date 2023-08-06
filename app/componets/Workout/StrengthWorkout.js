@@ -79,6 +79,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           description: 'Workout submitted successfully',
           type: "success",
         })
+        setPageMode('Main');
+        navigation.setOptions({ headerTitle: 'Workout' });
       }
       catch (err) {
         showMessage({
@@ -271,7 +273,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           </View>
 
           <View style={[styles.marginBottom, styles.homeContainer]}>
-
             {workout.sets && workout.sets.map((set, index) => (
               <SetsRecord 
                 key={index}
@@ -280,7 +281,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 workout={workout}
               />
             ))}
-
           </View>
 
           <View style={styles.center}>
@@ -306,6 +306,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       workout.repsByTotal = []
     if(!workout.repsBySet)
       workout.repsBySet = []
+    if(!workout.weightPrev)
+      workout.weightPrev = []
+    if(!workout.weightBySet)
+      workout.weightBySet = []
+    if(!workout.weightByTotal)
+      workout.weightByTotal = []
 
     //Read
     if(!set.edit)
@@ -370,7 +376,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 />
               </Pressable>
             </View>
-            
+
             <View style={[styles.homeContainer]}>
               <View style={[styles.title]}>
                 <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
@@ -383,7 +389,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   {workout.trackTotal == 1 && (
                     <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
                   )}
-                  {workout.trackTotal == 0 && (
+                  {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
                     <>
                       <View style={styles.row}>
                       <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @' : 'N/A'}</Text>
