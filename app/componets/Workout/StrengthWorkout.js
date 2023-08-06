@@ -114,6 +114,8 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         workout.repsByTotal = record.byTotal.reps.split(',');
         workout.repsPrev = prev.reps.split(',');
         workout.weightPrev = prev.weight ? prev.weight.split(',') : 'N/A'
+        workout.weightBySet = record.bySet.weight ? record.bySet.weight.split(',') : 'N/A'
+        workout.weightByTotal = record.byTotal.weight ? record.byTotal.weight.split(',') : 'N/A'
       });
 
       setWorkoutList(workoutList)
@@ -392,7 +394,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
 
                   {workout.trackTotal == 0 && (
-                    <Text>Weight:</Text>
+                    <>
+                      <Text>Weight:</Text>
+                      <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : 'N/A'}</Text>
+                    </>
                   )}
                 </View>
 
@@ -401,7 +406,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
 
                   {workout.trackTotal == 0 && (
-                    <Text>Weight:</Text>
+                    <>
+                      <Text>Weight:</Text>
+                      <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : 'N/A'}</Text>
+                    </>
                   )}
                 </View>
               </View>
