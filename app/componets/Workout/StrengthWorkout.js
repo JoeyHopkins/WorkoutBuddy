@@ -110,13 +110,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         if(lastWorkouts[0] != undefined)
           prev = lastWorkouts.find((workout) => workout.workoutId === workoutId);
 
-        let repsBySet = record.bySet.reps.split(',');
-        let repsByTotal = record.byTotal.reps.split(',');
-        let repsPrev = prev.reps.split(',');
-
-        workout.repsBySet = repsBySet
-        workout.repsByTotal = repsByTotal
-        workout.repsPrev = repsPrev
+        workout.repsBySet = record.bySet.reps.split(',');
+        workout.repsByTotal = record.byTotal.reps.split(',');
+        workout.repsPrev = prev.reps.split(',');
+        workout.weightPrev = prev.weight ? prev.weight.split(',') : 'N/A'
       });
 
       setWorkoutList(workoutList)
@@ -307,7 +304,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       workout.repsByTotal = []
     if(!workout.repsBySet)
       workout.repsBySet = []
-  
+
     //Read
     if(!set.edit)
       return (
@@ -383,7 +380,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   <Text>Last time:</Text>
                   <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
                   {workout.trackTotal == 0 && (
-                    <Text>Weight:</Text>
+                    <>
+                      <Text>Weight:</Text>
+                      <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : 'N/A'}</Text>
+                    </>
                   )}
                 </View>
 
