@@ -380,35 +380,48 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
                 <View>
                   <Text>Last time:</Text>
-                  <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
+                  )}
                   {workout.trackTotal == 0 && (
                     <>
-                      <Text>Weight:</Text>
-                      <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : 'N/A'}</Text>
+                      <View style={styles.row}>
+                      <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @' : 'N/A'}</Text>
+                      <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
+                      </View>
                     </>
                   )}
                 </View>
 
                 <View>
                   <Text>Workout best:</Text>
-                  <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
 
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
+                  )} 
                   {workout.trackTotal == 0 && (
                     <>
-                      <Text>Weight:</Text>
-                      <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : 'N/A'}</Text>
+                      <View style={styles.row}>
+                        <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @' : 'N/A'}</Text>
+                        <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
+                      </View>
                     </>
                   )}
                 </View>
 
                 <View>
                   <Text>Set Best:</Text>
-                  <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
+
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
+                  )} 
 
                   {workout.trackTotal == 0 && (
                     <>
-                      <Text>Weight:</Text>
-                      <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : 'N/A'}</Text>
+                      <View style={styles.row}>
+                        <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @' : 'N/A'}</Text>
+                        <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
+                      </View>
                     </>
                   )}
                 </View>
