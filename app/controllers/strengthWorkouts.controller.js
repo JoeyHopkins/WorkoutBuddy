@@ -188,6 +188,9 @@ function combineWorkoutSets(reps1, weight1, reps2, weight2) {
     }
   }
 
+  finalReps = finalReps.join(',')
+  finalWeight = finalWeight.join(',')
+
   return { reps: finalReps, weight: finalWeight }
 }
 

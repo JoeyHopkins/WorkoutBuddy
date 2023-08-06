@@ -44,6 +44,19 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
   async function submitWorkout() {
 
+    for(let workout of workouts)
+      for(let set of workout.sets)
+        if(set.rep == 0 || (workout.trackTotal == 0 && set.weight == 0))
+          {
+            showMessage({
+              message: 'Error!!',
+              description: 'Workouts cannot be empty',
+              type: "danger",
+            })
+            setSubmitTrigger('false')
+            return
+          }
+
     for(let workout of workouts) {
 
       let { trackTotal, sets, id} = workout
@@ -114,10 +127,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
         workout.repsBySet = record.bySet.reps.split(',');
         workout.repsByTotal = record.byTotal.reps.split(',');
-        workout.repsPrev = prev.reps.split(',');
-        workout.weightPrev = prev.weight ? prev.weight.split(',') : 'N/A'
         workout.weightBySet = record.bySet.weight ? record.bySet.weight.split(',') : 'N/A'
         workout.weightByTotal = record.byTotal.weight ? record.byTotal.weight.split(',') : 'N/A'
+        workout.repsPrev = prev.reps.split(',');
+        workout.weightPrev = prev.weight ? prev.weight.split(',') : 'N/A'
       });
 
       setWorkoutList(workoutList)
@@ -392,7 +405,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
                     <>
                       <View style={styles.row}>
-                      <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @' : 'N/A'}</Text>
+                      <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @ ' : 'N/A'}</Text>
                       <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
                       </View>
                     </>
@@ -408,7 +421,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   {workout.trackTotal == 0 && (
                     <>
                       <View style={styles.row}>
-                        <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @' : 'N/A'}</Text>
+                        <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @ ' : 'N/A'}</Text>
                         <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
                       </View>
                     </>
@@ -425,7 +438,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                   {workout.trackTotal == 0 && (
                     <>
                       <View style={styles.row}>
-                        <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @' : 'N/A'}</Text>
+                        <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @ ' : 'N/A'}</Text>
                         <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
                       </View>
                     </>
