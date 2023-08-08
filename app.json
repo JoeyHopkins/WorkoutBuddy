@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "WorkoutBuddy",
-    "slug": "WorkoutBuddy",
+    "name": "Workout Buddy",
+    "slug": "workout-buddy",
+    "description": "All in one workout tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +22,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.joeyaitch.workoutbuddy"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fca48344-48b8-4952-9b27-63b424903e34"
+      }
     }
   }
 }

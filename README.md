@@ -81,3 +81,25 @@ Can also reload with hitting R in the console
 ## Useful dev stuff
 
 App is linked appwide to config/colors page. Some adjustments may need to be changed but it is being developed with this is mind.
+
+## build for remote use
+
+install cli in not yet installed on machine
+npm install -g eas-cli
+
+login to cli
+eas login
+
+add build file (if eas.json does not exist)
+eas build:configure
+
+Note: configure the esd.jdon with proper name, description, etc... if not already done so
+
+Do the build with
+eas build --profile preview --platform android
+
+initial build took about 12 minutes and delivered .apk for local installation on android
+follow qr code and install the app, may have to do things to bypass serurity on device
+
+"developmentClient": true
+This setting determines if the final buld will run using a dev client running on pc or if false, will run off device
