@@ -77,8 +77,11 @@ export const Workout = ({navigation, route}) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      routineSelectedID.current == -1
-      fetchData();
+      if(lastPageMode.current != 'Workout')
+      {
+        routineSelectedID.current == -1
+        fetchData();
+      }
     }, [])
   );
 
