@@ -6,9 +6,11 @@ import { showMessage } from "react-native-flash-message";
 import * as homeSql from '../../controllers/home.controller'
 import * as workoutSql from '../../controllers/workouts.controller'
 import * as strengthSql from '../../controllers/strengthWorkouts.controller'
+import * as activitiesSQL from '../../controllers/activities.controller'
 import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
+import * as Utils from "../../utils";
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, submitTrigger, setSubmitTrigger }) => {
 
@@ -87,6 +89,10 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
         let result = await strengthSql.insertStrengthWorkoutSummary(id, params)
         let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
+
+        const routine = routineList.current.find(routine => routine.id === routineID);
+        await activitiesSQL.addActivity(routine.routine + ' Day', Utils.getCurrentLocalISOStringDate(), 'strength')
+
         showMessage({
           message: 'Success!!',
           description: 'Workout submitted successfully',

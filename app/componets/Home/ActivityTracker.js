@@ -35,6 +35,7 @@ export const ActivityTracker = ({navigation}) => {
 
   const custom = {key: 'custom', color: Colors.customActivityColor, selectedDotColor: Colors.customActivitySelectedColor};
   const cardio = {key: 'cardio', color: Colors.cardioActivityColor, selectedDotColor: Colors.cardioActivitySelectedColor};
+  const strength = {key: 'strength', color: Colors.strengthActivityColor, selectedDotColor: Colors.strengthActivitySelectedColor};
   const noType = {key: 'noType', color: Colors.defaultActivityColor, selectedDotColor: Colors.defaultActivitySelectedColor};
 
   const fetchData = async () => {
@@ -99,6 +100,9 @@ export const ActivityTracker = ({navigation}) => {
           break;
         case 'cardio':
           activityType = cardio;
+          break;
+        case 'strength':
+          activityType = strength;
           break;
         default:
           activityType = noType;
@@ -230,6 +234,8 @@ export const ActivityTracker = ({navigation}) => {
           return Colors.customActivityColor;
         case 'cardio':
           return Colors.cardioActivityColor;
+        case 'strength':
+          return Colors.strengthActivityColor;
         default:
           return Colors.defaultActivityColor;
       }

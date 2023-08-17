@@ -46,5 +46,7 @@ export const customActivityColor = '#fc8542';
 export const customActivitySelectedColor = '#fc8542';
 export const cardioActivityColor = '#038a45';
 export const cardioActivitySelectedColor = '#038a45';
+export const strengthActivityColor = '#9B59B6';
+export const strengthActivitySelectedColor = '#9B59B6';
 export const defaultActivityColor = '#b1b6af';
 export const defaultActivitySelectedColor = '#b1b6af';
