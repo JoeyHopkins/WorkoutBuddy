@@ -380,13 +380,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
             <View style={[styles.center, styles.marginVertical_S]}>
               <Pressable
-                onPress={() => {
-                  for(let workout of workouts)
-                    if(workout.id == workout.id) {
-                      alterSets('remove', workout.sets, index)
-                      break
-                    }  
-                }}
+                onPress={() => { alterSets('remove', workout.sets, index) }}
               >
                 <MaterialIcon
                   name="close-outline"
