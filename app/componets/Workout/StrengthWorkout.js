@@ -121,18 +121,23 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         const workout = workouts.find((workout) => workout.id === workoutId);
         const record = JSON.parse(pbItem.record);
 
-        let prev = {}
-
-        if(lastWorkouts[0] != undefined)
-          prev = lastWorkouts.find((workout) => workout.workoutId === workoutId);
-
         workout.repsBySet = record.bySet.reps.split(',');
         workout.repsByTotal = record.byTotal.reps.split(',');
         workout.weightBySet = (record.bySet && record.bySet.weight) ? record.bySet.weight.split(',') : 'N/A'
         workout.weightByTotal = (record.byTotal && record.byTotal.weight) ? record.byTotal.weight.split(',') : 'N/A'
-        workout.repsPrev = prev.reps ? prev.reps.split(',') : 'N/A'
-        workout.weightPrev = prev.weight ? prev.weight.split(',') : 'N/A'
       });
+
+      lastWorkouts.forEach((prevWorkout) => {
+        
+        if(prevWorkout == undefined)
+          return 
+
+        const workoutId = prevWorkout.workoutId;
+        const workout = workouts.find((workout) => workout.id === workoutId);        
+  
+        workout.repsPrev = prevWorkout.reps ? prevWorkout.reps.split(',') : 'N/A'
+        workout.weightPrev = prevWorkout.weight ? prevWorkout.weight.split(',') : 'N/A'
+      });      
 
       setWorkoutList(workoutList)
     } 
