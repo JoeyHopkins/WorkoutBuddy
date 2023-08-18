@@ -6,6 +6,7 @@ import { Workout } from './app/componets/Workout/Workout';
 import appSql from './app/controllers/app.controller';
 import FlashMessage from "react-native-flash-message";
 import { useEffect } from 'react'
+import { StatusBar } from 'react-native';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -46,7 +47,7 @@ export default function App() {
 
   return (
     <>
-      {/* <StatusBar backgroundColor="black"  /> */}
+      <StatusBar backgroundColor={Colors.primary} />
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={{
