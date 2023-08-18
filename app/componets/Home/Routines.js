@@ -230,7 +230,7 @@ export const RoutineMain = ({ todaysRoutine, setTodaysRoutine, refreshComponet, 
       let settingValue = await settingSql.getSetting(settingName);
 
       if (!settingValue || settingValue.length == 0) {
-        // Setting does not exist, create it with initial value -1
+        // Setting does not exist, create it with initial value
         await settingSql.createNewSetting(settingName, null);
         return null;
       } 

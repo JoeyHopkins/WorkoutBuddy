@@ -11,6 +11,7 @@ import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import InputSpinner from "react-native-input-spinner";
 import * as Utils from "../../utils";
+import settingSql from '../../controllers/settings.controller'
 
 export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, submitTrigger, setSubmitTrigger }) => {
 
@@ -92,6 +93,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
         const routine = routineList.current.find(routine => routine.id === routineID);
         await activitiesSQL.addActivity(routine.routine + ' Day', Utils.getCurrentLocalISOStringDate(), 'strength')
+        await settingSql.updateRoutineSetting(routine.id);
 
         showMessage({
           message: 'Success!!',
