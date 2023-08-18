@@ -39,6 +39,13 @@ export const Home = ({navigation}) => {
     }
   }, [pageMode]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setRefreshComponet(true)
+    }, [])
+  );
+
+
   const SettingsPageHeader = () => {
     const navigation = useNavigation();
     
