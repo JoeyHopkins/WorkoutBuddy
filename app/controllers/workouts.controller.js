@@ -308,3 +308,41 @@ exports.getWeeklyCardioDistanceTotals = () => {
     });
   });
 };
+
+
+exports.getWeeklyStrengthTotals = () => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql("SELECT SUM(total) AS repsOverall, SUM(weightTotal) AS weightOverall FROM strengthWorkoutSummary WHERE workoutId IN (SELECT id FROM strengthWorkouts WHERE trackTotal = 0)", 
+      [], 
+      (txObj, { rows: { _array } }) => {
+
+        let Overall = {
+          reps: _array[0].repsOverall, 
+          weight: _array[0].weightOverall,
+          average: _array[0].weightOverall / _array[0].repsOverall
+        }
+
+        const currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() - 7);
+        const lastWeekDate = currentDate.toISOString().slice(0, 10);
+
+        tx.executeSql("SELECT SUM(total) AS repsOverall, SUM(weightTotal) AS weightOverall FROM strengthWorkoutSummary WHERE workoutId IN (SELECT id FROM strengthWorkouts WHERE trackTotal = 0) AND date >= ?",
+          [lastWeekDate],
+          (txObj, { rows: { _array } }) => {
+
+            let weekly = {
+              reps: _array[0].repsOverall, 
+              weight: _array[0].weightOverall,
+              average: _array[0].weightOverall / _array[0].repsOverall
+            }
+
+            resolve({ Overall, weekly });
+          },
+          (txObj, error) => { reject(error) },
+        );
+      },
+      (txObj, error) => { reject(error) });
+    });
+  });
+};
