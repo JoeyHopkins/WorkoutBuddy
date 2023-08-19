@@ -71,7 +71,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         total += set.rep
         reps += set.rep + ','
         if(trackTotal == 0){
-          weightTotal += set.weight
+          weightTotal += set.weight * set.rep
           weight += set.weight + ','
         }
       }

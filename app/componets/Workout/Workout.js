@@ -348,15 +348,15 @@ export const Workout = ({navigation, route}) => {
       <>
         <View style={styles.totalItem}>
           <Text>Reps</Text>
-          <Text>{strengthTotals.Overall ? strengthTotals.Overall.reps : 0}</Text>
+          <Text>{ (strengthTotals.Overall && strengthTotals.Overall.reps) ? strengthTotals.Overall.reps : 0}</Text>
         </View>
         <View style={styles.totalItem}>
           <Text>Weight</Text>
-          <Text>{strengthTotals.Overall ? strengthTotals.Overall.weight : 0} lbs</Text>
+          <Text>{ (strengthTotals.Overall && strengthTotals.Overall.weight) ? strengthTotals.Overall.weight : 0} lbs</Text>
         </View>
         <View style={styles.totalItem}>
           <Text>Avg</Text>
-          <Text>{strengthTotals.Overall ? strengthTotals.Overall.average.toFixed(2) : 0} lbs</Text>
+          <Text>{ (strengthTotals.Overall && strengthTotals.Overall.average) ? strengthTotals.Overall.average.toFixed(2) : 0} lbs</Text>
         </View>      
       </>
     ) 
