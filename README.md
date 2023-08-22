@@ -103,3 +103,11 @@ follow qr code and install the app, may have to do things to bypass serurity on 
 
 "developmentClient": true
 This setting determines if the final buld will run using a dev client running on pc or if false, will run off device
+
+## Dev Builds
+
+Dev Build #1 results
+Found a few minor bugs that were fixed
+Added functionality to add workouts to activity tracker
+setup routines to switch based on the day being worked out
+Fixed totalweight calculation to take into account the number of reps
