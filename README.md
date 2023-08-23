@@ -104,6 +104,17 @@ follow qr code and install the app, may have to do things to bypass serurity on 
 "developmentClient": true
 This setting determines if the final buld will run using a dev client running on pc or if false, will run off device
 
+---
+
+After the first time
+login
+eas login
+
+change settings if needed
+
+run build
+eas build --profile preview --platform android
+
 ## Dev Builds
 
 Dev Build #1 results
