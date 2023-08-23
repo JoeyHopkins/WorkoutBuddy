@@ -60,26 +60,26 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             return
           }
 
-    for(let workout of workouts) {
+    try {
+      for(let workout of workouts) {
 
-      let { trackTotal, sets, id} = workout
-      let total = 0, weightTotal = 0
-      let reps = '', weight = ''
-      let now = new Date().toISOString();
+        let { trackTotal, sets, id} = workout
+        let total = 0, weightTotal = 0
+        let reps = '', weight = ''
+        let now = new Date().toISOString();
 
-      for(let set of sets) {
-        total += set.rep
-        reps += set.rep + ','
-        if(trackTotal == 0){
-          weightTotal += set.weight * set.rep
-          weight += set.weight + ','
+        for(let set of sets) {
+          total += set.rep
+          reps += set.rep + ','
+          if(trackTotal == 0){
+            weightTotal += set.weight * set.rep
+            weight += set.weight + ','
+          }
         }
-      }
 
-      reps = reps.substring(0, reps.length - 1)
-      weight = weight.substring(0, weight.length - 1)
+        reps = reps.substring(0, reps.length - 1)
+        weight = weight.substring(0, weight.length - 1)
 
-      try {
         let params = {
           date: now, 
           reps: reps, 
@@ -91,28 +91,30 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
         let result = await strengthSql.insertStrengthWorkoutSummary(id, params)
         let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
 
-        const routine = routineList.current.find(routine => routine.id === routineID);
-        await activitiesSQL.addActivity(routine.routine + ' Day', Utils.getCurrentLocalISOStringDate(), 'strength')
-        await settingSql.updateRoutineSetting(routine.id);
 
-        showMessage({
-          message: 'Success!!',
-          description: 'Workout submitted successfully',
-          type: "success",
-        })
-        setPageMode('Main');
-        navigation.setOptions({ headerTitle: 'Workout' });
       }
-      catch (err) {
-        showMessage({
-          message: 'Error',
-          description: 'There was an error. ' + err.message,
-          type: "danger",
-        });
-        console.error(err);
-      }
+
+      const routine = routineList.current.find(routine => routine.id === routineID);
+      await activitiesSQL.addActivity(routine.routine + ' Day', Utils.getCurrentLocalISOStringDate(), 'strength')
+      await settingSql.updateRoutineSetting(routine.id);
+
+      showMessage({
+        message: 'Success!!',
+        description: 'Workout submitted successfully',
+        type: "success",
+      })
+      setPageMode('Main');
+      navigation.setOptions({ headerTitle: 'Workout' });
+
     }
-
+    catch (err) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error. ' + err.message,
+        type: "danger",
+      });
+      console.error(err);
+    }
     setSubmitTrigger('false')
   }
 
