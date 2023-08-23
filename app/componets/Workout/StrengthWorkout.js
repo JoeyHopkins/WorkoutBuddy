@@ -290,7 +290,16 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           </View>
 
           <View style={[styles.marginVertical_S, styles.center]}>
-            <Text style={[styles.title]}>{workout.name}</Text>
+
+            <Pressable
+              onPress={() => {
+                workout.edit = false
+                getData()
+              }}
+              style={styles.border}
+            >
+              <Text style={[styles.title]}>{workout.name}</Text>
+            </Pressable>
 
             {workout.trackTotal == true && (
               <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
