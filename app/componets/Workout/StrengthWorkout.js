@@ -296,7 +296,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 workout.edit = false
                 getData()
               }}
-              style={styles.border}
             >
               <Text style={[styles.title]}>{workout.name}</Text>
             </Pressable>
