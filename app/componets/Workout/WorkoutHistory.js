@@ -4,6 +4,7 @@ import * as historySql from '../../controllers/workoutHistory.controller'
 import React, {useState, useEffect, useRef, memo} from 'react';
 import { showMessage } from "react-native-flash-message";
 import * as homeSql from '../../controllers/home.controller'
+import * as Utils from '../../utils'
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -37,10 +38,13 @@ export const WorkoutHistory = ({navigation, route}) => {
     setHistory(await historySql.getWorkoutHistory(workoutID, 0, 10))
   }
   const HistoryItem = ({ workout, index }) => {
+    let workoutDate = new Date(workout.date)
     return (
       <>
-        <View style={[styles.row, styles.spread]}>
-          <Text>{workout.date}</Text>
+        <View style={[styles.homeContainer, styles.marginTop_S]}>
+          <View style={[styles.center, styles.marginVertical_S]}>
+            <Text>{Utils.formatISOtoDisplayDate(workoutDate)}</Text>
+          </View>
           <Text>{workout.reps}</Text>
           <Text>{workout.weight}</Text>
         </View>
@@ -50,7 +54,7 @@ export const WorkoutHistory = ({navigation, route}) => {
 
   return (
     <>
-      <ScrollView>
+      <ScrollView style={styles.background}>
         <View style={[styles.center]}>
           <Text style={[styles.title, styles.marginVertical_S]}>{workoutName}</Text>
         </View>
