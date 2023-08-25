@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home } from './app/componets/Home/Home';
 import { Reports } from './app/componets/Reports/Reports';
 import { Workout } from './app/componets/Workout/Workout';
+import { WorkoutHistory } from './app/componets/Workout/WorkoutHistory';
 import appSql from './app/controllers/app.controller';
 import FlashMessage from "react-native-flash-message";
 import { useEffect } from 'react'
@@ -11,6 +12,9 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import * as Colors from './app/config/colors'
+
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+const Stack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +48,34 @@ export default function App() {
       fontWeight: 'bold',
     },
   };
+
+
+  function WorkoutStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="WorkoutScreen"
+          component={Workout}
+          options={{
+            ...headerOptions,
+            tabBarIcon: ({ color, size }) => (
+              <AntIcon name='linechart' size={20} color={color} />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="WorkoutHistory"
+          component={WorkoutHistory}
+          options={{
+            ...headerOptions,
+            tabBarIcon: ({ color, size }) => (
+              <AntIcon name='linechart' size={20} color={color} />
+            ),
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
 
   return (
     <>
@@ -80,9 +112,10 @@ export default function App() {
           />
           <Tab.Screen 
             name="Workout" 
-            component={Workout}
+            component={WorkoutStack}
             options={{
               ...headerOptions,
+                headerShown: false,
               tabBarIcon: ({ color, size }) => (
                 <FontIcon name='dumbbell' size={20} color={color} />
               ),

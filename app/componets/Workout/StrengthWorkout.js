@@ -1,4 +1,4 @@
-import { Text, View, Pressable, ScrollView, Alert } from "react-native"
+import { Text, View, Pressable, ScrollView, Alert, DrawerLayoutAndroid } from "react-native"
 import * as Colors from '../../config/colors'
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +9,7 @@ import * as strengthSql from '../../controllers/strengthWorkouts.controller'
 import * as activitiesSQL from '../../controllers/activities.controller'
 import styles from '../../config/styles';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 import InputSpinner from "react-native-input-spinner";
 import * as Utils from "../../utils";
 import settingSql from '../../controllers/settings.controller'
@@ -289,8 +290,9 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             </Pressable>
           </View>
 
-          <View style={[styles.marginVertical_S, styles.center]}>
+          <View style={[styles.marginTop_S, styles.center, styles.row]}>
 
+            <View style={[styles.fillSpace]}></View>
             <Pressable
               onPress={() => {
                 workout.edit = false
@@ -300,13 +302,25 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
               <Text style={[styles.title]}>{workout.name}</Text>
             </Pressable>
 
-            {workout.trackTotal == true && (
-              <MaterialIcon name='sigma' size={20} color={Colors.secondary} />
-            )}
-            {workout.trackTotal == false && (
-              <MaterialIcon name='arm-flex-outline' size={20} color={Colors.secondary} />
-            )}
+            <View style={[styles.fillSpace]}>
+              {workout.trackTotal == true && (
+                <MaterialIcon style={styles.marginLeft} name='sigma' size={20} color={Colors.secondary} />
+              )}
+              {workout.trackTotal == false && (
+                <MaterialIcon style={styles.marginLeft} name='arm-flex-outline' size={20} color={Colors.secondary} />
+              )}
+            </View>
+          </View>
 
+          <View style={[styles.marginVertical_S, styles.center]}>
+            <Pressable
+              onPress={() => {
+                navigation.navigate('WorkoutHistory', {wourkoutID: workout.id})
+                console.log(workout)
+              }}
+            >
+              <EntypoIcon name='magnifying-glass' size={30} color={Colors.secondary} />
+            </Pressable>
           </View>
 
           <View style={[styles.marginBottom, styles.homeContainer]}>
