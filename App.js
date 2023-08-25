@@ -64,7 +64,7 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="WorkoutHistory"
+          name="Workout History"
           component={WorkoutHistory}
           options={{
             ...headerOptions,

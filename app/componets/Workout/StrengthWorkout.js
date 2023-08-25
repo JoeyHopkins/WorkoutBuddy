@@ -315,7 +315,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           <View style={[styles.marginVertical_S, styles.center]}>
             <Pressable
               onPress={() => {
-                navigation.navigate('WorkoutHistory', {wourkoutID: workout.id})
+                navigation.navigate('Workout History', {workoutID: workout.id})
                 console.log(workout)
               }}
             >
