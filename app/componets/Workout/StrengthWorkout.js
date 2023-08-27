@@ -163,45 +163,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
     return
   }
 
-  function alterSets(type, sets, index = null) {
-    switch (type) {
-      case 'init':
-        sets.push({
-          rep: 0,
-          weight: 0,
-          edit: true,
-        })
-        break; 
-      case 'addNew':
-        sets.forEach((set, idx) => {
-          set.edit = false;
-        });
-
-        sets.push({
-          rep: sets[sets.length - 1].rep,
-          weight: sets[sets.length - 1].weight,
-          edit: true,
-        });
-        break;
-      case 'remove':
-        if (index !== null && index >= 0 && index < sets.length) {
-          sets.splice(index, 1);
-        }
-        break;
-      case 'editMode':
-        if (index !== null && index >= 0 && index < sets.length) {
-          sets.forEach((set, idx) => {
-            set.edit = idx === index;
-          });
-        }
-        break;
-      default:
-        break;
-    }
-
-    if(type != 'init')
-      getData()
-  }
 
   function alterWorkoutList (type, workout) {
     switch (type) {
@@ -315,8 +276,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
           <View style={[styles.marginVertical_S, styles.center]}>
             <Pressable
               onPress={() => {
-                navigation.navigate('Workout History', {workoutID: workout.id, workoutName: workout.name})
-                console.log(workout)
+                navigation.navigate('Workout History', {workoutID: workout.id, workoutName: workout.name, trackTotal: workout.trackTotal})
               }}
             >
               <EntypoIcon name='magnifying-glass' size={30} color={Colors.secondary} />
@@ -325,11 +285,12 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
           <View style={[styles.marginBottom, styles.homeContainer]}>
             {workout.sets && workout.sets.map((set, index) => (
-              <SetsRecord 
+              <SetsRecord
                 key={index}
                 set={set}
                 index={index}
                 workout={workout}
+                getData={getData}
               />
             ))}
           </View>
@@ -338,6 +299,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
             <MaterialIcon
               onPress={() => {
                 alterSets('addNew', workout.sets)
+                getData()
               }}
               name="plus-circle-outline"
               size={40}
@@ -349,179 +311,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       );
   };
 
-  const SetsRecord = ({set, index, workout}) => {
-
-    if(!workout.repsPrev)
-      workout.repsPrev = []
-    if(!workout.repsByTotal)
-      workout.repsByTotal = []
-    if(!workout.repsBySet)
-      workout.repsBySet = []
-    if(!workout.weightPrev)
-      workout.weightPrev = []
-    if(!workout.weightBySet)
-      workout.weightBySet = []
-    if(!workout.weightByTotal)
-      workout.weightByTotal = []
-
-    //Read
-    if(!set.edit)
-      return (
-        <>
-          <Pressable 
-            style={[
-              styles.fillSpace, 
-              index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S,
-              styles.row,
-            ]}
-            onPress={() => {
-              for(let activity of workouts)
-                if(activity.id == workout.id) {
-                  alterSets('editMode', activity.sets, index)
-                  break
-                }  
-            }}
-          >
-            <View style={[styles.center, styles.marginLeft]}>
-              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
-            </View>
-
-            <View style={[
-              styles.fillSpace, 
-              styles.row, 
-              styles.center, 
-              styles.spread,
-            ]}>
-              <Text style={[styles.centerText, styles.fillSpace]}>{'Reps: ' + set.rep}</Text>
-              
-              {workout.trackTotal == 0 && (
-                <Text style={[styles.centerText, styles.fillSpace]}>{'Weight: ' + set.weight}</Text>            
-              )}
-            </View>
-
-          </Pressable>
-        </>
-      )
-    else
-      //Write
-      return (
-        <>
-          <View style={[styles.fillSpace, 
-            index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S
-          ]}>
-
-            <View style={[styles.center, styles.marginVertical_S]}>
-              <Pressable
-                onPress={() => { alterSets('remove', workout.sets, index) }}
-              >
-                <MaterialIcon
-                  name="close-outline"
-                  size={22}
-                  color={Colors.black}
-                />
-              </Pressable>
-            </View>
-
-            <View style={[styles.homeContainer]}>
-              <View style={[styles.title]}>
-                <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
-              </View>
-
-              <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
-
-                <View>
-                  <Text>Last time:</Text>
-                  {workout.trackTotal == 1 && (
-                    <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
-                  )}
-                  {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
-                    <>
-                      <View style={styles.row}>
-                      <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @ ' : 'N/A'}</Text>
-                      <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
-                      </View>
-                    </>
-                  )}
-                </View>
-
-                <View>
-                  <Text>Workout best:</Text>
-
-                  {workout.trackTotal == 1 && (
-                    <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
-                  )} 
-                  {workout.trackTotal == 0 && (
-                    <>
-                      <View style={styles.row}>
-                        <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @ ' : 'N/A'}</Text>
-                        <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
-                      </View>
-                    </>
-                  )}
-                </View>
-
-                <View>
-                  <Text>Set Best:</Text>
-
-                  {workout.trackTotal == 1 && (
-                    <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
-                  )} 
-
-                  {workout.trackTotal == 0 && (
-                    <>
-                      <View style={styles.row}>
-                        <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @ ' : 'N/A'}</Text>
-                        <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
-                      </View>
-                    </>
-                  )}
-                </View>
-              </View>
-            </View>
-
-            <View style={[styles.row]}>
-              <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
-                <Text>{'Reps'}</Text>
-                <InputSpinner
-                  value={set.rep}
-                  onChange={(num) => {
-                    set.rep = num;
-                  }}
-                  style={[styles.spinner]}
-                  buttonStyle={styles.inputSpinnerButtonContainer}
-                  skin="default"
-                  max={9999}
-                  colorMax={Colors.primary}
-                  colorMin={Colors.primary}
-                  color={Colors.secondary}
-                />
-              </View>
-
-              {workout.trackTotal == 0 && (
-                <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
-                  <Text>{'Weight'}</Text>
-                  <InputSpinner
-                    value={set.weight}
-                    onChange={(num) => {
-                      set.weight = num;
-                    }}
-                    style={[styles.spinner]}
-                    buttonStyle={styles.inputSpinnerButtonContainer}
-                    skin="default"
-                    max={9999}
-                    type={"real"}
-                    step={5}
-                    colorMax={Colors.primary}
-                    colorMin={Colors.primary}
-                    color={Colors.secondary}
-                  />
-                </View>
-              )}
-            </View>
-          </View>
-        </>
-      )
-  }
 
   const WorkoutsRecord = ({workout}) => {
 
@@ -617,4 +406,231 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
       </BottomSheet>
     </>
   );
+}
+
+
+exports.alterSets = (type, sets, index = null, reps = null, weight = null) => {
+  alterSets(type, sets, index, reps, weight)
+}
+
+function alterSets(type, sets, index = null, reps = null, weight = null) {
+  switch (type) {
+    case 'init':
+      if(reps != null && weight != null) {
+        for(let i in reps) {
+          sets.push({
+            rep: reps[i],
+            weight: weight[i],
+            edit: false,
+          })          
+        }
+      }
+      else
+        sets.push({
+          rep: 0,
+          weight: 0,
+          edit: true,
+        })
+      break; 
+    case 'addNew':
+      sets.forEach((set, idx) => {
+        set.edit = false;
+      });
+
+      sets.push({
+        rep: sets[sets.length - 1].rep,
+        weight: sets[sets.length - 1].weight,
+        edit: true,
+      });
+      break;
+    case 'remove':
+      if (index !== null && index >= 0 && index < sets.length) {
+        sets.splice(index, 1);
+      }
+      break;
+    case 'editMode':
+      if (index !== null && index >= 0 && index < sets.length) {
+        sets.forEach((set, idx) => {
+          set.edit = idx === index;
+        });
+      }
+      break;
+    default:
+      break;
+  }
+
+}
+
+export const SetsRecord = ({set, index, workout, getData}) => {
+
+  if(!workout.repsPrev)
+    workout.repsPrev = []
+  if(!workout.repsByTotal)
+    workout.repsByTotal = []
+  if(!workout.repsBySet)
+    workout.repsBySet = []
+  if(!workout.weightPrev)
+    workout.weightPrev = []
+  if(!workout.weightBySet)
+    workout.weightBySet = []
+  if(!workout.weightByTotal)
+    workout.weightByTotal = []
+
+  //Read
+  if(!set.edit)
+    return (
+      <>
+        <Pressable 
+          style={[
+            styles.fillSpace, 
+            index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S,
+            styles.row,
+          ]}
+          onPress={() => {
+              alterSets('editMode', workout.sets, index)
+              getData()  
+          }}
+        >
+          <View style={[styles.center, styles.marginLeft]}>
+            <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+          </View>
+
+          <View style={[
+            styles.fillSpace, 
+            styles.row, 
+            styles.center, 
+            styles.spread,
+          ]}>
+            <Text style={[styles.centerText, styles.fillSpace]}>{'Reps: ' + set.rep}</Text>
+            
+            {workout.trackTotal == 0 && (
+              <Text style={[styles.centerText, styles.fillSpace]}>{'Weight: ' + set.weight}</Text>            
+            )}
+          </View>
+
+        </Pressable>
+      </>
+    )
+  else
+    //Write
+    return (
+      <>
+        <View style={[styles.fillSpace, 
+          index + 1 != workout.sets.length ? styles.listItemContainer : styles.paddingVertical_S
+        ]}>
+
+          <View style={[styles.center, styles.marginVertical_S]}>
+            <Pressable
+              onPress={() => { 
+                alterSets('remove', workout.sets, index)  
+                getData()
+              }}
+            >
+              <MaterialIcon
+                name="close-outline"
+                size={22}
+                color={Colors.black}
+              />
+            </Pressable>
+          </View>
+
+          <View style={[styles.homeContainer]}>
+            <View style={[styles.title]}>
+              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+            </View>
+
+            <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
+
+              <View>
+                <Text>Last time:</Text>
+                {workout.trackTotal == 1 && (
+                  <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
+                )}
+                {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
+                  <>
+                    <View style={styles.row}>
+                    <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @ ' : 'N/A'}</Text>
+                    <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
+                    </View>
+                  </>
+                )}
+              </View>
+
+              <View>
+                <Text>Workout best:</Text>
+
+                {workout.trackTotal == 1 && (
+                  <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
+                )} 
+                {workout.trackTotal == 0 && (
+                  <>
+                    <View style={styles.row}>
+                      <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @ ' : 'N/A'}</Text>
+                      <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
+                    </View>
+                  </>
+                )}
+              </View>
+
+              <View>
+                <Text>Set Best:</Text>
+
+                {workout.trackTotal == 1 && (
+                  <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
+                )} 
+
+                {workout.trackTotal == 0 && (
+                  <>
+                    <View style={styles.row}>
+                      <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @ ' : 'N/A'}</Text>
+                      <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
+                    </View>
+                  </>
+                )}
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.row]}>
+            <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+              <Text>{'Reps'}</Text>
+              <InputSpinner
+                value={set.rep}
+                onChange={(num) => {
+                  set.rep = num;
+                }}
+                style={[styles.spinner]}
+                buttonStyle={styles.inputSpinnerButtonContainer}
+                skin="default"
+                max={9999}
+                colorMax={Colors.primary}
+                colorMin={Colors.primary}
+                color={Colors.secondary}
+              />
+            </View>
+
+            {workout.trackTotal == 0 && (
+              <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
+                <Text>{'Weight'}</Text>
+                <InputSpinner
+                  value={set.weight}
+                  onChange={(num) => {
+                    set.weight = num;
+                  }}
+                  style={[styles.spinner]}
+                  buttonStyle={styles.inputSpinnerButtonContainer}
+                  skin="default"
+                  max={9999}
+                  type={"real"}
+                  step={5}
+                  colorMax={Colors.primary}
+                  colorMin={Colors.primary}
+                  color={Colors.secondary}
+                />
+              </View>
+            )}
+          </View>
+        </View>
+      </>
+    )
 }
