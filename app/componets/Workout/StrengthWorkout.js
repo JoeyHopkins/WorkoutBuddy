@@ -291,6 +291,7 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
                 index={index}
                 workout={workout}
                 getData={getData}
+                showStats={true}
               />
             ))}
           </View>
@@ -461,7 +462,7 @@ function alterSets(type, sets, index = null, reps = null, weight = null) {
 
 }
 
-export const SetsRecord = ({set, index, workout, getData}) => {
+export const SetsRecord = ({set, index, workout, getData, showStats}) => {
 
   if(!workout.repsPrev)
     workout.repsPrev = []
@@ -533,64 +534,64 @@ export const SetsRecord = ({set, index, workout, getData}) => {
               />
             </Pressable>
           </View>
+          {showStats && (
+            <View style={[styles.homeContainer]}>
+              <View style={[styles.title]}>
+                <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+              </View>
 
-          <View style={[styles.homeContainer]}>
-            <View style={[styles.title]}>
-              <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+              <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
+
+                <View>
+                  <Text>Last time:</Text>
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
+                  )}
+                  {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
+                    <>
+                      <View style={styles.row}>
+                      <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @ ' : 'N/A'}</Text>
+                      <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+
+                <View>
+                  <Text>Workout best:</Text>
+
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
+                  )} 
+                  {workout.trackTotal == 0 && (
+                    <>
+                      <View style={styles.row}>
+                        <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @ ' : 'N/A'}</Text>
+                        <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+
+                <View>
+                  <Text>Set Best:</Text>
+
+                  {workout.trackTotal == 1 && (
+                    <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
+                  )} 
+
+                  {workout.trackTotal == 0 && (
+                    <>
+                      <View style={styles.row}>
+                        <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @ ' : 'N/A'}</Text>
+                        <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+              </View>
             </View>
-
-            <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
-
-              <View>
-                <Text>Last time:</Text>
-                {workout.trackTotal == 1 && (
-                  <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' Reps' : 'N/A'}</Text>
-                )}
-                {workout.trackTotal == 0 && workout.repsPrev != [] && workout.weightPrev != [] && (
-                  <>
-                    <View style={styles.row}>
-                    <Text>{workout.repsPrev[index] ? workout.repsPrev[index] + ' @ ' : 'N/A'}</Text>
-                    <Text>{workout.weightPrev[index] ? workout.weightPrev[index] + ' lbs' : ''}</Text>
-                    </View>
-                  </>
-                )}
-              </View>
-
-              <View>
-                <Text>Workout best:</Text>
-
-                {workout.trackTotal == 1 && (
-                  <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' Reps' : 'N/A'}</Text>
-                )} 
-                {workout.trackTotal == 0 && (
-                  <>
-                    <View style={styles.row}>
-                      <Text>{workout.repsByTotal[index] ? workout.repsByTotal[index] + ' @ ' : 'N/A'}</Text>
-                      <Text>{workout.weightByTotal[index] ? workout.weightByTotal[index] + ' lbs' : ''}</Text>
-                    </View>
-                  </>
-                )}
-              </View>
-
-              <View>
-                <Text>Set Best:</Text>
-
-                {workout.trackTotal == 1 && (
-                  <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' Reps' : 'N/A'}</Text>
-                )} 
-
-                {workout.trackTotal == 0 && (
-                  <>
-                    <View style={styles.row}>
-                      <Text>{workout.repsBySet[index] ? workout.repsBySet[index] + ' @ ' : 'N/A'}</Text>
-                      <Text>{workout.weightBySet[index] ? workout.weightBySet[index] + ' lbs' : ''}</Text>
-                    </View>
-                  </>
-                )}
-              </View>
-            </View>
-          </View>
-
+          )}
           <View style={[styles.row]}>
             <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
               <Text>{'Reps'}</Text>

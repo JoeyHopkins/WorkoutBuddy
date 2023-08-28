@@ -78,6 +78,7 @@ export const WorkoutHistory = ({navigation, route}) => {
                 index={index}
                 workout={workout}
                 getData={getData}
+                showStats={false}
               />
             ))}
           </View>
