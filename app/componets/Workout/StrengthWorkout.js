@@ -450,11 +450,14 @@ function alterSets(type, sets, index = null, reps = null, weight = null) {
       }
       break;
     case 'editMode':
-      if (index !== null && index >= 0 && index < sets.length) {
+      if (index !== null && index >= 0 && index < sets.length)
         sets.forEach((set, idx) => {
           set.edit = idx === index;
         });
-      }
+      break;
+    case 'minimize':
+      if (index !== null && index >= 0 && index < sets.length)
+        sets[index].edit = false;
       break;
     default:
       break;
@@ -536,9 +539,16 @@ export const SetsRecord = ({set, index, workout, getData, showStats}) => {
           </View>
           {showStats && (
             <View style={[styles.homeContainer]}>
-              <View style={[styles.title]}>
-                <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
-              </View>
+              <Pressable
+                onPress={() => { 
+                  alterSets('minimize', workout.sets, index)  
+                  getData()
+                }}
+              >
+                <View style={[styles.title]}>
+                  <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+                </View>
+              </Pressable>
 
               <View style={[styles.row, styles.spread, styles.marginHorizonal_S, styles.marginVertical_M]}>
 
@@ -591,6 +601,18 @@ export const SetsRecord = ({set, index, workout, getData, showStats}) => {
                 </View>
               </View>
             </View>
+          )}
+          {!showStats && (
+            <Pressable
+              onPress={() => { 
+                alterSets('minimize', workout.sets, index)  
+                getData()
+              }}
+            >
+              <View style={[styles.title]}>
+                <Text style={[styles.smallTitle]}>{'Set: ' + (index + 1)}</Text>
+              </View>
+            </Pressable>
           )}
           <View style={[styles.row]}>
             <View style={[styles.inputSpinnerContainer, styles.fillSpace, styles.center, styles.marginVertical_M]}>
