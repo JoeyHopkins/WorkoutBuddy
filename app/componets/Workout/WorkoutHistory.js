@@ -43,8 +43,8 @@ export const WorkoutHistory = ({navigation, route}) => {
 
       for(let item of tempHistory)
       {
-        item.reps = item.reps.split(',')
-        item.weight = item.weight.split(',')
+        item.reps = item.reps ? item.reps.split(',') : []
+        item.weight = item.weight ? item.weight.split(',') : []
         item.trackTotal = trackTotal
       }
     }
