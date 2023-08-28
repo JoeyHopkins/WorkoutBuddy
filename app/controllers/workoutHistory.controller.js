@@ -7,14 +7,26 @@ exports.getWorkoutHistory = (workoutId, page, pageSize) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM strengthWorkoutSummary WHERE workoutId = ? ORDER BY id DESC LIMIT ? OFFSET ?`,
-        [workoutId, pageSize, offset],
-        (txObj, { rows: { _array } }) => { 
-          resolve(_array);
+        `SELECT COUNT(*) AS totalCount FROM strengthWorkoutSummary WHERE workoutId = ?`,
+        [workoutId],
+        (txObj, { rows: { _array: [{ totalCount }] } }) => {
+          tx.executeSql(
+            `SELECT * FROM strengthWorkoutSummary WHERE workoutId = ? ORDER BY id DESC LIMIT ? OFFSET ?`,
+            [workoutId, pageSize, offset],
+            (txObj, { rows: { _array } }) => {
+              resolve({
+                items: _array,
+                totalItems: totalCount,
+              });
+            },
+            (txObj, error) => {
+              reject(error);
+            }
+          );
         },
-        (txObj, error) => { 
+        (txObj, error) => {
           reject(error);
-        },
+        }
       );
     });
   });

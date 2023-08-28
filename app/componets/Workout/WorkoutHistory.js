@@ -16,11 +16,19 @@ export const WorkoutHistory = ({navigation, route}) => {
   const { workoutID, workoutName, trackTotal } = route.params;
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([])
+  const [totalItems, setTotalItems] = useState(0)
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
   const routineList = useRef([])
+  const pagePrev = useRef(1)
 
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [page])
   
   const fetchData = async () => {
     try {
@@ -40,9 +48,10 @@ export const WorkoutHistory = ({navigation, route}) => {
   async function getData() {
     let tempHistory = []
 
-    if(history.length == 0)
-    {
-      tempHistory = await historySql.getWorkoutHistory(workoutID, 0, 10)
+    if(history.length == 0 || pagePrev.current !== page) {
+      response = await historySql.getWorkoutHistory(workoutID, page, pageSize)
+      tempHistory = response.items
+      setTotalItems(response.totalItems)
 
       for(let item of tempHistory)
       {
@@ -166,11 +175,47 @@ export const WorkoutHistory = ({navigation, route}) => {
           </View>
         )}
         {loading == false && (
-          <View style={styles.fillSpace}>
-            {history.map((workout, index) => (
-              <HistoryItem key={index} workout={workout} index={index} />
-            ))}
-          </View>
+          <>
+            <View style={styles.fillSpace}>
+              {history.map((workout, index) => (
+                <HistoryItem key={index} workout={workout} index={index} />
+              ))}
+            </View>
+
+            <View style={styles.center}>
+              <Text>{((page - 1) * pageSize) + 1} - {(page * pageSize) > totalItems ? totalItems : (page * pageSize)} of {totalItems} </Text>
+            </View>
+
+            <View style={[styles.row, styles.spread, styles.marginHorizonal_L]}>
+              <Pressable
+                onPress={() => { 
+                  pagePrev.current = page;
+                  setPage(page - 1)
+                }}
+                disabled={page <= 1}
+              >
+                <MaterialIcon 
+                  name='arrow-left-bold-outline' 
+                  size={100}
+                  color={page <= 1 ? Colors.backgroundGray : Colors.primary} 
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => { 
+                  pagePrev.current = page;
+                  setPage(page + 1)
+                }}
+                disabled={(page * pageSize) > totalItems}
+              >
+                <MaterialIcon 
+                  name='arrow-right-bold-outline' 
+                  size={100} 
+                  color={(page * pageSize) > totalItems ? Colors.backgroundGray : Colors.primary}
+                />
+              </Pressable>
+            </View>
+
+          </>
         )}
       </ScrollView>
     </>
