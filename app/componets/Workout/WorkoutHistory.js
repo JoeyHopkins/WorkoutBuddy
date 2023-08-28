@@ -5,6 +5,8 @@ import React, {useState, useEffect, useRef, memo} from 'react';
 import { showMessage } from "react-native-flash-message";
 import { alterSets, SetsRecord } from './StrengthWorkout'
 import * as Utils from '../../utils'
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Colors from '../../config/colors'
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -65,7 +67,7 @@ export const WorkoutHistory = ({navigation, route}) => {
 
     return (
       <>
-        <View style={[styles.homeContainer, styles.marginTop_S]}>
+        <View style={[styles.homeContainer, styles.marginBottom_S]}>
           <View style={[styles.center, styles.marginVertical_S]}>
             <Text>{Utils.formatISOtoDisplayDate(workoutDate)}</Text>
           </View>
@@ -81,6 +83,20 @@ export const WorkoutHistory = ({navigation, route}) => {
                 showStats={false}
               />
             ))}
+          </View>
+          <View style={[styles.center, styles.marginBottom_S]}>
+            <Pressable
+              style={[
+                styles.circleButton, 
+                styles.disabled
+              ]}
+              disabled={true}
+              onPress={() => { 
+                console.log('hit')
+              }}
+            >
+              <MaterialIcon name='check-outline' size={20} color={Colors.black} />
+            </Pressable>
           </View>
         </View>
       </>
