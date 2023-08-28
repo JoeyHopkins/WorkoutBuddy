@@ -19,3 +19,26 @@ exports.getWorkoutHistory = (workoutId, page, pageSize) => {
     });
   });
 };
+
+exports.updateWorkoutSummary = (id, newData) => {
+  const { reps, total, weight, weightTotal } = newData;
+
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE strengthWorkoutSummary SET reps = ?, total = ?, weight = ?, weightTotal = ? WHERE id = ?`,
+        [reps, total, weight, weightTotal, id],
+        (txObj, resultSet) => {
+          if (resultSet.rowsAffected > 0) {
+            resolve('Record updated successfully');
+          } else {
+            reject(new Error('Record not found'));
+          }
+        },
+        (txObj, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+};

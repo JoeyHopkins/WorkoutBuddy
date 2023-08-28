@@ -3,7 +3,7 @@ import styles from '../../config/styles';
 import * as historySql from '../../controllers/workoutHistory.controller'
 import React, {useState, useEffect, useRef, memo} from 'react';
 import { showMessage } from "react-native-flash-message";
-import { alterSets, SetsRecord } from './StrengthWorkout'
+import { alterSets, SetsRecord, prepSetsForDB } from './StrengthWorkout'
 import * as Utils from '../../utils'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Colors from '../../config/colors'
@@ -60,6 +60,34 @@ export const WorkoutHistory = ({navigation, route}) => {
     workout.changed = true
   }
 
+  function updateWorkout(workout) {
+    const {reps, total, weight, weightTotal} = prepSetsForDB(workout)
+    
+    let params = {
+      reps: reps,
+      total: total,
+      weight: weight,
+      weightTotal: weightTotal,
+    }
+
+    try {
+      historySql.updateWorkoutSummary(workout.id, params)
+      workout.changed = false
+      showMessage({
+        message: 'Success',
+        description: 'Workout has been updated',
+        type: "success",
+      });
+      getData()
+    }
+    catch(error) {
+      showMessage({
+        message: 'Error',
+        description: 'There was an error. ' + error,
+        type: "danger",
+      });
+    }
+  }
 
   const HistoryItem = ({ workout, index }) => {
     let workoutDate = new Date(workout.date)
@@ -74,7 +102,7 @@ export const WorkoutHistory = ({navigation, route}) => {
       <>
         <View style={[styles.homeContainer, styles.marginBottom_S]}>
           <View style={[styles.center, styles.marginVertical_S]}>
-            <Text>{Utils.formatISOtoDisplayDate(workoutDate)}</Text>
+            <Text style={styles.title}>{Utils.formatISOtoDisplayDate(workoutDate)}</Text>
           </View>
 
           <View style={[styles.marginBottom, styles.homeContainer]}>
@@ -113,8 +141,7 @@ export const WorkoutHistory = ({navigation, route}) => {
               ]}
               disabled={workout.changed == undefined ? true : false}
               onPress={() => { 
-                console.log('hit')
-
+                updateWorkout(workout)
               }}
             >
               <MaterialIcon name='check-outline' size={20} color={Colors.black} />

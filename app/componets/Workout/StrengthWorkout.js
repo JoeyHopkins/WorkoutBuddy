@@ -63,27 +63,13 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
     try {
       for(let workout of workouts) {
-
-        let { trackTotal, sets, id} = workout
-        let total = 0, weightTotal = 0
-        let reps = '', weight = ''
+        let { id} = workout
         let now = new Date().toISOString();
-
-        for(let set of sets) {
-          total += set.rep
-          reps += set.rep + ','
-          if(trackTotal == 0){
-            weightTotal += set.weight * set.rep
-            weight += set.weight + ','
-          }
-        }
-
-        reps = reps.substring(0, reps.length - 1)
-        weight = weight.substring(0, weight.length - 1)
+        const {reps, total, weight, weightTotal} = prepSetsForDB(workout)
 
         let params = {
-          date: now, 
-          reps: reps, 
+          date: now,
+          reps: reps,
           total: total,
           weight: weight == '' ? null : weight,
           weightTotal: weightTotal == 0 ? null : weightTotal,
@@ -91,8 +77,6 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
 
         let result = await strengthSql.insertStrengthWorkoutSummary(id, params)
         let resultOverall = await strengthSql.runAgainstOverallBest(id, params)
-
-
       }
 
       const routine = routineList.current.find(routine => routine.id === routineID);
@@ -409,6 +393,29 @@ export const StrengthWorkout = ({ navigation, setPageMode, workouts, routineID, 
   );
 }
 
+exports.prepSetsForDB = (workout) => {
+  return prepSetsForDB(workout)
+}
+
+function prepSetsForDB(workout) {
+  let { trackTotal, sets, id} = workout
+  let total = 0, weightTotal = 0
+  let reps = '', weight = ''
+
+  for(let set of sets) {
+    total += +set.rep
+    reps += set.rep + ','
+    if(trackTotal == 0){
+      weightTotal += set.weight * set.rep
+      weight += set.weight + ','
+    }
+  }
+
+  reps = reps.substring(0, reps.length - 1)
+  weight = weight.substring(0, weight.length - 1)
+
+  return {reps, total, weight, weightTotal}
+}
 
 exports.alterSets = (type, sets, index = null, reps = null, weight = null) => {
   alterSets(type, sets, index, reps, weight)
@@ -462,7 +469,6 @@ function alterSets(type, sets, index = null, reps = null, weight = null) {
     default:
       break;
   }
-
 }
 
 export const SetsRecord = ({set, index, workout, getData, showStats, setStateChanged}) => {
@@ -625,7 +631,7 @@ export const SetsRecord = ({set, index, workout, getData, showStats, setStateCha
                 value={set.rep}
                 onChange={(num) => {
                   set.rep = num;
-                  if(!showStats)
+                  if(!showStats && !workout.changed)
                   {
                     setStateChanged(workout)
                     getData()
