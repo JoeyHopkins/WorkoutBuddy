@@ -90,6 +90,21 @@ export const WorkoutHistory = ({navigation, route}) => {
               />
             ))}
           </View>
+          <View style={styles.center}>
+            <MaterialIcon
+              onPress={() => {
+                alterSets('addNew', workout.sets)
+                setStateChanged(workout)
+                getData()
+              }}
+              name="plus-circle-outline"
+              size={40}
+              color={Colors.primary}
+              style={styles.marginBottom_S}
+            />
+          </View>
+
+
           <View style={[styles.center, styles.marginBottom_S]}>
             <Pressable
               style={[
