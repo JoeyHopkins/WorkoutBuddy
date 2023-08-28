@@ -56,6 +56,11 @@ export const WorkoutHistory = ({navigation, route}) => {
     setHistory(tempHistory)
   }
 
+  function setStateChanged(workout) {
+    workout.changed = true
+  }
+
+
   const HistoryItem = ({ workout, index }) => {
     let workoutDate = new Date(workout.date)
 
@@ -81,6 +86,7 @@ export const WorkoutHistory = ({navigation, route}) => {
                 workout={workout}
                 getData={getData}
                 showStats={false}
+                setStateChanged={setStateChanged}
               />
             ))}
           </View>
@@ -88,11 +94,12 @@ export const WorkoutHistory = ({navigation, route}) => {
             <Pressable
               style={[
                 styles.circleButton, 
-                styles.disabled
+                workout.changed ? '' : styles.disabled 
               ]}
-              disabled={true}
+              disabled={workout.changed == undefined ? true : false}
               onPress={() => { 
                 console.log('hit')
+
               }}
             >
               <MaterialIcon name='check-outline' size={20} color={Colors.black} />

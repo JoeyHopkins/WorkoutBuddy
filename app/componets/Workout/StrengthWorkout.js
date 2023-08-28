@@ -465,7 +465,7 @@ function alterSets(type, sets, index = null, reps = null, weight = null) {
 
 }
 
-export const SetsRecord = ({set, index, workout, getData, showStats}) => {
+export const SetsRecord = ({set, index, workout, getData, showStats, setStateChanged}) => {
 
   if(!workout.repsPrev)
     workout.repsPrev = []
@@ -526,7 +526,11 @@ export const SetsRecord = ({set, index, workout, getData, showStats}) => {
           <View style={[styles.center, styles.marginVertical_S]}>
             <Pressable
               onPress={() => { 
-                alterSets('remove', workout.sets, index)  
+                alterSets('remove', workout.sets, index)
+                
+                if(!showStats)
+                  setStateChanged(workout)
+
                 getData()
               }}
             >
@@ -621,6 +625,11 @@ export const SetsRecord = ({set, index, workout, getData, showStats}) => {
                 value={set.rep}
                 onChange={(num) => {
                   set.rep = num;
+                  if(!showStats)
+                  {
+                    setStateChanged(workout)
+                    getData()
+                  }
                 }}
                 style={[styles.spinner]}
                 buttonStyle={styles.inputSpinnerButtonContainer}
@@ -639,6 +648,11 @@ export const SetsRecord = ({set, index, workout, getData, showStats}) => {
                   value={set.weight}
                   onChange={(num) => {
                     set.weight = num;
+                    if(!showStats)
+                    {
+                      setStateChanged(workout)
+                      getData()
+                    }
                   }}
                   style={[styles.spinner]}
                   buttonStyle={styles.inputSpinnerButtonContainer}
