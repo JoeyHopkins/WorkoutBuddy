@@ -7,6 +7,7 @@ import { alterSets, SetsRecord, prepSetsForDB } from './StrengthWorkout'
 import * as Utils from '../../utils'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Colors from '../../config/colors'
+import { Wander } from 'react-native-animated-spinkit'
 
 const width = Dimensions.get('window').width;
 const slideWidth = width * 0.8 - 0;
@@ -158,11 +159,19 @@ export const WorkoutHistory = ({navigation, route}) => {
         <View style={[styles.center]}>
           <Text style={[styles.title, styles.marginVertical_S]}>{workoutName}</Text>
         </View>
-        <View style={styles.fillSpace}>
-          {history.map((workout, index) => (
-            <HistoryItem key={index} workout={workout} index={index} />
-          ))}
-        </View>
+
+        {loading == true && (
+          <View style={[styles.center, styles.fillSpace, styles.marginTop_M]}>
+            <Wander size={300} color={Colors.primary} />
+          </View>
+        )}
+        {loading == false && (
+          <View style={styles.fillSpace}>
+            {history.map((workout, index) => (
+              <HistoryItem key={index} workout={workout} index={index} />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </>
   );
