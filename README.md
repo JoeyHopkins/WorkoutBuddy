@@ -122,3 +122,6 @@ Found a few minor bugs that were fixed
 Added functionality to add workouts to activity tracker
 setup routines to switch based on the day being worked out
 Fixed totalweight calculation to take into account the number of reps
+
+Dev Build #2
+primary focus here is the workout history page and making sure the app is storing/displaying data correctly on the android build
