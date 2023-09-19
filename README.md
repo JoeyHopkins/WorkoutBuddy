@@ -84,6 +84,8 @@ App is linked appwide to config/colors page. Some adjustments may need to be cha
 
 ## build for remote use
 
+sometimes the cli will need to be updated. can do so using the same command to install cli below
+
 install cli in not yet installed on machine
 npm install -g eas-cli
 
